@@ -1,0 +1,8 @@
+{
+  "global": [
+    {"type": "heatwave", "chance": 0.2}
+  ],
+  "cell": [
+    {"type": "crow", "chance": 0.1}
+  ]
+}
