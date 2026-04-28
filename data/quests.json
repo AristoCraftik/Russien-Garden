@@ -1,0 +1,11 @@
+{
+  "quests": [
+    {
+      "id": "q_sell_40",
+      "description": "Продайте урожая на 40 кредитов",
+      "condition_type": "quota_reach",
+      "params": {"value": 40},
+      "reward_artifact_id": "artifact_seal"
+    }
+  ]
+}

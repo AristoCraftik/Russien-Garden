@@ -1,0 +1,39 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/hud.gd" id="1"]
+
+[node name="HUD" type="Control"]
+script = ExtResource("1")
+
+[node name="Panel" type="Panel" parent="."]
+anchors_preset = 0
+offset_right = 330.0
+offset_bottom = 250.0
+
+[node name="VBox" type="VBoxContainer" parent="Panel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Day" type="Label" parent="Panel/VBox"]
+text = "День"
+
+[node name="Money" type="Label" parent="Panel/VBox"]
+text = "Деньги"
+
+[node name="Quota" type="Label" parent="Panel/VBox"]
+text = "Квота"
+
+[node name="Law" type="Label" parent="Panel/VBox"]
+text = "Закон"
+
+[node name="Inventory" type="Label" parent="Panel/VBox"]
+text = "Инвентарь"
+
+[node name="SeedMenu" type="OptionButton" parent="Panel/VBox"]
+
+[node name="EndDay" type="Button" parent="Panel/VBox"]
+text = "Завершить день"
+
+[node name="SellAll" type="Button" parent="Panel/VBox"]
+text = "Продать всё"

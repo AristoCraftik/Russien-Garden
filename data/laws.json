@@ -1,0 +1,16 @@
+{
+  "laws": [
+    {
+      "id": "law_no_watermelon",
+      "description": "Запрещено сажать арбуз на этой неделе.",
+      "condition_type": "no_plant_id",
+      "params": {"plant_id": "watermelon"}
+    },
+    {
+      "id": "law_poppy_watermelon",
+      "description": "Мак не может расти рядом с арбузом.",
+      "condition_type": "no_adjacent",
+      "params": {"a": "poppy", "b": "watermelon"}
+    }
+  ]
+}

@@ -1,0 +1,2 @@
+extends BasePlant
+class_name SimpleGrowPlant
