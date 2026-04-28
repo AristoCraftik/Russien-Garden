@@ -1,2 +1,0 @@
-extends BaseShopItem
-class_name FertilizerItem
