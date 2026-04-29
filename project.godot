@@ -11,19 +11,18 @@ config_version=5
 [application]
 
 config/name="Garden State"
-run/main_scene="res://main.tscn"
+run/main_scene="uid://kmywuy1wjwrk"
 config/features=PackedStringArray("4.6", "Forward Plus")
+boot_splash/stretch_mode=0
 config/icon="res://icon.svg"
 
 [autoload]
 
-GameManager="*res://autoloads/game_manager.gd"
-PlantRegistry="*res://autoloads/plant_registry.gd"
-LawManager="*res://autoloads/law_manager.gd"
-EconomyManager="*res://autoloads/economy_manager.gd"
-EventManager="*res://autoloads/event_manager.gd"
-MetaManager="*res://autoloads/meta_manager.gd"
-BreedingSystem="*res://autoloads/breeding_system.gd"
+FadeManager="*uid://ikd1eqvqlx73"
+
+[display]
+
+window/stretch/mode="viewport"
 
 [input]
 
@@ -44,4 +43,5 @@ harvest_cell={
 
 [rendering]
 
+textures/canvas_textures/default_texture_filter=0
 rendering_device/driver.windows="d3d12"

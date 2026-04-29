@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://dk6v20hgdf1xx"]
+
+[ext_resource type="Texture2D" uid="uid://bqmd53tkujtfy" path="res://assets/button_defoult.png" id="1_3dk36"]
+[ext_resource type="Script" uid="uid://dtqhvy1t045kq" path="res://scenes/tiles/tile.gd" id="1_ywnoi"]
+
+[node name="Tile" type="Control" unique_id=1857160279]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 3
+anchor_right = 0.028
+anchor_bottom = 0.049000002
+offset_right = -0.25600052
+offset_bottom = 0.24799919
+pivot_offset = Vector2(16, 16)
+script = ExtResource("1_ywnoi")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=2017187307]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer" unique_id=748203990]
+layout_mode = 2
+texture = ExtResource("1_3dk36")

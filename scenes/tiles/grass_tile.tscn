@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://bcpp35efkflci"]
+
+[ext_resource type="PackedScene" uid="uid://dk6v20hgdf1xx" path="res://scenes/tiles/tile.tscn" id="1_1gyt2"]
+[ext_resource type="Script" uid="uid://cmp3bohvtyrvd" path="res://scenes/tiles/grass_tile.gd" id="2_d3x5g"]
+
+[node name="GrassTile" unique_id=1857160279 instance=ExtResource("1_1gyt2")]
+script = ExtResource("2_d3x5g")

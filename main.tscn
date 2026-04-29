@@ -1,0 +1,96 @@
+[gd_scene format=3 uid="uid://kmywuy1wjwrk"]
+
+[ext_resource type="Script" uid="uid://cegr4dbr3fpap" path="res://main.gd" id="1_0xm2m"]
+[ext_resource type="PackedScene" uid="uid://cm2bc5rciqoj3" path="res://scenes/ui/button.tscn" id="1_ig7tw"]
+
+[node name="MainMenu" type="Control" unique_id=1104007043]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_0xm2m")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=245814310]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=351241366]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1722746789]
+layout_mode = 2
+text = "Game name"
+
+[node name="StartGameButton" parent="MarginContainer/VBoxContainer" unique_id=529498404 instance=ExtResource("1_ig7tw")]
+layout_mode = 2
+text = "Start game"
+
+[node name="LoadGameButton" parent="MarginContainer/VBoxContainer" unique_id=1190446085 instance=ExtResource("1_ig7tw")]
+layout_mode = 2
+text = "Load game"
+
+[node name="CollectionButton" parent="MarginContainer/VBoxContainer" unique_id=1177122136 instance=ExtResource("1_ig7tw")]
+layout_mode = 2
+text = "Collection"
+
+[node name="SettingsButton" parent="MarginContainer/VBoxContainer" unique_id=1996965689 instance=ExtResource("1_ig7tw")]
+layout_mode = 2
+text = "Settings"
+
+[node name="QuitButton" parent="MarginContainer/VBoxContainer" unique_id=87368283 instance=ExtResource("1_ig7tw")]
+layout_mode = 2
+text = "Quit
+"
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer" unique_id=253481447]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 8
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 7
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 7
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/MarginContainer" unique_id=1850102448]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/MarginContainer/VBoxContainer" unique_id=419466355]
+layout_mode = 2
+text = "Check out our social media"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/MarginContainer/VBoxContainer" unique_id=1790489683]
+layout_mode = 2
+
+[node name="DiscordButton" parent="MarginContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=747863928 instance=ExtResource("1_ig7tw")]
+layout_mode = 2
+text = "Discord"
+
+[node name="TelegramButton" parent="MarginContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1198832073 instance=ExtResource("1_ig7tw")]
+layout_mode = 2
+text = "Telegram"
+
+[node name="YouTubeButton" parent="MarginContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1309165067 instance=ExtResource("1_ig7tw")]
+layout_mode = 2
+text = "YouTube"
+
+[node name="ReditButton" parent="MarginContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1036228959 instance=ExtResource("1_ig7tw")]
+layout_mode = 2
+text = "Redit"
+
+[node name="TikTokButton" parent="MarginContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=2001406378 instance=ExtResource("1_ig7tw")]
+layout_mode = 2
+text = "TikTok"
+
+[connection signal="button_up" from="MarginContainer/VBoxContainer/StartGameButton" to="." method="_on_start_game_button_button_up"]

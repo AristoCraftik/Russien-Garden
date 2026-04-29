@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://c4b5hhi2rxgff"]
+
+[ext_resource type="PackedScene" uid="uid://dk6v20hgdf1xx" path="res://scenes/tiles/tile.tscn" id="1_f235s"]
+[ext_resource type="Script" uid="uid://dmf7w14rwf32a" path="res://scenes/tiles/bed_tile.gd" id="2_olhof"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_yeuga"]
+
+[node name="BedTile" unique_id=1857160279 instance=ExtResource("1_f235s")]
+mouse_filter = 1
+script = ExtResource("2_olhof")
+
+[node name="Area2D" type="Area2D" parent="." index="1" unique_id=1079258435]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" index="0" unique_id=251323972]
+position = Vector2(16, 16)
+scale = Vector2(1.6, 1.6)
+shape = SubResource("RectangleShape2D_yeuga")
+
+[connection signal="mouse_entered" from="Area2D" to="." method="_on_area_2d_mouse_entered"]
