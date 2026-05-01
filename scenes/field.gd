@@ -1,24 +1,30 @@
 extends Node2D
 
-
-@export var filed_matrix = [
-	["bed_tile", "bed_tile", "bed_tile"],
-	["bed_tile", "bed_tile", "bed_tile"],
-	["bed_tile", "bed_tile", "bed_tile"]
+@onready var WateredBedLayer = $WateredBedLayer
+@export var field_map = [
+	Vector2i(0, 0),
+	Vector2i(1, 1),
+	Vector2i(0, 1),
 ]
- 
 
-func _ready() -> void:
-	var z = 0
-	var y = 0 
-	for row in filed_matrix:
-		var x = 0
-		for cell in row:
-			add_cell(y, x, z, cell)
-			x += 1
-		y += 1
-	
-	add_cell(1, 1, 1, "plant")
+
+func _unhandled_input(event):
+	if event is InputEventMouseButton and event.pressed:
+		var mouse_pos = get_global_mouse_position()
+		var local_pos = WateredBedLayer.to_local(mouse_pos)
+		var cell_pos = WateredBedLayer.local_to_map(local_pos)
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			pour_cell(cell_pos)
+		elif event.button_index == MOUSE_BUTTON_RIGHT:
+			depour_cell(cell_pos)
+
+
+func pour_cell(cell_pos:= Vector2(0, 0)):
+	WateredBedLayer.set_cells_terrain_connect([cell_pos], 0, 0)
+
+
+func depour_cell(cell_pos:= Vector2i(0, 0)):
+	WateredBedLayer.set_cells_terrain_connect([cell_pos], 0, -1)
 
 
 func replace_cell(y, x, z, cell):
