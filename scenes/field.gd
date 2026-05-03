@@ -11,24 +11,23 @@ extends Node2D
 func _ready() -> void:
 	add_to_group("field")
 
-func plant_seed(cell_pos: Vector2i, texture: Texture2D) -> bool:
-	# Проверка доступности клетки (можно добавить свои условия)
+func plant_seed(cell_pos: Vector2i, plant_data: PlantData) -> bool:
 	if not cell_pos in field_map:
-		field_map.append(cell_pos)   # временно разрешаем везде
+		field_map.append(cell_pos)
 	
-	# Загружаем сцену растения
 	var plant_scene = preload("res://plant.tscn")
 	var plant = plant_scene.instantiate()
 	
-	# Инициализируем данными
-	plant.setup(texture, "Семечко")   # название можешь менять
+	# Сначала добавляем в дерево – чтобы _ready() нашёл Sprite
+	WateredBedLayer.add_child(plant)
 	
-	# Позиция в центре клетки
+	# Теперь настраиваем (спрайт уже гарантированно существует)
+	plant.setup_from_data(plant_data)
+	
+	# Позиция и остальное
 	plant.position = WateredBedLayer.map_to_local(cell_pos)
 	plant.z_index = 1
 	
-	# Добавляем как ребёнка слоя
-	WateredBedLayer.add_child(plant)
 	return true
 
 func _unhandled_input(event):

@@ -5,20 +5,26 @@ var drag_copy: TextureRect
 var origin_pos_in_inventory: Vector2
 var inventory_root: Control
 
+# Данные о растении, которые несёт этот предмет
+var plant_data: PlantData = null
+
 func _ready() -> void:
 	mouse_filter = MOUSE_FILTER_STOP
 	set_process_input(true)
 	inventory_root = _find_inventory_root()
 
-# Ищем корневой узел инвентаря (по имени "Inventory")
 func _find_inventory_root() -> Control:
 	var node: Node = self
 	while node:
 		if node.name == "Inventory" and node is Control:
 			return node
 		node = node.get_parent()
-	# Если не нашли, остаёмся самим предметом (тоже Control)
 	return self
+
+func set_plant_data(data: PlantData) -> void:
+	plant_data = data
+	if data and data.seed_texture:
+		texture = data.seed_texture
 
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
@@ -63,21 +69,19 @@ func end_drag() -> void:
 
 	if not drag_copy: return
 
-	# Проверяем, можно ли посадить растение на поле
+	# Пытаемся посадить
 	if try_plant_on_field():
-		# Удаляем предмет из инвентаря и летающую копию
 		if drag_copy:
 			drag_copy.queue_free()
 			drag_copy = null
 		queue_free()
 		return
 
-	# Если не получилось – возвращаем предмет обратно в слот
+	# Возврат анимацией
 	var tween = create_tween()
 	tween.set_ease(Tween.EASE_OUT)
 	tween.set_trans(Tween.TRANS_BACK)
 	tween.tween_property(drag_copy, "position", origin_pos_in_inventory, 0.3)
-
 	tween.tween_callback(func():
 		if drag_copy:
 			drag_copy.queue_free()
@@ -86,21 +90,18 @@ func end_drag() -> void:
 	)
 
 func try_plant_on_field() -> bool:
+	if not plant_data:
+		return false   # нет данных — сажать нечего
+
 	var field = get_tree().get_first_node_in_group("field")
-	if not field:
-		return false
-	
-	# Получить мировые координаты мыши (работает даже с UI в CanvasLayer)
+	if not field: return false
+
 	var mouse_world = get_global_mouse_position()
-	
-	# Получить ссылку на слой политых клеток
 	var water_layer = field.WateredBedLayer
-	if not water_layer:
-		return false
-	
-	# Перевести мировые координаты в координаты тайловой карты
+	if not water_layer: return false
+
 	var local_pos = water_layer.to_local(mouse_world)
 	var cell_pos = water_layer.local_to_map(local_pos)
-	
-	# Вызвать метод посадки на поле (он сам проверит возможность)
-	return field.plant_seed(cell_pos, texture)
+
+	# Вызываем посадку, передавая PlantData
+	return field.plant_seed(cell_pos, plant_data)

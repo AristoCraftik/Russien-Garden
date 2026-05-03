@@ -3,8 +3,9 @@
 [ext_resource type="Script" uid="uid://ba032cbaf3tvq" path="res://scenes/field.gd" id="1_6pmjc"]
 [ext_resource type="Texture2D" uid="uid://cc0aph27nxjoj" path="res://assets/grass_tile.png" id="2_7156t"]
 [ext_resource type="Texture2D" uid="uid://d3uayy740iou6" path="res://assets/farm_tile.png" id="2_pn4dk"]
-[ext_resource type="TileSet" uid="uid://drwtvac4dwabj" path="res://rescources/tile_set.tres" id="2_ttalb"]
+[ext_resource type="TileSet" uid="uid://drwtvac4dwabj" path="res://resources/tile_set.tres" id="2_ttalb"]
 [ext_resource type="Texture2D" uid="uid://c3o3b7gefso3i" path="res://assets/pour_tilemap.png" id="4_wnvii"]
+
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_tcubs"]
 texture = ExtResource("2_pn4dk")

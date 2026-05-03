@@ -1,29 +1,45 @@
 extends Node2D
 
-# --- Данные растения ---
-var growth_stage: int = 0          # текущая стадия (0 - семя, 1 - росток и т.д.)
-var final_stage: int = 3           # стадия, на которой растение считается взрослым
-var days_to_grow: int = 1          # сколько дней до перехода на следующую стадию
-var watered: bool = false          # полито ли сегодня
+var sprite: Sprite2D
+var growth_stage: int = 0
+var final_stage: int = 2
+var watered: bool = false
+var plant_name: String = ""
 
-var plant_name: String = "Неизвестное растение"
-var seed_texture: Texture2D        # базовая текстура (семени)
+var atlas_texture: Texture2D = null
+var frame_width: int = 32
+var frame_height: int = 32
 
-# Можно добавить массив текстур для каждой стадии
-var stage_textures: Array[Texture2D] = []
+func _ready() -> void:
+	sprite = get_node_or_null("Sprite")
+	if not sprite:
+		sprite = Sprite2D.new()
+		sprite.name = "Sprite"
+		add_child(sprite)
 
-func setup(seed_tex: Texture2D, name_str: String = "Растение") -> void:
-	plant_name = name_str
-	seed_texture = seed_tex
-	$Sprite.texture = seed_tex
+func setup_from_data(data: PlantData) -> void:
+	plant_name = data.plant_name
+	final_stage = data.final_stage
+	atlas_texture = data.atlas_texture
+	
+	if atlas_texture:
+		sprite.texture = atlas_texture
+		sprite.region_enabled = true
+		frame_width = atlas_texture.get_width() / final_stage
+		frame_height = atlas_texture.get_height()
+		_update_frame()
+	else:
+		sprite.texture = null
+
+func _update_frame() -> void:
+	var col = growth_stage % final_stage
+	var row = growth_stage / final_stage
+	sprite.region_rect = Rect2(col * frame_width, row * frame_height, frame_width, frame_height)
 
 func water() -> void:
 	watered = true
-
+	
 func advance_day() -> void:
 	if growth_stage < final_stage:
 		growth_stage += 1
-		# Меняем спрайт, если есть текстуры для стадий
-		if stage_textures.size() > growth_stage:
-			$Sprite.texture = stage_textures[growth_stage]
-	watered = false   # сбрасываем полив на следующий день
+		_update_frame()
