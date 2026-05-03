@@ -1,5 +1,7 @@
 extends Control
 
+@onready var field = $Field
+
 func _ready() -> void:
 	if FadeManager.start_mode == "load":
 		load_game()
@@ -15,12 +17,15 @@ func _spawn_initial_items() -> void:
 
 
 func _on_quit_to_menu_button_button_up() -> void:
+	TimeManager.save_all()
 	FadeManager.change_scene_with_fade("res://main.tscn")
 
 
 func _on_next_day_button_button_up() -> void:
-	TimeManager.next_day
+	TimeManager.next_day()
 
 
 func load_game():
-	var plants = TimeManager.load_game
+	var plants = TimeManager.load_game()
+	for plant in plants:
+		field.plant_seed(plant[0], load(str(plant[1])), plant[2])

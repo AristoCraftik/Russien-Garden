@@ -6,7 +6,6 @@
 [ext_resource type="TileSet" uid="uid://drwtvac4dwabj" path="res://resources/tile_set.tres" id="2_ttalb"]
 [ext_resource type="Texture2D" uid="uid://c3o3b7gefso3i" path="res://assets/pour_tilemap.png" id="4_wnvii"]
 
-
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_tcubs"]
 texture = ExtResource("2_pn4dk")
 texture_region_size = Vector2i(32, 32)
@@ -369,6 +368,7 @@ sources/0 = SubResource("TileSetAtlasSource_wnvii")
 
 [node name="Field" type="Node2D" unique_id=69235035]
 script = ExtResource("1_6pmjc")
+field_map = null
 
 [node name="BedLayer" type="TileMapLayer" parent="." unique_id=334382930]
 tile_map_data = PackedByteArray("AAD/////AAAAAAAAAAD//wAAAAAAAAAAAAAAAP//AAAAAAAAAAAAAAAAAAAAAAAAAAD+//7/AAAAAAAAAAD+////AAAAAAAAAAD+/wAAAAAAAAAAAAD+/wEAAAAAAAAAAAD///7/AAAAAAAAAAD//wEAAAAAAAAAAAAAAP7/AAAAAAAAAAAAAAEAAAAAAAAAAAABAP7/AAAAAAAAAAABAP//AAAAAAAAAAABAAAAAAAAAAAAAAABAAEAAAAAAAAAAAA=")

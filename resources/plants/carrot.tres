@@ -11,4 +11,5 @@ seed_texture = ExtResource("2_rlaaf")
 atlas_texture = ExtResource("1_ghg2e")
 final_stage = 4
 description = "это морковь"
+path_to_tres = "res://resources/plants/carrot.tres"
 metadata/_custom_type_script = "uid://bpuoqsrolsstp"

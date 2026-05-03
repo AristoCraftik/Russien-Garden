@@ -13,8 +13,9 @@ var frame_width: int = 32
 var frame_height: int = 32
 
 func _ready() -> void:
+	TimeManager.plants_grow.connect(_plants_grow)
 	add_to_group("plants")
-	
+
 	sprite = get_node_or_null("Sprite")
 	if not sprite:
 		sprite = Sprite2D.new()
@@ -46,8 +47,11 @@ func _update_frame() -> void:
 
 func water() -> void:
 	watered = true
-	
+
 func advance_day() -> void:
 	if growth_stage < final_stage:
 		growth_stage += 1
 		_update_frame()
+
+func _plants_grow():
+	advance_day()

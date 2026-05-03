@@ -14,6 +14,7 @@ anchor_mode = 0
 
 [node name="Field" parent="." unique_id=69235035 instance=ExtResource("1_uwrxv")]
 position = Vector2(171, 179)
+field_map = [Vector2i(0, 0), Vector2i(1, 1), Vector2i(0, 1)]
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=495993463]
 

@@ -10,7 +10,7 @@ extends Node2D
 func _ready() -> void:
 	add_to_group("field")
 
-func plant_seed(cell_pos: Vector2i, plant_data: PlantData) -> bool:
+func plant_seed(cell_pos: Vector2i, plant_data: PlantData, growth_stage: int = 0) -> bool:
 	if not cell_pos in field_map:
 		field_map.append(cell_pos)
 	
@@ -20,11 +20,15 @@ func plant_seed(cell_pos: Vector2i, plant_data: PlantData) -> bool:
 	WateredBedLayer.add_child(plant)
 	plant.setup_from_data(plant_data)
 	plant.set_cell(cell_pos)
+	plant.growth_stage = growth_stage
+	plant._update_frame()
 	
 	plant.position = WateredBedLayer.map_to_local(cell_pos)
 	plant.z_index = 1
 	
 	return true
+
+
 
 func _unhandled_input(event):
 	if event is InputEventMouseButton and event.pressed:
@@ -41,21 +45,3 @@ func pour_cell(cell_pos:= Vector2(0, 0)):
 
 func depour_cell(cell_pos:= Vector2i(0, 0)):
 	WateredBedLayer.set_cells_terrain_connect([cell_pos], 0, -1)
-
-
-func replace_cell(y, x, z, cell):
-	add_cell(y, x, z, cell)
-	remove_cell(y, x, z)
-
-
-func remove_cell(y, x, z):
-	var cell = get_node("cell" + str(y) + str(x) + str(z))
-	cell.queue_free()
-
-
-func add_cell(y, x, z, cell):
-	var cell_instantiate = load("res://scenes/tiles/" + cell + ".tscn").instantiate()
-	cell_instantiate.position = Vector2(x*32, y*32)
-	cell_instantiate.name = "cell" + str(y) + str(x) + str(z)
-	cell_instantiate.z_index = z
-	add_child(cell_instantiate)

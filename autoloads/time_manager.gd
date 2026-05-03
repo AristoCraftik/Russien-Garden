@@ -11,7 +11,7 @@ func load_game():
 	if err == OK:
 		return config.get_value("game", "plants")
 	else:
-		print("error")
+		print("Save error code: ", err)
 
 
 func next_day():
@@ -22,11 +22,14 @@ func next_day():
 func save_all():
 	var config := ConfigFile.new()
 	config.set_value("game", "plants", get_plants())
+	var dir := save_path.get_base_dir()
+	DirAccess.make_dir_recursive_absolute(dir)
+	var err = config.save(save_path)
 
 
 func get_plants():
 	var plants_list = []
 	var plants = get_tree().get_nodes_in_group("plants")
 	for plant in plants:
-		plants_list.append([plant.cell_position, plant.path_to_tres, plant.stage])
+		plants_list.append([plant.cell_position, plant.path_to_tres, plant.growth_stage])
 	return plants_list
