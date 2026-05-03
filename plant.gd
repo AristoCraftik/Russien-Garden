@@ -5,12 +5,16 @@ var growth_stage: int = 0
 var final_stage: int = 2
 var watered: bool = false
 var plant_name: String = ""
+var cell_position: Vector2i = Vector2i.ZERO
+var path_to_tres: String = ""
 
 var atlas_texture: Texture2D = null
 var frame_width: int = 32
 var frame_height: int = 32
 
 func _ready() -> void:
+	add_to_group("plants")
+	
 	sprite = get_node_or_null("Sprite")
 	if not sprite:
 		sprite = Sprite2D.new()
@@ -21,6 +25,7 @@ func setup_from_data(data: PlantData) -> void:
 	plant_name = data.plant_name
 	final_stage = data.final_stage
 	atlas_texture = data.atlas_texture
+	path_to_tres = data.path_to_tres
 	
 	if atlas_texture:
 		sprite.texture = atlas_texture
@@ -30,6 +35,9 @@ func setup_from_data(data: PlantData) -> void:
 		_update_frame()
 	else:
 		sprite.texture = null
+
+func set_cell(pos: Vector2i) -> void:
+	cell_position = pos
 
 func _update_frame() -> void:
 	var col = growth_stage % final_stage

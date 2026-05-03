@@ -7,3 +7,4 @@ extends Resource
 @export var final_stage: int = 3
 @export var needs_water: bool = true
 @export var description: String = ""
+@export var path_to_tres: String = ""

@@ -7,7 +7,6 @@ extends Node2D
 	Vector2i(0, 1),
 ]
 
-# Добавь группу в _ready(), чтобы предмет мог найти поле
 func _ready() -> void:
 	add_to_group("field")
 
@@ -18,13 +17,10 @@ func plant_seed(cell_pos: Vector2i, plant_data: PlantData) -> bool:
 	var plant_scene = preload("res://plant.tscn")
 	var plant = plant_scene.instantiate()
 	
-	# Сначала добавляем в дерево – чтобы _ready() нашёл Sprite
 	WateredBedLayer.add_child(plant)
-	
-	# Теперь настраиваем (спрайт уже гарантированно существует)
 	plant.setup_from_data(plant_data)
+	plant.set_cell(cell_pos)
 	
-	# Позиция и остальное
 	plant.position = WateredBedLayer.map_to_local(cell_pos)
 	plant.z_index = 1
 	
