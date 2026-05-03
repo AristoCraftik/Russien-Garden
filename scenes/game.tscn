@@ -11,10 +11,9 @@ script = ExtResource("1_lnu2h")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=128895694]
 anchor_mode = 0
-zoom = Vector2(2, 2)
 
 [node name="Field" parent="." unique_id=69235035 instance=ExtResource("1_uwrxv")]
-position = Vector2(180, 157)
+position = Vector2(171, 179)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=495993463]
 

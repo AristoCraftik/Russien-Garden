@@ -90,20 +90,22 @@ func _commit_to_window() -> void:
 	var monitor_idx: int = display_select.selected
 	DisplayServer.window_set_current_screen(monitor_idx)
 
-	match window_mode.selected:
-		0: # Fullscreen
-			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN)
-		1: # Borderless Window
-			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
-		2: # Windowed
-			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
-			# Центрируем окно на выбранном мониторе
-			var screen_pos  := DisplayServer.screen_get_position(monitor_idx)
-			var screen_size := DisplayServer.screen_get_size(monitor_idx)
-			var win_size    := DisplayServer.window_get_size()
-			DisplayServer.window_set_position(screen_pos + (screen_size - win_size) / 2)
+	if OS.has_feature("editor"):
+		# Запущено из редактора — только оконный режим
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+	else:
+		match window_mode.selected:
+			0:
+				DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN)
+			1:
+				DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+			2:
+				DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+				var screen_pos  := DisplayServer.screen_get_position(monitor_idx)
+				var screen_size := DisplayServer.screen_get_size(monitor_idx)
+				var win_size    := DisplayServer.window_get_size()
+				DisplayServer.window_set_position(screen_pos + (screen_size - win_size) / 2)
 
-	# Пиксель-арт: отключаем размытие при масштабировании
 	get_viewport().canvas_item_default_texture_filter = \
 		Viewport.DEFAULT_CANVAS_ITEM_TEXTURE_FILTER_NEAREST
 
