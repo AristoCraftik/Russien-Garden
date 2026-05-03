@@ -2,6 +2,7 @@ extends CanvasLayer
 
 var color_rect: ColorRect
 var tween: Tween
+var start_mode = "new" # или "load"
 
 func _ready():
 	color_rect = ColorRect.new()
