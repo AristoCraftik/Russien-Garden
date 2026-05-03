@@ -7,6 +7,29 @@ extends Node2D
 	Vector2i(0, 1),
 ]
 
+# Добавь группу в _ready(), чтобы предмет мог найти поле
+func _ready() -> void:
+	add_to_group("field")
+
+func plant_seed(cell_pos: Vector2i, texture: Texture2D) -> bool:
+	# Проверка доступности клетки (можно добавить свои условия)
+	if not cell_pos in field_map:
+		field_map.append(cell_pos)   # временно разрешаем везде
+	
+	# Загружаем сцену растения
+	var plant_scene = preload("res://plant.tscn")
+	var plant = plant_scene.instantiate()
+	
+	# Инициализируем данными
+	plant.setup(texture, "Семечко")   # название можешь менять
+	
+	# Позиция в центре клетки
+	plant.position = WateredBedLayer.map_to_local(cell_pos)
+	plant.z_index = 1
+	
+	# Добавляем как ребёнка слоя
+	WateredBedLayer.add_child(plant)
+	return true
 
 func _unhandled_input(event):
 	if event is InputEventMouseButton and event.pressed:
@@ -18,10 +41,8 @@ func _unhandled_input(event):
 		elif event.button_index == MOUSE_BUTTON_RIGHT:
 			depour_cell(cell_pos)
 
-
 func pour_cell(cell_pos:= Vector2(0, 0)):
 	WateredBedLayer.set_cells_terrain_connect([cell_pos], 0, 0)
-
 
 func depour_cell(cell_pos:= Vector2i(0, 0)):
 	WateredBedLayer.set_cells_terrain_connect([cell_pos], 0, -1)

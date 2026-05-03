@@ -63,6 +63,16 @@ func end_drag() -> void:
 
 	if not drag_copy: return
 
+	# Проверяем, можно ли посадить растение на поле
+	if try_plant_on_field():
+		# Удаляем предмет из инвентаря и летающую копию
+		if drag_copy:
+			drag_copy.queue_free()
+			drag_copy = null
+		queue_free()
+		return
+
+	# Если не получилось – возвращаем предмет обратно в слот
 	var tween = create_tween()
 	tween.set_ease(Tween.EASE_OUT)
 	tween.set_trans(Tween.TRANS_BACK)
@@ -74,3 +84,23 @@ func end_drag() -> void:
 			drag_copy = null
 		show()
 	)
+
+func try_plant_on_field() -> bool:
+	var field = get_tree().get_first_node_in_group("field")
+	if not field:
+		return false
+	
+	# Получить мировые координаты мыши (работает даже с UI в CanvasLayer)
+	var mouse_world = get_global_mouse_position()
+	
+	# Получить ссылку на слой политых клеток
+	var water_layer = field.WateredBedLayer
+	if not water_layer:
+		return false
+	
+	# Перевести мировые координаты в координаты тайловой карты
+	var local_pos = water_layer.to_local(mouse_world)
+	var cell_pos = water_layer.local_to_map(local_pos)
+	
+	# Вызвать метод посадки на поле (он сам проверит возможность)
+	return field.plant_seed(cell_pos, texture)
