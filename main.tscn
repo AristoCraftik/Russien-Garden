@@ -189,4 +189,5 @@ layout_mode = 2
 text = "Apply"
 
 [connection signal="button_up" from="MarginContainer/MainPanelContainer/MarginContainer/VBoxContainer/VBoxContainer/StartGameButton" to="." method="_on_start_game_button_button_up"]
+[connection signal="button_up" from="MarginContainer/MainPanelContainer/MarginContainer/VBoxContainer/VBoxContainer/LoadGameButton" to="." method="_on_load_game_button_button_up"]
 [connection signal="button_up" from="MarginContainer/MainPanelContainer/MarginContainer/VBoxContainer/VBoxContainer/SettingsButton" to="." method="_on_settings_button_button_up"]

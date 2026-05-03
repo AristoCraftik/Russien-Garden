@@ -29,3 +29,21 @@ size_flags_vertical = 8
 
 [node name="Inventory" parent="CanvasLayer/MarginContainer" unique_id=1145177155 instance=ExtResource("2_yqjtg")]
 layout_mode = 2
+
+[node name="MarginContainer2" type="MarginContainer" parent="CanvasLayer" unique_id=1686475514]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/MarginContainer2" unique_id=285399231]
+layout_mode = 2
+
+[node name="NextDayButton" type="Button" parent="CanvasLayer/MarginContainer2/HBoxContainer" unique_id=1273487328]
+layout_mode = 2
+text = "Next day"
+
+[node name="QuitToMenuButton" type="Button" parent="CanvasLayer/MarginContainer2/HBoxContainer" unique_id=2117596932]
+layout_mode = 2
+text = "Quit to menu"
+
+[connection signal="button_up" from="CanvasLayer/MarginContainer2/HBoxContainer/NextDayButton" to="." method="_on_next_day_button_button_up"]
+[connection signal="button_up" from="CanvasLayer/MarginContainer2/HBoxContainer/QuitToMenuButton" to="." method="_on_quit_to_menu_button_button_up"]

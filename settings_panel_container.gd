@@ -6,7 +6,7 @@ extends PanelContainer
 @onready var apply_button: Button = $MarginContainer/VBoxContainer/HBoxContainer/ApplyButton
 @onready var reset_button: Button = $MarginContainer/VBoxContainer/HBoxContainer/ReturnToDefoultButton
 
-const SAVE_PATH := "user://display_settings.cfg"
+const SAVE_PATH := "user://garden/display_settings.cfg"
 
 # Снимок последних сохранённых настроек — используется для отката при закрытии
 var _saved_settings := {}
@@ -14,13 +14,11 @@ var _saved_settings := {}
 func _ready() -> void:
 	apply_button.pressed.connect(_on_apply_button_pressed)
 	reset_button.pressed.connect(_on_reset_pressed)
+	window_mode.item_selected.connect(_on_window_mode_changed)
+	display_select.item_selected.connect(_on_display_changed)
 
 	_populate_static_options()
 	_load_settings()
-
-	# Применяем изменения сразу при взаимодействии
-	window_mode.item_selected.connect(_on_window_mode_changed)
-	display_select.item_selected.connect(_on_display_changed)
 
 
 # ---------------------------------------------------------------------------
@@ -87,24 +85,22 @@ func _apply_settings(s: Dictionary) -> void:
 	_commit_to_window()
 
 func _commit_to_window() -> void:
+	var wid: int = get_window().get_window_id()
 	var monitor_idx: int = display_select.selected
-	DisplayServer.window_set_current_screen(monitor_idx)
+	DisplayServer.window_set_current_screen(monitor_idx, wid)
 
-	if OS.has_feature("editor"):
-		# Запущено из редактора — только оконный режим
-		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
-	else:
-		match window_mode.selected:
-			0:
-				DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN)
-			1:
-				DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
-			2:
-				DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
-				var screen_pos  := DisplayServer.screen_get_position(monitor_idx)
-				var screen_size := DisplayServer.screen_get_size(monitor_idx)
-				var win_size    := DisplayServer.window_get_size()
-				DisplayServer.window_set_position(screen_pos + (screen_size - win_size) / 2)
+	match window_mode.selected:
+		0: # Fullscreen
+			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN, wid)
+		1: # Borderless Window
+			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN, wid)
+		2: # Windowed
+			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED, wid)
+			# Центрируем окно на выбранном мониторе
+			var screen_pos  := DisplayServer.screen_get_position(monitor_idx)
+			var screen_size := DisplayServer.screen_get_size(monitor_idx)
+			var win_size    := DisplayServer.window_get_size(wid)
+			DisplayServer.window_set_position(screen_pos + (screen_size - win_size) / 2, wid)
 
 	get_viewport().canvas_item_default_texture_filter = \
 		Viewport.DEFAULT_CANVAS_ITEM_TEXTURE_FILTER_NEAREST
@@ -126,6 +122,7 @@ func _on_display_changed(_idx: int) -> void:
 # ---------------------------------------------------------------------------
 
 func _on_apply_button_pressed() -> void:
+	_commit_to_window()
 	_save_settings()
 
 func _on_reset_pressed() -> void:
