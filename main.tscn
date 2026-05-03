@@ -2,6 +2,8 @@
 
 [ext_resource type="Script" uid="uid://cegr4dbr3fpap" path="res://main.gd" id="1_0xm2m"]
 [ext_resource type="PackedScene" uid="uid://cm2bc5rciqoj3" path="res://scenes/ui/button.tscn" id="1_ig7tw"]
+[ext_resource type="Theme" uid="uid://djyjxn8m33ich" path="res://rescources/new_theme.tres" id="2_h2yge"]
+[ext_resource type="Script" uid="uid://mi4ngaqa7gyp" path="res://settings_panel_container.gd" id="4_1bvp3"]
 
 [node name="MainMenu" type="Control" unique_id=1104007043]
 layout_mode = 3
@@ -12,85 +14,179 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_0xm2m")
 
-[node name="MarginContainer" type="MarginContainer" parent="." unique_id=245814310]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=381470132]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
+theme = ExtResource("2_h2yge")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=351241366]
+[node name="MainPanelContainer" type="PanelContainer" parent="MarginContainer" unique_id=1316940158]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
+theme = ExtResource("2_h2yge")
 
-[node name="Label" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1722746789]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/MainPanelContainer" unique_id=1440589913]
 layout_mode = 2
+theme = ExtResource("2_h2yge")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/MainPanelContainer/MarginContainer" unique_id=483519422]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Label" type="Label" parent="MarginContainer/MainPanelContainer/MarginContainer/VBoxContainer" unique_id=1722746789]
+layout_mode = 2
+theme = ExtResource("2_h2yge")
 text = "Game name"
 
-[node name="StartGameButton" parent="MarginContainer/VBoxContainer" unique_id=529498404 instance=ExtResource("1_ig7tw")]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/MainPanelContainer/MarginContainer/VBoxContainer" unique_id=351241366]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 6
+
+[node name="StartGameButton" parent="MarginContainer/MainPanelContainer/MarginContainer/VBoxContainer/VBoxContainer" unique_id=529498404 instance=ExtResource("1_ig7tw")]
 layout_mode = 2
 text = "Start game"
 
-[node name="LoadGameButton" parent="MarginContainer/VBoxContainer" unique_id=1190446085 instance=ExtResource("1_ig7tw")]
+[node name="LoadGameButton" parent="MarginContainer/MainPanelContainer/MarginContainer/VBoxContainer/VBoxContainer" unique_id=1190446085 instance=ExtResource("1_ig7tw")]
 layout_mode = 2
 text = "Load game"
 
-[node name="CollectionButton" parent="MarginContainer/VBoxContainer" unique_id=1177122136 instance=ExtResource("1_ig7tw")]
+[node name="CollectionButton" parent="MarginContainer/MainPanelContainer/MarginContainer/VBoxContainer/VBoxContainer" unique_id=1177122136 instance=ExtResource("1_ig7tw")]
 layout_mode = 2
 text = "Collection"
 
-[node name="SettingsButton" parent="MarginContainer/VBoxContainer" unique_id=1996965689 instance=ExtResource("1_ig7tw")]
+[node name="SettingsButton" parent="MarginContainer/MainPanelContainer/MarginContainer/VBoxContainer/VBoxContainer" unique_id=1996965689 instance=ExtResource("1_ig7tw")]
 layout_mode = 2
 text = "Settings"
 
-[node name="QuitButton" parent="MarginContainer/VBoxContainer" unique_id=87368283 instance=ExtResource("1_ig7tw")]
+[node name="QuitButton" parent="MarginContainer/MainPanelContainer/MarginContainer/VBoxContainer/VBoxContainer" unique_id=87368283 instance=ExtResource("1_ig7tw")]
 layout_mode = 2
 text = "Quit
 "
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer" unique_id=253481447]
+[node name="SocialPanelContainer" type="PanelContainer" parent="MarginContainer" unique_id=161227233]
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 8
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 7
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 7
+theme = ExtResource("2_h2yge")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/MarginContainer" unique_id=1850102448]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/SocialPanelContainer" unique_id=1667642664]
+layout_mode = 2
+theme = ExtResource("2_h2yge")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/SocialPanelContainer/MarginContainer" unique_id=1850102448]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MarginContainer/MarginContainer/VBoxContainer" unique_id=419466355]
+[node name="Label" type="Label" parent="MarginContainer/SocialPanelContainer/MarginContainer/VBoxContainer" unique_id=419466355]
 layout_mode = 2
 text = "Check out our social media"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/MarginContainer/VBoxContainer" unique_id=1790489683]
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/SocialPanelContainer/MarginContainer/VBoxContainer" unique_id=1790489683]
 layout_mode = 2
 
-[node name="DiscordButton" parent="MarginContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=747863928 instance=ExtResource("1_ig7tw")]
+[node name="DiscordButton" parent="MarginContainer/SocialPanelContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=747863928 instance=ExtResource("1_ig7tw")]
 layout_mode = 2
 text = "Discord"
 
-[node name="TelegramButton" parent="MarginContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1198832073 instance=ExtResource("1_ig7tw")]
+[node name="TelegramButton" parent="MarginContainer/SocialPanelContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1198832073 instance=ExtResource("1_ig7tw")]
 layout_mode = 2
 text = "Telegram"
 
-[node name="YouTubeButton" parent="MarginContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1309165067 instance=ExtResource("1_ig7tw")]
+[node name="YouTubeButton" parent="MarginContainer/SocialPanelContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1309165067 instance=ExtResource("1_ig7tw")]
 layout_mode = 2
 text = "YouTube"
 
-[node name="ReditButton" parent="MarginContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1036228959 instance=ExtResource("1_ig7tw")]
+[node name="ReditButton" parent="MarginContainer/SocialPanelContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1036228959 instance=ExtResource("1_ig7tw")]
 layout_mode = 2
 text = "Redit"
 
-[node name="TikTokButton" parent="MarginContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=2001406378 instance=ExtResource("1_ig7tw")]
+[node name="TikTokButton" parent="MarginContainer/SocialPanelContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=2001406378 instance=ExtResource("1_ig7tw")]
 layout_mode = 2
 text = "TikTok"
 
-[connection signal="button_up" from="MarginContainer/VBoxContainer/StartGameButton" to="." method="_on_start_game_button_button_up"]
+[node name="SettingsPanelContainer" type="PanelContainer" parent="." unique_id=716094286]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = 59.0
+offset_top = 17.0
+offset_right = 206.0
+offset_bottom = 127.0
+grow_horizontal = 0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme = ExtResource("2_h2yge")
+script = ExtResource("4_1bvp3")
+
+[node name="MarginContainer" type="MarginContainer" parent="SettingsPanelContainer" unique_id=2103068549]
+layout_mode = 2
+theme = ExtResource("2_h2yge")
+theme_override_constants/margin_top = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="SettingsPanelContainer/MarginContainer" unique_id=1990533075]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Label" type="Label" parent="SettingsPanelContainer/MarginContainer/VBoxContainer" unique_id=858717989]
+layout_mode = 2
+text = "Settings"
+horizontal_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="SettingsPanelContainer/MarginContainer/VBoxContainer" unique_id=811824741]
+layout_mode = 2
+
+[node name="WindowContainer" type="VBoxContainer" parent="SettingsPanelContainer/MarginContainer/VBoxContainer/VBoxContainer" unique_id=1279800328]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="WindowContainer" type="HBoxContainer" parent="SettingsPanelContainer/MarginContainer/VBoxContainer/VBoxContainer/WindowContainer" unique_id=1746520606]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="Label" type="Label" parent="SettingsPanelContainer/MarginContainer/VBoxContainer/VBoxContainer/WindowContainer/WindowContainer" unique_id=1616673333]
+layout_mode = 2
+text = "Window mode"
+
+[node name="OptionButton" type="OptionButton" parent="SettingsPanelContainer/MarginContainer/VBoxContainer/VBoxContainer/WindowContainer/WindowContainer" unique_id=282257829]
+layout_mode = 2
+size_flags_horizontal = 10
+
+[node name="MonitorContainer" type="HBoxContainer" parent="SettingsPanelContainer/MarginContainer/VBoxContainer/VBoxContainer/WindowContainer" unique_id=941403576]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="SettingsPanelContainer/MarginContainer/VBoxContainer/VBoxContainer/WindowContainer/MonitorContainer" unique_id=270822763]
+layout_mode = 2
+text = "Monitor"
+
+[node name="OptionButton" type="OptionButton" parent="SettingsPanelContainer/MarginContainer/VBoxContainer/VBoxContainer/WindowContainer/MonitorContainer" unique_id=1213540183]
+layout_mode = 2
+size_flags_horizontal = 10
+
+[node name="SoundContainer" type="VBoxContainer" parent="SettingsPanelContainer/MarginContainer/VBoxContainer/VBoxContainer" unique_id=653132303]
+layout_mode = 2
+
+[node name="OtherContainer" type="VBoxContainer" parent="SettingsPanelContainer/MarginContainer/VBoxContainer/VBoxContainer" unique_id=632770473]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="SettingsPanelContainer/MarginContainer/VBoxContainer/VBoxContainer/OtherContainer" unique_id=1204135738]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="SettingsPanelContainer/MarginContainer/VBoxContainer" unique_id=1724396288]
+layout_mode = 2
+
+[node name="ReturnToDefoultButton" parent="SettingsPanelContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=195443746 instance=ExtResource("1_ig7tw")]
+layout_mode = 2
+text = "Return to Defoult"
+
+[node name="ApplyButton" parent="SettingsPanelContainer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1926945975 instance=ExtResource("1_ig7tw")]
+layout_mode = 2
+text = "Apply"
+
+[connection signal="button_up" from="MarginContainer/MainPanelContainer/MarginContainer/VBoxContainer/VBoxContainer/StartGameButton" to="." method="_on_start_game_button_button_up"]
+[connection signal="button_up" from="MarginContainer/MainPanelContainer/MarginContainer/VBoxContainer/VBoxContainer/SettingsButton" to="." method="_on_settings_button_button_up"]
