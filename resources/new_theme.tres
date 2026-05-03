@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://d0e04hfsjgrnj" path="res://assets/button_selected.png" id="1_ph6ia"]
 [ext_resource type="Texture2D" uid="uid://dt62meujlty5g" path="res://assets/gold_card.png" id="1_t42wq"]
-[ext_resource type="FontFile" uid="uid://ib420hrxkh70" path="res://rescources/TrueType (.ttf)/04B_03__.TTF" id="1_wrif5"]
+[ext_resource type="FontFile" uid="uid://ib420hrxkh70" path="res://resources/TrueType (.ttf)/04B_03__.TTF" id="1_wrif5"]
 [ext_resource type="Texture2D" uid="uid://bqmd53tkujtfy" path="res://assets/button_defoult.png" id="2_wrif5"]
 [ext_resource type="Texture2D" uid="uid://4xbkq4pitopw" path="res://assets/button_pressed.png" id="3_fp81a"]
 

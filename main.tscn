@@ -2,8 +2,9 @@
 
 [ext_resource type="Script" uid="uid://cegr4dbr3fpap" path="res://main.gd" id="1_0xm2m"]
 [ext_resource type="PackedScene" uid="uid://cm2bc5rciqoj3" path="res://scenes/ui/button.tscn" id="1_ig7tw"]
-[ext_resource type="Theme" uid="uid://djyjxn8m33ich" path="res://rescources/new_theme.tres" id="2_h2yge"]
+[ext_resource type="Theme" uid="uid://djyjxn8m33ich" path="res://resources/new_theme.tres" id="2_h2yge"]
 [ext_resource type="Script" uid="uid://mi4ngaqa7gyp" path="res://settings_panel_container.gd" id="4_1bvp3"]
+
 
 [node name="MainMenu" type="Control" unique_id=1104007043]
 layout_mode = 3

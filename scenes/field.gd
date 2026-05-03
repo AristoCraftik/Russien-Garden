@@ -7,6 +7,24 @@ extends Node2D
 	Vector2i(0, 1),
 ]
 
+func _ready() -> void:
+	add_to_group("field")
+
+func plant_seed(cell_pos: Vector2i, plant_data: PlantData) -> bool:
+	if not cell_pos in field_map:
+		field_map.append(cell_pos)
+	
+	var plant_scene = preload("res://plant.tscn")
+	var plant = plant_scene.instantiate()
+	
+	WateredBedLayer.add_child(plant)
+	plant.setup_from_data(plant_data)
+	plant.set_cell(cell_pos)
+	
+	plant.position = WateredBedLayer.map_to_local(cell_pos)
+	plant.z_index = 1
+	
+	return true
 
 func _unhandled_input(event):
 	if event is InputEventMouseButton and event.pressed:
@@ -18,10 +36,8 @@ func _unhandled_input(event):
 		elif event.button_index == MOUSE_BUTTON_RIGHT:
 			depour_cell(cell_pos)
 
-
 func pour_cell(cell_pos:= Vector2(0, 0)):
 	WateredBedLayer.set_cells_terrain_connect([cell_pos], 0, 0)
-
 
 func depour_cell(cell_pos:= Vector2i(0, 0)):
 	WateredBedLayer.set_cells_terrain_connect([cell_pos], 0, -1)

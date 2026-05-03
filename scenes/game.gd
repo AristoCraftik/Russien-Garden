@@ -8,15 +8,10 @@ func _ready() -> void:
 	_spawn_initial_items()
 
 func _spawn_initial_items() -> void:
-	var inventory = $CanvasLayer/MarginContainer/Inventory   # узел инвентаря в сцене игры
+	var inventory = $CanvasLayer/MarginContainer/Inventory
 	if not inventory: return
-	
-	var texture = preload("res://assets/button_defoult.png")
-
-	# Спавним 5 предметов с паузой 0.4 сек между ними
-	for i in range(5):
-		inventory.fly_item_to_slot(i, texture)
-		await get_tree().create_timer(0.5).timeout
+	var carrot_data = preload("res://resources/plants/carrot.tres")
+	inventory.fly_item_to_slot(0, carrot_data)
 
 
 func _on_quit_to_menu_button_button_up() -> void:

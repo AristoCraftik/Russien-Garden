@@ -2,18 +2,18 @@
 
 importer="font_data_dynamic"
 type="FontFile"
-uid="uid://82mmcq25lews"
-path="res://.godot/imported/PixeloidSans.ttf-73cafccd49d6a67980bd0f0526a29fd1.fontdata"
+uid="uid://b8kc8tkc0cgrn"
+path="res://.godot/imported/PixeloidMono.ttf-31da4678ff3c11efae5ca37d9edf872e.fontdata"
 
 [deps]
 
-source_file="res://rescources/TrueType (.ttf)/PixeloidSans.ttf"
-dest_files=["res://.godot/imported/PixeloidSans.ttf-73cafccd49d6a67980bd0f0526a29fd1.fontdata"]
+source_file="res://resources/TrueType (.ttf)/PixeloidMono.ttf"
+dest_files=["res://.godot/imported/PixeloidMono.ttf-31da4678ff3c11efae5ca37d9edf872e.fontdata"]
 
 [params]
 
 Rendering=null
-antialiasing=1
+antialiasing=0
 generate_mipmaps=false
 disable_embedded_bitmaps=true
 multichannel_signed_distance_field=false
@@ -23,14 +23,19 @@ allow_system_fallback=true
 force_autohinter=false
 modulate_color_glyphs=false
 hinting=1
-subpixel_positioning=4
+subpixel_positioning=0
 keep_rounding_remainders=true
 oversampling=0.0
 Fallbacks=null
 fallbacks=[]
 Compress=null
 compress=true
-preload=[]
+preload=[{
+"chars": [],
+"glyphs": [],
+"name": "Новая конфигурация",
+"size": Vector2i(16, 0)
+}]
 language_support={}
 script_support={}
 opentype_features={}
