@@ -50,10 +50,12 @@ func water() -> void:
 	watered = true
 
 func advance_day() -> void:
-	if growth_stage < final_stage:
+	if growth_stage < final_stage - 1:
 		growth_stage += 1
 		_update_frame()
-	else: print('я ебу собак')
+	else:
+		print('2')
+
 
 func _plants_grow():
 	advance_day()
