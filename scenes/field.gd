@@ -8,10 +8,11 @@ extends Node2D
 	Vector2i(0, 1),
 ]
 
+
+
 func _ready() -> void:
 	add_to_group("field")
 	TimeManager.clear_watered_tiles.connect(clear_watered_tiles)
-	
 	field_map.clear()
 	for cell in BedLayer.get_used_cells():
 		field_map.append(cell)
@@ -19,24 +20,18 @@ func _ready() -> void:
 func plant_seed(cell_pos: Vector2i, plant_data: PlantData, growth_stage: int = 0) -> bool:
 	if not is_bed(cell_pos):
 		return false
-	
 	var plant_scene = preload("res://resources/plants/plant.tscn")
 	var plant = plant_scene.instantiate()
-	
 	WateredBedLayer.add_child(plant)
 	plant.setup_from_data(plant_data)
 	plant.set_cell(cell_pos)
 	plant.growth_stage = growth_stage
 	plant._update_frame()
-	
 	plant.position = WateredBedLayer.map_to_local(cell_pos)
 	plant.z_index = 1
-	
 	if is_cell_watered(cell_pos):
 		plant.watered = true
-	
 	return true
-
 
 
 func harvest_plant_at(cell_pos: Vector2i) -> bool:
@@ -52,6 +47,7 @@ func harvest_plant_at(cell_pos: Vector2i) -> bool:
 			return true
 	return false
 
+
 func _unhandled_input(event):
 	if event is InputEventMouseButton and event.pressed:
 		var mouse_pos = get_global_mouse_position()
@@ -66,40 +62,41 @@ func _unhandled_input(event):
 		elif event.button_index == MOUSE_BUTTON_RIGHT:
 			depour_cell(cell_pos)
 
+
 func pour_cell(cell_pos:= Vector2i(0, 0)):
 	if not is_bed(cell_pos):
 		return
 	WateredBedLayer.set_cells_terrain_connect([cell_pos], 0, 0)
-	
 	for plant in get_tree().get_nodes_in_group("plants"):
 		if plant.get("cell_position") == cell_pos:
 			plant.watered = true
 			break
 
+
 func depour_cell(cell_pos:= Vector2i(0, 0)):
 	if not is_bed(cell_pos):
 		return
 	WateredBedLayer.set_cells_terrain_connect([cell_pos], 0, -1)
-	
 	for plant in get_tree().get_nodes_in_group("plants"):
 		if plant.get("cell_position") == cell_pos:
 			plant.watered = false
 			break
 
+
 func clear_watered_tiles() -> bool:
 	WateredBedLayer.clear()
-	
 	return true
-	
 func is_bed(cell_pos: Vector2i) -> bool:
 	return cell_pos in field_map
-	
+
+
 func is_cell_occupied(cell_pos: Vector2i) -> bool:
 	for plant in get_tree().get_nodes_in_group("plants"):
 		var pos = plant.get("cell_position")
 		if pos != null and pos == cell_pos:
 			return true
 	return false
-	
+
+
 func is_cell_watered(cell_pos: Vector2i) -> bool:
 	return WateredBedLayer.get_cell_tile_data(cell_pos) != null

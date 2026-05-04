@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://bkbxosxv8w673"]
+
+[ext_resource type="Script" uid="uid://ikd1eqvqlx73" path="res://autoloads/fade_manager.gd" id="1_h7qw4"]
+[ext_resource type="Theme" uid="uid://djyjxn8m33ich" path="res://resources/new_theme.tres" id="2_vde52"]
+
+[node name="FadeManager" type="CanvasLayer" unique_id=640020441]
+layer = 2
+script = ExtResource("1_h7qw4")
+
+[node name="Label" type="Label" parent="." unique_id=922654088]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_vde52")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 64
+horizontal_alignment = 1
+vertical_alignment = 1

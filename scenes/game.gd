@@ -25,6 +25,7 @@ func _on_quit_to_menu_button_button_up() -> void:
 
 
 func _on_next_day_button_button_up() -> void:
+	FadeManager.change_scene_with_fade('', 0.5, 0.5, 'vova_huesos')
 	TimeManager.next_day()
 
 

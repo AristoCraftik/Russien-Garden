@@ -8,7 +8,7 @@ var settings_is_opened = 0
 
 func _on_start_game_button_button_up() -> void:
 	FadeManager.start_mode = "new"
-	FadeManager.change_scene_with_fade("res://scenes/game.tscn")
+	FadeManager.change_scene_with_fade("res://scenes/game.tscn", 0.5, 0.5, "Day 0")
 
 func _on_settings_button_button_up() -> void:
 	switch_settings()
