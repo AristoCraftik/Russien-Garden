@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://bqv5rj56s87f1"]
 
 [ext_resource type="Script" uid="uid://dv3pby1jaakkk" path="res://scenes/ui/inventory.gd" id="1_xeaml"]
+[ext_resource type="Texture2D" uid="uid://d3uayy740iou6" path="res://assets/farm_tile.png" id="2_5yy05"]
 [ext_resource type="Theme" uid="uid://djyjxn8m33ich" path="res://resources/new_theme.tres" id="2_avmd0"]
 [ext_resource type="PackedScene" uid="uid://6k81u701i53i" path="res://scenes/ui/slot.tscn" id="3_xeaml"]
 
@@ -16,157 +17,81 @@ anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = -204.0
+offset_bottom = 32.0
 grow_horizontal = 0
 grow_vertical = 2
 
-[node name="TabContainer" type="TabContainer" parent="MarginContainer" unique_id=2109501123]
+[node name="TextureRect" type="TextureRect" parent="MarginContainer" unique_id=400469483]
 layout_mode = 2
+texture = ExtResource("2_5yy05")
+stretch_mode = 1
+
+[node name="Slots" type="GridContainer" parent="MarginContainer/TextureRect" unique_id=1998553659]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 48.0
+offset_right = 192.0
+offset_bottom = 116.0
 theme = ExtResource("2_avmd0")
-tab_alignment = 1
-current_tab = 0
+columns = 5
 
-[node name="Seeds" type="GridContainer" parent="MarginContainer/TabContainer" unique_id=1998553659]
-layout_mode = 2
-theme = ExtResource("2_avmd0")
-columns = 6
-metadata/_tab_index = 0
-
-[node name="Slot" parent="MarginContainer/TabContainer/Seeds" unique_id=272914832 instance=ExtResource("3_xeaml")]
+[node name="Slot" parent="MarginContainer/TextureRect/Slots" unique_id=272914832 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot2" parent="MarginContainer/TabContainer/Seeds" unique_id=661972054 instance=ExtResource("3_xeaml")]
+[node name="Slot2" parent="MarginContainer/TextureRect/Slots" unique_id=661972054 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot3" parent="MarginContainer/TabContainer/Seeds" unique_id=1393355875 instance=ExtResource("3_xeaml")]
+[node name="Slot3" parent="MarginContainer/TextureRect/Slots" unique_id=1393355875 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot4" parent="MarginContainer/TabContainer/Seeds" unique_id=1107765453 instance=ExtResource("3_xeaml")]
+[node name="Slot4" parent="MarginContainer/TextureRect/Slots" unique_id=1107765453 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot5" parent="MarginContainer/TabContainer/Seeds" unique_id=1312307206 instance=ExtResource("3_xeaml")]
+[node name="Slot5" parent="MarginContainer/TextureRect/Slots" unique_id=1312307206 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot6" parent="MarginContainer/TabContainer/Seeds" unique_id=1466816179 instance=ExtResource("3_xeaml")]
+[node name="Slot6" parent="MarginContainer/TextureRect/Slots" unique_id=1466816179 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot7" parent="MarginContainer/TabContainer/Seeds" unique_id=1278765452 instance=ExtResource("3_xeaml")]
+[node name="Slot7" parent="MarginContainer/TextureRect/Slots" unique_id=1278765452 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Fertilizers" type="GridContainer" parent="MarginContainer/TabContainer" unique_id=172675261]
-visible = false
-layout_mode = 2
-theme = ExtResource("2_avmd0")
-columns = 6
-metadata/_tab_index = 1
-
-[node name="Slot" parent="MarginContainer/TabContainer/Fertilizers" unique_id=40179745 instance=ExtResource("3_xeaml")]
+[node name="Slot8" parent="MarginContainer/TextureRect/Slots" unique_id=765122129 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot2" parent="MarginContainer/TabContainer/Fertilizers" unique_id=1734849451 instance=ExtResource("3_xeaml")]
+[node name="Slot9" parent="MarginContainer/TextureRect/Slots" unique_id=1657695112 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot3" parent="MarginContainer/TabContainer/Fertilizers" unique_id=1127658360 instance=ExtResource("3_xeaml")]
+[node name="Slot10" parent="MarginContainer/TextureRect/Slots" unique_id=1557722413 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot4" parent="MarginContainer/TabContainer/Fertilizers" unique_id=854635787 instance=ExtResource("3_xeaml")]
+[node name="Slot11" parent="MarginContainer/TextureRect/Slots" unique_id=1709487025 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot5" parent="MarginContainer/TabContainer/Fertilizers" unique_id=774364836 instance=ExtResource("3_xeaml")]
-layout_mode = 2
+[node name="SortTypeBtn" type="Button" parent="." unique_id=1479096159]
+top_level = true
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -48.0
+offset_bottom = 19.0
+grow_horizontal = 0
+theme_override_font_sizes/font_size = 7
+text = "Type"
 
-[node name="Slot6" parent="MarginContainer/TabContainer/Fertilizers" unique_id=1619708678 instance=ExtResource("3_xeaml")]
-layout_mode = 2
+[node name="SortNameBtn" type="Button" parent="." unique_id=1586839550]
+top_level = true
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -105.0
+offset_right = -57.0
+offset_bottom = 19.0
+grow_horizontal = 0
+theme_override_font_sizes/font_size = 7
+text = "Name"
 
-[node name="Slot7" parent="MarginContainer/TabContainer/Fertilizers" unique_id=724674752 instance=ExtResource("3_xeaml")]
-layout_mode = 2
-
-[node name="Slot8" parent="MarginContainer/TabContainer/Fertilizers" unique_id=1589842017 instance=ExtResource("3_xeaml")]
-layout_mode = 2
-
-[node name="Slot9" parent="MarginContainer/TabContainer/Fertilizers" unique_id=1764943896 instance=ExtResource("3_xeaml")]
-layout_mode = 2
-
-[node name="Slot10" parent="MarginContainer/TabContainer/Fertilizers" unique_id=976687649 instance=ExtResource("3_xeaml")]
-layout_mode = 2
-
-[node name="Slot11" parent="MarginContainer/TabContainer/Fertilizers" unique_id=476268889 instance=ExtResource("3_xeaml")]
-layout_mode = 2
-
-[node name="Slot12" parent="MarginContainer/TabContainer/Fertilizers" unique_id=222044410 instance=ExtResource("3_xeaml")]
-layout_mode = 2
-
-[node name="Slot13" parent="MarginContainer/TabContainer/Fertilizers" unique_id=522647362 instance=ExtResource("3_xeaml")]
-layout_mode = 2
-
-[node name="Slot14" parent="MarginContainer/TabContainer/Fertilizers" unique_id=1058536890 instance=ExtResource("3_xeaml")]
-layout_mode = 2
-
-[node name="Artifacts" type="GridContainer" parent="MarginContainer/TabContainer" unique_id=256460797]
-visible = false
-layout_mode = 2
-theme = ExtResource("2_avmd0")
-columns = 6
-metadata/_tab_index = 2
-
-[node name="Slot" parent="MarginContainer/TabContainer/Artifacts" unique_id=1095216953 instance=ExtResource("3_xeaml")]
-layout_mode = 2
-
-[node name="Slot2" parent="MarginContainer/TabContainer/Artifacts" unique_id=1679611203 instance=ExtResource("3_xeaml")]
-layout_mode = 2
-
-[node name="Slot3" parent="MarginContainer/TabContainer/Artifacts" unique_id=1976989401 instance=ExtResource("3_xeaml")]
-layout_mode = 2
-
-[node name="Slot4" parent="MarginContainer/TabContainer/Artifacts" unique_id=1741812956 instance=ExtResource("3_xeaml")]
-layout_mode = 2
-
-[node name="Slot5" parent="MarginContainer/TabContainer/Artifacts" unique_id=725721795 instance=ExtResource("3_xeaml")]
-layout_mode = 2
-
-[node name="Slot6" parent="MarginContainer/TabContainer/Artifacts" unique_id=840545904 instance=ExtResource("3_xeaml")]
-layout_mode = 2
-
-[node name="Slot7" parent="MarginContainer/TabContainer/Artifacts" unique_id=156076302 instance=ExtResource("3_xeaml")]
-layout_mode = 2
-
-[node name="Slot8" parent="MarginContainer/TabContainer/Artifacts" unique_id=218711040 instance=ExtResource("3_xeaml")]
-layout_mode = 2
-
-[node name="Slot9" parent="MarginContainer/TabContainer/Artifacts" unique_id=599694100 instance=ExtResource("3_xeaml")]
-layout_mode = 2
-
-[node name="Slot10" parent="MarginContainer/TabContainer/Artifacts" unique_id=1899702963 instance=ExtResource("3_xeaml")]
-layout_mode = 2
-
-[node name="Slot11" parent="MarginContainer/TabContainer/Artifacts" unique_id=1818047890 instance=ExtResource("3_xeaml")]
-layout_mode = 2
-
-[node name="Slot12" parent="MarginContainer/TabContainer/Artifacts" unique_id=636355726 instance=ExtResource("3_xeaml")]
-layout_mode = 2
-
-[node name="Slot13" parent="MarginContainer/TabContainer/Artifacts" unique_id=2107375134 instance=ExtResource("3_xeaml")]
-layout_mode = 2
-
-[node name="Slot14" parent="MarginContainer/TabContainer/Artifacts" unique_id=710351309 instance=ExtResource("3_xeaml")]
-layout_mode = 2
-
-[node name="Slot15" parent="MarginContainer/TabContainer/Artifacts" unique_id=1546035429 instance=ExtResource("3_xeaml")]
-layout_mode = 2
-
-[node name="Slot16" parent="MarginContainer/TabContainer/Artifacts" unique_id=1178440658 instance=ExtResource("3_xeaml")]
-layout_mode = 2
-
-[node name="Slot17" parent="MarginContainer/TabContainer/Artifacts" unique_id=2041971234 instance=ExtResource("3_xeaml")]
-layout_mode = 2
-
-[node name="Slot18" parent="MarginContainer/TabContainer/Artifacts" unique_id=458409250 instance=ExtResource("3_xeaml")]
-layout_mode = 2
-
-[node name="Slot19" parent="MarginContainer/TabContainer/Artifacts" unique_id=2026122648 instance=ExtResource("3_xeaml")]
-layout_mode = 2
-
-[node name="Slot20" parent="MarginContainer/TabContainer/Artifacts" unique_id=1844193285 instance=ExtResource("3_xeaml")]
-layout_mode = 2
-
-[node name="Slot21" parent="MarginContainer/TabContainer/Artifacts" unique_id=725535138 instance=ExtResource("3_xeaml")]
-layout_mode = 2
+[connection signal="pressed" from="SortTypeBtn" to="." method="sort_by_type"]
+[connection signal="pressed" from="SortNameBtn" to="." method="sort_by_name"]

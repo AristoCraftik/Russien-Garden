@@ -185,3 +185,6 @@ func try_plant_on_field() -> bool:
 		return false
 	
 	return field.plant_seed(cell_pos, plant_data)
+	
+func get_plant_data() -> PlantData:
+	return plant_data
