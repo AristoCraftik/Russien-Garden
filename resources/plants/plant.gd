@@ -15,6 +15,7 @@ var atlas_texture: Texture2D = null
 var frame_width: int = 32
 var frame_height: int = 32
 
+
 func _ready() -> void:
 	TimeManager.plants_grow.connect(_plants_grow)
 	add_to_group("plants")
@@ -24,6 +25,7 @@ func _ready() -> void:
 		sprite = Sprite2D.new()
 		sprite.name = "Sprite"
 		add_child(sprite)
+
 
 func setup_from_data(data: PlantData) -> void:
 	plant_name = data.plant_name
@@ -41,8 +43,10 @@ func setup_from_data(data: PlantData) -> void:
 	else:
 		sprite.texture = null
 
+
 func set_cell(pos: Vector2i) -> void:
 	cell_position = pos
+
 
 func _update_frame() -> void:
 	var count_of_stages_in_atlas = float(atlas_texture.get_width()) / frame_width
@@ -50,13 +54,17 @@ func _update_frame() -> void:
 	var frame_index := int(round(t * (count_of_stages_in_atlas - 1)))
 	sprite.region_rect = Rect2(frame_index * frame_width, 0, frame_width, frame_height)
 
+
 func water() -> void:
 	watered = true
 
 
 func _plants_grow(mode, pos: Vector2i):
 	if mode:
+		if !watered:
+			queue_free()
 		grow()
+		watered = false
 		if path_to_script:
 			load(path_to_script).script(cell_position)
 	if !mode and pos == cell_position:
@@ -65,18 +73,9 @@ func _plants_grow(mode, pos: Vector2i):
 
 func grow():
 	if growth_stage < final_stage - 1:
-		if watered:
-			growth_stage += 1
-			_update_frame()
-		else:
-			queue_free()
-			
+		growth_stage += 1
+		_update_frame()
 		if growth_stage == final_stage - 1:
 			can_harvest = true
 	else:
-		pass
-	watered = false
-
-
-func _plants_grow():
-	advance_day()
+		print('1')
