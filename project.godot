@@ -18,7 +18,7 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-FadeManager="*uid://ikd1eqvqlx73"
+FadeManager="*uid://bkbxosxv8w673"
 TimeManager="*uid://c8q1s046b0g7d"
 
 [display]

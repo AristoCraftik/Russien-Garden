@@ -5,16 +5,20 @@
 [ext_resource type="PackedScene" uid="uid://bqv5rj56s87f1" path="res://scenes/ui/inventory.tscn" id="2_yqjtg"]
 [ext_resource type="Theme" uid="uid://djyjxn8m33ich" path="res://resources/new_theme.tres" id="4_lbhrr"]
 
-[node name="Game" type="Control" unique_id=344109033]
-layout_mode = 3
-anchors_preset = 0
+[node name="Game" type="MarginContainer" unique_id=1090181912]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(-6.635, 0)
 script = ExtResource("1_lnu2h")
+
+[node name="Field" parent="." unique_id=69235035 instance=ExtResource("1_uwrxv")]
+position = Vector2(180, 180)
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=128895694]
 anchor_mode = 0
-
-[node name="Field" parent="." unique_id=69235035 instance=ExtResource("1_uwrxv")]
-position = Vector2(171, 179)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=495993463]
 
