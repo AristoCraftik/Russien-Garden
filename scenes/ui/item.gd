@@ -147,11 +147,11 @@ func end_drag() -> void:
 	
 	if not drag_copy: return
 	
-	if try_plant_on_field() and not is_mouse_over_inventory():
+	if try_plant_on_field():
 		if drag_copy:
 			drag_copy.queue_free()
 			drag_copy = null
-		_hide_tooltip()   # на всякий случай
+		_hide_tooltip()
 		queue_free()
 		return
 	
@@ -166,13 +166,6 @@ func end_drag() -> void:
 			drag_copy = null
 		show()
 	)
-
-func is_mouse_over_inventory() -> bool:
-	if not inventory_root:
-		return false
-	var mouse_pos = inventory_root.get_local_mouse_position()
-	var rect = Rect2(Vector2.ZERO, inventory_root.size)
-	return rect.has_point(mouse_pos)
 
 func try_plant_on_field() -> bool:
 	if not plant_data:

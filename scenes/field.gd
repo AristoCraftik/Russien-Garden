@@ -1,6 +1,7 @@
 extends Node2D
 
 @onready var WateredBedLayer = $WateredBedLayer
+@onready var BedLayer = $BedLayer
 @export var field_map = [
 	Vector2i(0, 0),
 	Vector2i(1, 1),
@@ -9,10 +10,14 @@ extends Node2D
 
 func _ready() -> void:
 	add_to_group("field")
+	
+	field_map.clear()
+	for cell in BedLayer.get_used_cells():
+		field_map.append(cell)
 
 func plant_seed(cell_pos: Vector2i, plant_data: PlantData, growth_stage: int = 0) -> bool:
-	if not cell_pos in field_map:
-		field_map.append(cell_pos)
+	if not is_bed(cell_pos):
+		return false
 	
 	var plant_scene = preload("res://plant.tscn")
 	var plant = plant_scene.instantiate()
@@ -40,8 +45,15 @@ func _unhandled_input(event):
 		elif event.button_index == MOUSE_BUTTON_RIGHT:
 			depour_cell(cell_pos)
 
-func pour_cell(cell_pos:= Vector2(0, 0)):
+func pour_cell(cell_pos:= Vector2i(0, 0)):
+	if not is_bed(cell_pos):
+		return
 	WateredBedLayer.set_cells_terrain_connect([cell_pos], 0, 0)
 
 func depour_cell(cell_pos:= Vector2i(0, 0)):
+	if not is_bed(cell_pos):
+		return
 	WateredBedLayer.set_cells_terrain_connect([cell_pos], 0, -1)
+	
+func is_bed(cell_pos: Vector2i) -> bool:
+	return cell_pos in field_map

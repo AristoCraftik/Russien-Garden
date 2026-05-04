@@ -368,7 +368,6 @@ sources/0 = SubResource("TileSetAtlasSource_wnvii")
 
 [node name="Field" type="Node2D" unique_id=69235035]
 script = ExtResource("1_6pmjc")
-field_map = null
 
 [node name="BedLayer" type="TileMapLayer" parent="." unique_id=334382930]
 tile_map_data = PackedByteArray("AAD/////AAAAAAAAAAD//wAAAAAAAAAAAAAAAP//AAAAAAAAAAAAAAAAAAAAAAAAAAD+//7/AAAAAAAAAAD+////AAAAAAAAAAD+/wAAAAAAAAAAAAD+/wEAAAAAAAAAAAD///7/AAAAAAAAAAD//wEAAAAAAAAAAAAAAP7/AAAAAAAAAAAAAAEAAAAAAAAAAAABAP7/AAAAAAAAAAABAP//AAAAAAAAAAABAAAAAAAAAAAAAAABAAEAAAAAAAAAAAA=")
