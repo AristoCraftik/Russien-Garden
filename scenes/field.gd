@@ -39,12 +39,29 @@ func plant_seed(cell_pos: Vector2i, plant_data: PlantData, growth_stage: int = 0
 
 
 
+func harvest_plant_at(cell_pos: Vector2i) -> bool:
+	for plant in get_tree().get_nodes_in_group("plants"):
+		if plant.get("cell_position") == cell_pos and plant.get("can_harvest"):
+			var inventory = get_tree().get_first_node_in_group("inventory")
+			if inventory:
+				var slot_idx = inventory.get_first_empty_slot_index()
+				if slot_idx != -1:
+					var carrot_data = preload("res://resources/plants/carrot.tres")
+					inventory.fly_item_to_slot(slot_idx, carrot_data)
+			plant.queue_free()
+			return true
+	return false
+
 func _unhandled_input(event):
 	if event is InputEventMouseButton and event.pressed:
 		var mouse_pos = get_global_mouse_position()
 		var local_pos = WateredBedLayer.to_local(mouse_pos)
 		var cell_pos = WateredBedLayer.local_to_map(local_pos)
+		
 		if event.button_index == MOUSE_BUTTON_LEFT:
+			# Сначала сбор
+			if harvest_plant_at(cell_pos):
+				return
 			pour_cell(cell_pos)
 		elif event.button_index == MOUSE_BUTTON_RIGHT:
 			depour_cell(cell_pos)

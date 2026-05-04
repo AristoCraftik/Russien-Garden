@@ -5,6 +5,5 @@ extends Resource
 @export var seed_texture: Texture2D
 @export var atlas_texture: Texture2D
 @export var final_stage: int = 3
-@export var needs_water: bool = true
 @export var description: String = ""
 @export var path_to_tres: String = ""

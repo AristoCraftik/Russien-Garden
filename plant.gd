@@ -1,12 +1,14 @@
 extends Node2D
 
-var sprite: Sprite2D
 var growth_stage: int = 0
 var final_stage: int = 2
-var watered: bool = false
 var plant_name: String = ""
-var cell_position: Vector2i = Vector2i.ZERO
 var path_to_tres: String = ""
+
+var sprite: Sprite2D
+var cell_position: Vector2i = Vector2i.ZERO
+var watered: bool = false
+var can_harvest: bool = false
 
 var atlas_texture: Texture2D = null
 var frame_width: int = 32
@@ -53,8 +55,11 @@ func advance_day() -> void:
 			_update_frame()
 		else:
 			queue_free()
+			
+		if growth_stage == final_stage - 1:
+			can_harvest = true
 	else:
-		queue_free()
+		pass
 	watered = false
 
 

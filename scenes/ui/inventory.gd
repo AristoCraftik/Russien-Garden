@@ -1,5 +1,8 @@
 extends Control
 
+func _ready() -> void:
+	add_to_group("inventory")
+
 func fly_item_to_slot(slot_index: int, plant_data: PlantData) -> void:
 	var tab_container = $MarginContainer/TabContainer
 	var seeds_tab = tab_container.get_node("Seeds")
@@ -48,3 +51,11 @@ func fly_item_to_slot(slot_index: int, plant_data: PlantData) -> void:
 		
 		slot.add_child(item)
 	)
+	
+func get_first_empty_slot_index() -> int:
+	var tab_container = $MarginContainer/TabContainer
+	var seeds_tab = tab_container.get_node("Seeds")
+	for i in range(seeds_tab.get_child_count()):
+		if seeds_tab.get_child(i).get_child_count() == 0:
+			return i
+	return -1   # нет свободных слотов
