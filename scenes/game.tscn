@@ -19,6 +19,7 @@ position = Vector2(180, 180)
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=128895694]
 anchor_mode = 0
+zoom = Vector2(2, 2)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=495993463]
 
@@ -34,6 +35,8 @@ size_flags_vertical = 8
 
 [node name="Inventory" parent="CanvasLayer/MarginContainer" unique_id=1145177155 instance=ExtResource("2_yqjtg")]
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
 
 [node name="MarginContainer2" type="MarginContainer" parent="CanvasLayer" unique_id=1686475514]
 offset_right = 127.0

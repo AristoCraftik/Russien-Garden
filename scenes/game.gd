@@ -1,6 +1,9 @@
 extends Control
 
+@onready var camera = $Camera2D
 @onready var field = $Field
+
+var camera_zoom = Vector2(0.05, 0.05)
 var day_counter = 0
 
 func _ready() -> void:
@@ -30,6 +33,7 @@ func _on_next_day_button_button_up() -> void:
 	FadeManager.change_scene_with_fade('', 0.5, 0.5, 'day ' + str(day_counter))
 	await get_tree().create_timer(0.5).timeout
 	TimeManager.next_day(day_counter)
+	camera.zoom -= camera_zoom
 
 
 func load_game():

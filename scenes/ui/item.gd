@@ -4,10 +4,8 @@ var dragging: bool = false
 var drag_copy: TextureRect
 var origin_pos_in_inventory: Vector2
 var inventory_root: Control
-
 # Данные о растении
 var plant_data: PlantData = null
-
 # --- Тултип ---
 var tooltip: Control = null
 var mouse_over: bool = false
@@ -19,7 +17,6 @@ func _ready() -> void:
 	set_process_input(true)
 	inventory_root = _find_inventory_root()
 	
-	# Сигналы входа/выхода мыши
 	mouse_entered.connect(_on_mouse_entered)
 	mouse_exited.connect(_on_mouse_exited)
 
@@ -57,10 +54,19 @@ func _input(event: InputEvent) -> void:
 			end_drag()
 			get_viewport().set_input_as_handled()
 
+func _is_in_flight() -> bool:
+	# Во время сортировки предмет временно живёт прямо в Inventory (не в слоте).
+	# Родитель слота — нода Slots, родитель предмета в нормальном состоянии — слот.
+	# Если родитель == inventory_root, значит мы в середине анимации.
+	return get_parent() == inventory_root
+
 func start_drag() -> void:
+	# Блокируем drag пока предмет летит во время сортировки
+	if _is_in_flight():
+		return
+	
 	dragging = true
 	
-	# Прячем тултип, если есть
 	_hide_tooltip()
 	mouse_over = false
 	
@@ -79,12 +85,10 @@ func start_drag() -> void:
 	drag_copy.position = mouse_pos - size / 2.0
 
 func _process(delta: float) -> void:
-	# Движение перетаскиваемой копии
 	if dragging and drag_copy:
 		var mouse_pos = inventory_root.get_local_mouse_position()
 		drag_copy.position = mouse_pos - size / 2.0
 	
-	# Логика тултипа
 	if mouse_over and not dragging:
 		tooltip_timer -= delta
 		if tooltip_timer <= 0.0 and not tooltip:
@@ -97,40 +101,32 @@ func _process(delta: float) -> void:
 func _show_tooltip() -> void:
 	if not plant_data:
 		return
-
 	tooltip = Control.new()
 	tooltip.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
-	# Фон
 	var panel = Panel.new()
 	panel.self_modulate = Color(0, 0, 0, 0.8)
 	tooltip.add_child(panel)
 
-	# Текст
 	var label = Label.new()
 	label.text = plant_data.plant_name + "\n" + plant_data.description
 	label.add_theme_color_override("font_color", Color.WHITE)
 	label.add_theme_font_size_override("font_size", 12)
 	tooltip.add_child(label)
 
-	# Ищем CanvasLayer, в котором лежит инвентарь
 	var layer = inventory_root.get_parent()
 	while layer and not layer is CanvasLayer:
 		layer = layer.get_parent()
 	if not layer:
-		layer = get_tree().root   # запасной вариант
-
+		layer = get_tree().root
 	layer.add_child(tooltip)
 
-	# Поднимаем тултип на передний план (последний ребёнок в слое)
 	var parent = tooltip.get_parent()
 	parent.move_child(tooltip, parent.get_child_count() - 1)
 
-	# Позиционируем справа от предмета
 	var item_global_rect = get_global_rect()
 	tooltip.global_position = item_global_rect.position + Vector2(item_global_rect.size.x, 0)
 
-	# Подгоняем размеры
 	label.size = label.get_minimum_size()
 	panel.size = label.size + Vector2(8, 4)
 	label.position = Vector2(4, 2)
@@ -160,12 +156,12 @@ func end_drag() -> void:
 	tween.set_ease(Tween.EASE_OUT)
 	tween.set_trans(Tween.TRANS_BACK)
 	tween.tween_property(drag_copy, "position", origin_pos_in_inventory, 0.3)
-	tween.tween_callback(func():
+	var on_return = func():
 		if drag_copy:
 			drag_copy.queue_free()
 			drag_copy = null
 		show()
-	)
+	tween.tween_callback(on_return)
 
 func try_plant_on_field() -> bool:
 	if not plant_data:
@@ -185,6 +181,6 @@ func try_plant_on_field() -> bool:
 		return false
 	
 	return field.plant_seed(cell_pos, plant_data)
-	
+
 func get_plant_data() -> PlantData:
 	return plant_data

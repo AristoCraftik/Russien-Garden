@@ -1,97 +1,86 @@
 [gd_scene format=3 uid="uid://bqv5rj56s87f1"]
 
 [ext_resource type="Script" uid="uid://dv3pby1jaakkk" path="res://scenes/ui/inventory.gd" id="1_xeaml"]
-[ext_resource type="Texture2D" uid="uid://d3uayy740iou6" path="res://assets/farm_tile.png" id="2_5yy05"]
 [ext_resource type="Theme" uid="uid://djyjxn8m33ich" path="res://resources/new_theme.tres" id="2_avmd0"]
 [ext_resource type="PackedScene" uid="uid://6k81u701i53i" path="res://scenes/ui/slot.tscn" id="3_xeaml"]
 
 [node name="Inventory" type="Control" unique_id=1145177155]
+layout_direction = 3
 layout_mode = 3
 anchors_preset = 0
+size_flags_horizontal = 3
 script = ExtResource("1_xeaml")
 
 [node name="MarginContainer" type="MarginContainer" parent="." unique_id=1614663763]
+layout_direction = 2
 layout_mode = 1
-anchors_preset = 11
+anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -204.0
-offset_bottom = 32.0
+offset_left = -198.0
+offset_bottom = 154.0
 grow_horizontal = 0
-grow_vertical = 2
 
-[node name="TextureRect" type="TextureRect" parent="MarginContainer" unique_id=400469483]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1218143045]
 layout_mode = 2
-texture = ExtResource("2_5yy05")
-stretch_mode = 1
 
-[node name="Slots" type="GridContainer" parent="MarginContainer/TextureRect" unique_id=1998553659]
-layout_mode = 0
-offset_left = 16.0
-offset_top = 48.0
-offset_right = 192.0
-offset_bottom = 116.0
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=1185870568]
+layout_mode = 2
+
+[node name="SortTypeBtn" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=1479096159]
+layout_mode = 2
+size_flags_horizontal = 4
+theme = ExtResource("2_avmd0")
+theme_override_font_sizes/font_size = 8
+text = "Type"
+
+[node name="SortNameBtn" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=1586839550]
+layout_mode = 2
+theme = ExtResource("2_avmd0")
+theme_override_font_sizes/font_size = 8
+text = "Name"
+
+[node name="Panel" type="PanelContainer" parent="MarginContainer/VBoxContainer" unique_id=313190389]
+layout_mode = 2
+theme = ExtResource("2_avmd0")
+
+[node name="Slots" type="GridContainer" parent="MarginContainer/VBoxContainer/Panel" unique_id=1998553659]
+layout_mode = 2
 theme = ExtResource("2_avmd0")
 columns = 5
 
-[node name="Slot" parent="MarginContainer/TextureRect/Slots" unique_id=272914832 instance=ExtResource("3_xeaml")]
+[node name="Slot" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=272914832 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot2" parent="MarginContainer/TextureRect/Slots" unique_id=661972054 instance=ExtResource("3_xeaml")]
+[node name="Slot2" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=661972054 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot3" parent="MarginContainer/TextureRect/Slots" unique_id=1393355875 instance=ExtResource("3_xeaml")]
+[node name="Slot3" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1393355875 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot4" parent="MarginContainer/TextureRect/Slots" unique_id=1107765453 instance=ExtResource("3_xeaml")]
+[node name="Slot4" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1107765453 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot5" parent="MarginContainer/TextureRect/Slots" unique_id=1312307206 instance=ExtResource("3_xeaml")]
+[node name="Slot5" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1312307206 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot6" parent="MarginContainer/TextureRect/Slots" unique_id=1466816179 instance=ExtResource("3_xeaml")]
+[node name="Slot6" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1466816179 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot7" parent="MarginContainer/TextureRect/Slots" unique_id=1278765452 instance=ExtResource("3_xeaml")]
+[node name="Slot7" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1278765452 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot8" parent="MarginContainer/TextureRect/Slots" unique_id=765122129 instance=ExtResource("3_xeaml")]
+[node name="Slot8" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=765122129 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot9" parent="MarginContainer/TextureRect/Slots" unique_id=1657695112 instance=ExtResource("3_xeaml")]
+[node name="Slot9" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1657695112 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot10" parent="MarginContainer/TextureRect/Slots" unique_id=1557722413 instance=ExtResource("3_xeaml")]
+[node name="Slot10" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1557722413 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot11" parent="MarginContainer/TextureRect/Slots" unique_id=1709487025 instance=ExtResource("3_xeaml")]
+[node name="Slot11" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1709487025 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="SortTypeBtn" type="Button" parent="." unique_id=1479096159]
-top_level = true
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -48.0
-offset_bottom = 19.0
-grow_horizontal = 0
-theme_override_font_sizes/font_size = 7
-text = "Type"
-
-[node name="SortNameBtn" type="Button" parent="." unique_id=1586839550]
-top_level = true
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -105.0
-offset_right = -57.0
-offset_bottom = 19.0
-grow_horizontal = 0
-theme_override_font_sizes/font_size = 7
-text = "Name"
-
-[connection signal="pressed" from="SortTypeBtn" to="." method="sort_by_type"]
-[connection signal="pressed" from="SortNameBtn" to="." method="sort_by_name"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/SortTypeBtn" to="." method="sort_by_type"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/SortNameBtn" to="." method="sort_by_name"]
