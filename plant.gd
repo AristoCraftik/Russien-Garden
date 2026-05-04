@@ -46,15 +46,16 @@ func _update_frame() -> void:
 	var frame_index := int(round(t * (count_of_stages_in_atlas - 1)))
 	sprite.region_rect = Rect2(frame_index * frame_width, 0, frame_width, frame_height)
 
-func water() -> void:
-	watered = true
-
 func advance_day() -> void:
 	if growth_stage < final_stage - 1:
-		growth_stage += 1
-		_update_frame()
+		if watered:
+			growth_stage += 1
+			_update_frame()
+		else:
+			queue_free()
 	else:
-		print('2')
+		queue_free()
+	watered = false
 
 
 func _plants_grow():
