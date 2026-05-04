@@ -181,4 +181,7 @@ func try_plant_on_field() -> bool:
 	var local_pos = water_layer.to_local(mouse_world)
 	var cell_pos = water_layer.local_to_map(local_pos)
 	
+	if field.has_method("is_cell_occupied") and field.is_cell_occupied(cell_pos):
+		return false
+	
 	return field.plant_seed(cell_pos, plant_data)

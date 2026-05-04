@@ -57,3 +57,10 @@ func depour_cell(cell_pos:= Vector2i(0, 0)):
 	
 func is_bed(cell_pos: Vector2i) -> bool:
 	return cell_pos in field_map
+	
+func is_cell_occupied(cell_pos: Vector2i) -> bool:
+	for plant in get_tree().get_nodes_in_group("plants"):
+		var pos = plant.get("cell_position")
+		if pos != null and pos == cell_pos:
+			return true
+	return false
