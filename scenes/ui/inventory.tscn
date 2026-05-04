@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dv3pby1jaakkk" path="res://scenes/ui/inventory.gd" id="1_xeaml"]
 [ext_resource type="Theme" uid="uid://djyjxn8m33ich" path="res://resources/new_theme.tres" id="2_avmd0"]
+[ext_resource type="PackedScene" uid="uid://6k81u701i53i" path="res://scenes/ui/slot.tscn" id="3_xeaml"]
 
 [node name="Inventory" type="Control" unique_id=1145177155]
 layout_mode = 3
@@ -9,7 +10,6 @@ anchors_preset = 0
 script = ExtResource("1_xeaml")
 
 [node name="MarginContainer" type="MarginContainer" parent="." unique_id=1614663763]
-custom_minimum_size = Vector2(310, 0)
 layout_mode = 1
 anchors_preset = 11
 anchor_left = 1.0
@@ -31,33 +31,25 @@ theme = ExtResource("2_avmd0")
 columns = 6
 metadata/_tab_index = 0
 
-[node name="Slot1" type="Panel" parent="MarginContainer/TabContainer/Seeds" unique_id=729702976]
-custom_minimum_size = Vector2(48, 48)
-layout_mode = 2
-theme = ExtResource("2_avmd0")
-
-[node name="Slot2" type="Panel" parent="MarginContainer/TabContainer/Seeds" unique_id=1741785869]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot" parent="MarginContainer/TabContainer/Seeds" unique_id=272914832 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot3" type="Panel" parent="MarginContainer/TabContainer/Seeds" unique_id=501441372]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot2" parent="MarginContainer/TabContainer/Seeds" unique_id=661972054 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot4" type="Panel" parent="MarginContainer/TabContainer/Seeds" unique_id=1377055650]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot3" parent="MarginContainer/TabContainer/Seeds" unique_id=1393355875 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot5" type="Panel" parent="MarginContainer/TabContainer/Seeds" unique_id=1359098127]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot4" parent="MarginContainer/TabContainer/Seeds" unique_id=1107765453 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot6" type="Panel" parent="MarginContainer/TabContainer/Seeds" unique_id=534993908]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot5" parent="MarginContainer/TabContainer/Seeds" unique_id=1312307206 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot7" type="Panel" parent="MarginContainer/TabContainer/Seeds" unique_id=2042047270]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot6" parent="MarginContainer/TabContainer/Seeds" unique_id=1466816179 instance=ExtResource("3_xeaml")]
+layout_mode = 2
+
+[node name="Slot7" parent="MarginContainer/TabContainer/Seeds" unique_id=1278765452 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
 [node name="Fertilizers" type="GridContainer" parent="MarginContainer/TabContainer" unique_id=172675261]
@@ -67,60 +59,46 @@ theme = ExtResource("2_avmd0")
 columns = 6
 metadata/_tab_index = 1
 
-[node name="Slot1" type="Panel" parent="MarginContainer/TabContainer/Fertilizers" unique_id=250498399]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot" parent="MarginContainer/TabContainer/Fertilizers" unique_id=40179745 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot2" type="Panel" parent="MarginContainer/TabContainer/Fertilizers" unique_id=1950155215]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot2" parent="MarginContainer/TabContainer/Fertilizers" unique_id=1734849451 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot3" type="Panel" parent="MarginContainer/TabContainer/Fertilizers" unique_id=1452545867]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot3" parent="MarginContainer/TabContainer/Fertilizers" unique_id=1127658360 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot4" type="Panel" parent="MarginContainer/TabContainer/Fertilizers" unique_id=1640955023]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot4" parent="MarginContainer/TabContainer/Fertilizers" unique_id=854635787 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot5" type="Panel" parent="MarginContainer/TabContainer/Fertilizers" unique_id=612427258]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot5" parent="MarginContainer/TabContainer/Fertilizers" unique_id=774364836 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot6" type="Panel" parent="MarginContainer/TabContainer/Fertilizers" unique_id=539471467]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot6" parent="MarginContainer/TabContainer/Fertilizers" unique_id=1619708678 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot7" type="Panel" parent="MarginContainer/TabContainer/Fertilizers" unique_id=1952968505]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot7" parent="MarginContainer/TabContainer/Fertilizers" unique_id=724674752 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot8" type="Panel" parent="MarginContainer/TabContainer/Fertilizers" unique_id=1480798542]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot8" parent="MarginContainer/TabContainer/Fertilizers" unique_id=1589842017 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot9" type="Panel" parent="MarginContainer/TabContainer/Fertilizers" unique_id=569238060]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot9" parent="MarginContainer/TabContainer/Fertilizers" unique_id=1764943896 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot10" type="Panel" parent="MarginContainer/TabContainer/Fertilizers" unique_id=1951627893]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot10" parent="MarginContainer/TabContainer/Fertilizers" unique_id=976687649 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot11" type="Panel" parent="MarginContainer/TabContainer/Fertilizers" unique_id=1513987469]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot11" parent="MarginContainer/TabContainer/Fertilizers" unique_id=476268889 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot12" type="Panel" parent="MarginContainer/TabContainer/Fertilizers" unique_id=224501961]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot12" parent="MarginContainer/TabContainer/Fertilizers" unique_id=222044410 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot13" type="Panel" parent="MarginContainer/TabContainer/Fertilizers" unique_id=485930625]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot13" parent="MarginContainer/TabContainer/Fertilizers" unique_id=522647362 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot14" type="Panel" parent="MarginContainer/TabContainer/Fertilizers" unique_id=1094441262]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot14" parent="MarginContainer/TabContainer/Fertilizers" unique_id=1058536890 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
 [node name="Artifacts" type="GridContainer" parent="MarginContainer/TabContainer" unique_id=256460797]
@@ -130,86 +108,65 @@ theme = ExtResource("2_avmd0")
 columns = 6
 metadata/_tab_index = 2
 
-[node name="Slot1" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=1604696698]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot" parent="MarginContainer/TabContainer/Artifacts" unique_id=1095216953 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot2" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=708008853]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot2" parent="MarginContainer/TabContainer/Artifacts" unique_id=1679611203 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot3" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=1618135039]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot3" parent="MarginContainer/TabContainer/Artifacts" unique_id=1976989401 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot4" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=1215118167]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot4" parent="MarginContainer/TabContainer/Artifacts" unique_id=1741812956 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot5" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=1713172407]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot5" parent="MarginContainer/TabContainer/Artifacts" unique_id=725721795 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot6" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=473834625]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot6" parent="MarginContainer/TabContainer/Artifacts" unique_id=840545904 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot7" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=680210999]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot7" parent="MarginContainer/TabContainer/Artifacts" unique_id=156076302 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot8" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=79674062]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot8" parent="MarginContainer/TabContainer/Artifacts" unique_id=218711040 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot9" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=154126050]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot9" parent="MarginContainer/TabContainer/Artifacts" unique_id=599694100 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot10" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=1350134481]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot10" parent="MarginContainer/TabContainer/Artifacts" unique_id=1899702963 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot11" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=902703375]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot11" parent="MarginContainer/TabContainer/Artifacts" unique_id=1818047890 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot12" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=569683173]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot12" parent="MarginContainer/TabContainer/Artifacts" unique_id=636355726 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot13" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=1396735677]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot13" parent="MarginContainer/TabContainer/Artifacts" unique_id=2107375134 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot14" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=1090132555]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot14" parent="MarginContainer/TabContainer/Artifacts" unique_id=710351309 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot15" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=887748541]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot15" parent="MarginContainer/TabContainer/Artifacts" unique_id=1546035429 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot16" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=1827511203]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot16" parent="MarginContainer/TabContainer/Artifacts" unique_id=1178440658 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot17" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=84230134]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot17" parent="MarginContainer/TabContainer/Artifacts" unique_id=2041971234 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot18" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=1421946820]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot18" parent="MarginContainer/TabContainer/Artifacts" unique_id=458409250 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot19" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=1325300935]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot19" parent="MarginContainer/TabContainer/Artifacts" unique_id=2026122648 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot20" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=1371757056]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot20" parent="MarginContainer/TabContainer/Artifacts" unique_id=1844193285 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot21" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=519079830]
-custom_minimum_size = Vector2(48, 48)
+[node name="Slot21" parent="MarginContainer/TabContainer/Artifacts" unique_id=725535138 instance=ExtResource("3_xeaml")]
 layout_mode = 2
