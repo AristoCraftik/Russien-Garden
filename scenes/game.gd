@@ -13,7 +13,9 @@ func _spawn_initial_items() -> void:
 	var inventory = $CanvasLayer/MarginContainer/Inventory
 	if not inventory: return
 	var carrot_data = preload("res://resources/plants/carrot.tres")
+	var potato_data = preload("res://resources/plants/potato.tres")
 	inventory.fly_item_to_slot(0, carrot_data)
+	inventory.fly_item_to_slot(1, potato_data)
 
 
 func _on_quit_to_menu_button_button_up() -> void:
