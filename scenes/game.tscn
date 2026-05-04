@@ -14,7 +14,7 @@ script = ExtResource("1_lnu2h")
 anchor_mode = 0
 
 [node name="Field" parent="." unique_id=69235035 instance=ExtResource("1_uwrxv")]
-position = Vector2(171, 179)
+position = Vector2(172, 203)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=495993463]
 

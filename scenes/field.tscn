@@ -366,7 +366,9 @@ texture_region_size = Vector2i(32, 32)
 tile_size = Vector2i(32, 32)
 sources/0 = SubResource("TileSetAtlasSource_wnvii")
 
-[node name="Field" type="Node2D" unique_id=69235035]
+[node name="Field" type="Control" unique_id=619898813]
+layout_mode = 3
+anchors_preset = 0
 script = ExtResource("1_6pmjc")
 
 [node name="BedLayer" type="TileMapLayer" parent="." unique_id=334382930]

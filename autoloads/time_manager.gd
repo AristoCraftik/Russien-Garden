@@ -26,7 +26,7 @@ func save_all():
 	config.set_value("game", "plants", get_plants())
 	var dir := save_path.get_base_dir()
 	DirAccess.make_dir_recursive_absolute(dir)
-	var err = config.save(save_path)
+	config.save(save_path)
 
 
 func get_plants():

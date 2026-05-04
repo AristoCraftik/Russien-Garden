@@ -7,38 +7,27 @@ extends PanelContainer
 @onready var reset_button: Button = $MarginContainer/VBoxContainer/HBoxContainer/ReturnToDefoultButton
 
 const SAVE_PATH := "user://garden/display_settings.cfg"
-
-# Снимок последних сохранённых настроек — используется для отката при закрытии
 var _saved_settings := {}
+
 
 func _ready() -> void:
 	apply_button.pressed.connect(_on_apply_button_pressed)
 	reset_button.pressed.connect(_on_reset_pressed)
 	window_mode.item_selected.connect(_on_window_mode_changed)
 	display_select.item_selected.connect(_on_display_changed)
-
 	_populate_static_options()
 	_load_settings()
 
-
-# ---------------------------------------------------------------------------
-# Заполнение списков
-# ---------------------------------------------------------------------------
 
 func _populate_static_options() -> void:
 	window_mode.clear()
 	window_mode.add_item("Fullscreen",        0)
 	window_mode.add_item("Borderless Window", 1)
 	window_mode.add_item("Windowed",          2)
-
 	display_select.clear()
 	for i in DisplayServer.get_screen_count():
 		display_select.add_item("Display %d" % (i + 1))
 
-
-# ---------------------------------------------------------------------------
-# Сохранение / загрузка
-# ---------------------------------------------------------------------------
 
 func _current_settings() -> Dictionary:
 	return {
@@ -46,11 +35,13 @@ func _current_settings() -> Dictionary:
 		"display":     display_select.selected,
 	}
 
+
 func _default_settings() -> Dictionary:
 	return {
 		"window_mode": 0,  # Fullscreen
 		"display":     0,
 	}
+
 
 func _save_settings() -> void:
 	var cfg := ConfigFile.new()
@@ -60,9 +51,11 @@ func _save_settings() -> void:
 	cfg.save(SAVE_PATH)
 	_saved_settings = s.duplicate()
 
+
 func _load_settings() -> void:
 	var cfg := ConfigFile.new()
 	var defaults := _default_settings()
+
 
 	if cfg.load(SAVE_PATH) == OK:
 		_apply_settings({
@@ -73,16 +66,13 @@ func _load_settings() -> void:
 		_apply_settings(defaults)
 
 
-# ---------------------------------------------------------------------------
-# Применение
-# ---------------------------------------------------------------------------
-
 func _apply_settings(s: Dictionary) -> void:
 	window_mode.select(  clampi(s["window_mode"], 0, window_mode.item_count - 1))
 	display_select.select(clampi(s["display"],    0, display_select.item_count - 1))
 
 	_saved_settings = s.duplicate()
 	_commit_to_window()
+
 
 func _commit_to_window() -> void:
 	var wid: int = get_window().get_window_id()
@@ -100,15 +90,12 @@ func _commit_to_window() -> void:
 			var screen_pos  := DisplayServer.screen_get_position(monitor_idx)
 			var screen_size := DisplayServer.screen_get_size(monitor_idx)
 			var win_size    := DisplayServer.window_get_size(wid)
-			DisplayServer.window_set_position(screen_pos + (screen_size - win_size) / 2, wid)
+			var offset = ((screen_size - win_size) / 2.0).round()
+			DisplayServer.window_set_position(screen_pos + offset, wid)
 
 	get_viewport().canvas_item_default_texture_filter = \
 		Viewport.DEFAULT_CANVAS_ITEM_TEXTURE_FILTER_NEAREST
 
-
-# ---------------------------------------------------------------------------
-# Обработчики сигналов — живой предпросмотр
-# ---------------------------------------------------------------------------
 
 func _on_window_mode_changed(_idx: int) -> void:
 	_commit_to_window()
@@ -117,22 +104,15 @@ func _on_display_changed(_idx: int) -> void:
 	_commit_to_window()
 
 
-# ---------------------------------------------------------------------------
-# Кнопки
-# ---------------------------------------------------------------------------
-
 func _on_apply_button_pressed() -> void:
 	_commit_to_window()
 	_save_settings()
+
 
 func _on_reset_pressed() -> void:
 	_apply_settings(_default_settings())
 	_save_settings()
 
-
-# ---------------------------------------------------------------------------
-# Анимация панели
-# ---------------------------------------------------------------------------
 
 func open() -> void:
 	self.position.y = get_viewport().get_mouse_position().y - size.y / 2
@@ -142,10 +122,9 @@ func open() -> void:
 		.set_trans(Tween.TRANS_CUBIC) \
 		.set_ease(Tween.EASE_OUT)
 
-func close_settings() -> void:
-	# Откатываем несохранённые изменения
-	_apply_settings(_saved_settings)
 
+func close_settings() -> void:
+	_apply_settings(_saved_settings)
 	var screen_width: float = get_viewport_rect().size.x
 	var tween := create_tween()
 	tween.tween_property(self, "position:x", screen_width, 0.4) \
