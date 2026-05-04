@@ -1,15 +1,16 @@
 [gd_resource type="Resource" script_class="PlantData" format=3 uid="uid://yf75o0c1foer"]
 
 [ext_resource type="Texture2D" uid="uid://dsm4raq1r5l6d" path="res://assets/potato.png" id="1_1ojq1"]
-[ext_resource type="Script" uid="uid://bpuoqsrolsstp" path="res://plant_data.gd" id="1_dlsms"]
+[ext_resource type="Script" uid="uid://bpuoqsrolsstp" path="res://resources/plants/plant_data.gd" id="2_1ojq1"]
 [ext_resource type="Texture2D" uid="uid://cc0aph27nxjoj" path="res://assets/grass_tile.png" id="3_ajgsy"]
 
 [resource]
-script = ExtResource("1_dlsms")
+script = ExtResource("2_1ojq1")
 plant_name = "Potato"
 seed_texture = ExtResource("3_ajgsy")
 atlas_texture = ExtResource("1_1ojq1")
 needs_water = false
 description = "Картофанчик"
 path_to_tres = "res://resources/plants/potato.tres"
+path_to_script = "res://resources/plants/potato.gd"
 metadata/_custom_type_script = "uid://bpuoqsrolsstp"

@@ -15,7 +15,7 @@ func load_game():
 
 
 func next_day():
-	emit_signal("plants_grow")
+	plants_grow.emit(1, Vector2i(100000, 100000))
 	save_all()
 
 

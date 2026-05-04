@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="PlantData" format=3 uid="uid://cv1r4o52c4gyk"]
 
-[ext_resource type="Script" uid="uid://bpuoqsrolsstp" path="res://plant_data.gd" id="1_6pg3w"]
+[ext_resource type="Script" uid="uid://bpuoqsrolsstp" path="res://resources/plants/plant_data.gd" id="1_6pg3w"]
 [ext_resource type="Texture2D" uid="uid://d1s6cw81lwakq" path="res://assets/carrot.png" id="1_ghg2e"]
 [ext_resource type="Texture2D" uid="uid://c23dvaa7r8jdg" path="res://assets/carrot_seed.png" id="3_ghg2e"]
 

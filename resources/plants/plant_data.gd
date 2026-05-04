@@ -8,3 +8,4 @@ extends Resource
 @export var needs_water: bool = true
 @export var description: String = ""
 @export var path_to_tres: String = ""
+@export var path_to_script: String = ""

@@ -19,7 +19,7 @@ func plant_seed(cell_pos: Vector2i, plant_data: PlantData, growth_stage: int = 0
 	if not is_bed(cell_pos):
 		return false
 	
-	var plant_scene = preload("res://plant.tscn")
+	var plant_scene = preload("res://resources/plants/plant.tscn")
 	var plant = plant_scene.instantiate()
 	
 	WateredBedLayer.add_child(plant)

@@ -7,6 +7,7 @@ var watered: bool = false
 var plant_name: String = ""
 var cell_position: Vector2i = Vector2i.ZERO
 var path_to_tres: String = ""
+var path_to_script: String = ""
 
 var atlas_texture: Texture2D = null
 var frame_width: int = 32
@@ -27,6 +28,7 @@ func setup_from_data(data: PlantData) -> void:
 	final_stage = data.final_stage
 	atlas_texture = data.atlas_texture
 	path_to_tres = data.path_to_tres
+	path_to_script = data.path_to_script
 	
 	if atlas_texture:
 		sprite.texture = atlas_texture
@@ -49,13 +51,19 @@ func _update_frame() -> void:
 func water() -> void:
 	watered = true
 
-func advance_day() -> void:
+
+func _plants_grow(mode, pos: Vector2i):
+	if mode:
+		grow()
+		if path_to_script:
+			load(path_to_script).script(cell_position)
+	if !mode and pos == cell_position:
+		grow()
+
+
+func grow():
 	if growth_stage < final_stage - 1:
 		growth_stage += 1
 		_update_frame()
 	else:
 		print('2')
-
-
-func _plants_grow():
-	advance_day()
