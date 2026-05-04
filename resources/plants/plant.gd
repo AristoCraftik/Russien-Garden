@@ -1,13 +1,15 @@
 extends Node2D
 
-var sprite: Sprite2D
 var growth_stage: int = 0
 var final_stage: int = 2
-var watered: bool = false
 var plant_name: String = ""
-var cell_position: Vector2i = Vector2i.ZERO
 var path_to_tres: String = ""
 var path_to_script: String = ""
+
+var sprite: Sprite2D
+var cell_position: Vector2i = Vector2i.ZERO
+var watered: bool = false
+var can_harvest: bool = false
 
 var atlas_texture: Texture2D = null
 var frame_width: int = 32
@@ -63,7 +65,18 @@ func _plants_grow(mode, pos: Vector2i):
 
 func grow():
 	if growth_stage < final_stage - 1:
-		growth_stage += 1
-		_update_frame()
+		if watered:
+			growth_stage += 1
+			_update_frame()
+		else:
+			queue_free()
+			
+		if growth_stage == final_stage - 1:
+			can_harvest = true
 	else:
-		print('2')
+		pass
+	watered = false
+
+
+func _plants_grow():
+	advance_day()

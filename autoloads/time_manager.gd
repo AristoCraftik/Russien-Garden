@@ -1,6 +1,7 @@
 extends Node
 
 signal plants_grow
+signal clear_watered_tiles
 
 var save_path := "user://garden/game_data.cfg"
 
@@ -16,6 +17,7 @@ func load_game():
 
 func next_day():
 	plants_grow.emit(1, Vector2i(100000, 100000))
+	emit_signal("clear_watered_tiles")
 	save_all()
 
 
