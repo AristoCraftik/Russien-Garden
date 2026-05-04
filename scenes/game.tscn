@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://d1qgvqplxflri" path="res://scenes/game.gd" id="1_lnu2h"]
 [ext_resource type="PackedScene" uid="uid://oprnu180mftx" path="res://scenes/field.tscn" id="1_uwrxv"]
 [ext_resource type="PackedScene" uid="uid://bqv5rj56s87f1" path="res://scenes/ui/inventory.tscn" id="2_yqjtg"]
+[ext_resource type="Theme" uid="uid://djyjxn8m33ich" path="res://resources/new_theme.tres" id="4_lbhrr"]
 
 [node name="Game" type="Control" unique_id=344109033]
 layout_mode = 3
@@ -40,10 +41,14 @@ layout_mode = 2
 
 [node name="NextDayButton" type="Button" parent="CanvasLayer/MarginContainer2/HBoxContainer" unique_id=1273487328]
 layout_mode = 2
+theme = ExtResource("4_lbhrr")
+theme_override_font_sizes/font_size = 16
 text = "Next day"
 
 [node name="QuitToMenuButton" type="Button" parent="CanvasLayer/MarginContainer2/HBoxContainer" unique_id=2117596932]
 layout_mode = 2
+theme = ExtResource("4_lbhrr")
+theme_override_font_sizes/font_size = 16
 text = "Quit to menu"
 
 [connection signal="button_up" from="CanvasLayer/MarginContainer2/HBoxContainer/NextDayButton" to="." method="_on_next_day_button_button_up"]

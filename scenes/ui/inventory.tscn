@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://bqv5rj56s87f1"]
 
 [ext_resource type="Script" uid="uid://dv3pby1jaakkk" path="res://scenes/ui/inventory.gd" id="1_xeaml"]
+[ext_resource type="Theme" uid="uid://djyjxn8m33ich" path="res://resources/new_theme.tres" id="2_avmd0"]
 
 [node name="Inventory" type="Control" unique_id=1145177155]
 layout_mode = 3
@@ -20,48 +21,195 @@ grow_vertical = 2
 
 [node name="TabContainer" type="TabContainer" parent="MarginContainer" unique_id=2109501123]
 layout_mode = 2
+theme = ExtResource("2_avmd0")
 tab_alignment = 1
 current_tab = 0
 
-[node name="Семена" type="GridContainer" parent="MarginContainer/TabContainer" unique_id=1998553659]
+[node name="Seeds" type="GridContainer" parent="MarginContainer/TabContainer" unique_id=1998553659]
 layout_mode = 2
+theme = ExtResource("2_avmd0")
 columns = 6
 metadata/_tab_index = 0
 
-[node name="Slot1" type="Panel" parent="MarginContainer/TabContainer/Семена" unique_id=729702976]
+[node name="Slot1" type="Panel" parent="MarginContainer/TabContainer/Seeds" unique_id=729702976]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+theme = ExtResource("2_avmd0")
+
+[node name="Slot2" type="Panel" parent="MarginContainer/TabContainer/Seeds" unique_id=1741785869]
 custom_minimum_size = Vector2(48, 48)
 layout_mode = 2
 
-[node name="Slot2" type="Panel" parent="MarginContainer/TabContainer/Семена" unique_id=1741785869]
+[node name="Slot3" type="Panel" parent="MarginContainer/TabContainer/Seeds" unique_id=501441372]
 custom_minimum_size = Vector2(48, 48)
 layout_mode = 2
 
-[node name="Slot3" type="Panel" parent="MarginContainer/TabContainer/Семена" unique_id=501441372]
+[node name="Slot4" type="Panel" parent="MarginContainer/TabContainer/Seeds" unique_id=1377055650]
 custom_minimum_size = Vector2(48, 48)
 layout_mode = 2
 
-[node name="Slot4" type="Panel" parent="MarginContainer/TabContainer/Семена" unique_id=1377055650]
+[node name="Slot5" type="Panel" parent="MarginContainer/TabContainer/Seeds" unique_id=1359098127]
 custom_minimum_size = Vector2(48, 48)
 layout_mode = 2
 
-[node name="Slot5" type="Panel" parent="MarginContainer/TabContainer/Семена" unique_id=1359098127]
+[node name="Slot6" type="Panel" parent="MarginContainer/TabContainer/Seeds" unique_id=534993908]
 custom_minimum_size = Vector2(48, 48)
 layout_mode = 2
 
-[node name="Slot6" type="Panel" parent="MarginContainer/TabContainer/Семена" unique_id=534993908]
+[node name="Slot7" type="Panel" parent="MarginContainer/TabContainer/Seeds" unique_id=2042047270]
 custom_minimum_size = Vector2(48, 48)
 layout_mode = 2
 
-[node name="Slot7" type="Panel" parent="MarginContainer/TabContainer/Семена" unique_id=2042047270]
-custom_minimum_size = Vector2(48, 48)
-layout_mode = 2
-
-[node name="Удобрения" type="GridContainer" parent="MarginContainer/TabContainer" unique_id=172675261]
+[node name="Fertilizers" type="GridContainer" parent="MarginContainer/TabContainer" unique_id=172675261]
 visible = false
 layout_mode = 2
+theme = ExtResource("2_avmd0")
+columns = 6
 metadata/_tab_index = 1
 
-[node name="Артефакты" type="GridContainer" parent="MarginContainer/TabContainer" unique_id=256460797]
+[node name="Slot1" type="Panel" parent="MarginContainer/TabContainer/Fertilizers" unique_id=250498399]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+
+[node name="Slot2" type="Panel" parent="MarginContainer/TabContainer/Fertilizers" unique_id=1950155215]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+
+[node name="Slot3" type="Panel" parent="MarginContainer/TabContainer/Fertilizers" unique_id=1452545867]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+
+[node name="Slot4" type="Panel" parent="MarginContainer/TabContainer/Fertilizers" unique_id=1640955023]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+
+[node name="Slot5" type="Panel" parent="MarginContainer/TabContainer/Fertilizers" unique_id=612427258]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+
+[node name="Slot6" type="Panel" parent="MarginContainer/TabContainer/Fertilizers" unique_id=539471467]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+
+[node name="Slot7" type="Panel" parent="MarginContainer/TabContainer/Fertilizers" unique_id=1952968505]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+
+[node name="Slot8" type="Panel" parent="MarginContainer/TabContainer/Fertilizers" unique_id=1480798542]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+
+[node name="Slot9" type="Panel" parent="MarginContainer/TabContainer/Fertilizers" unique_id=569238060]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+
+[node name="Slot10" type="Panel" parent="MarginContainer/TabContainer/Fertilizers" unique_id=1951627893]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+
+[node name="Slot11" type="Panel" parent="MarginContainer/TabContainer/Fertilizers" unique_id=1513987469]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+
+[node name="Slot12" type="Panel" parent="MarginContainer/TabContainer/Fertilizers" unique_id=224501961]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+
+[node name="Slot13" type="Panel" parent="MarginContainer/TabContainer/Fertilizers" unique_id=485930625]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+
+[node name="Slot14" type="Panel" parent="MarginContainer/TabContainer/Fertilizers" unique_id=1094441262]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+
+[node name="Artifacts" type="GridContainer" parent="MarginContainer/TabContainer" unique_id=256460797]
 visible = false
 layout_mode = 2
+theme = ExtResource("2_avmd0")
+columns = 6
 metadata/_tab_index = 2
+
+[node name="Slot1" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=1604696698]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+
+[node name="Slot2" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=708008853]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+
+[node name="Slot3" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=1618135039]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+
+[node name="Slot4" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=1215118167]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+
+[node name="Slot5" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=1713172407]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+
+[node name="Slot6" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=473834625]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+
+[node name="Slot7" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=680210999]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+
+[node name="Slot8" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=79674062]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+
+[node name="Slot9" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=154126050]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+
+[node name="Slot10" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=1350134481]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+
+[node name="Slot11" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=902703375]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+
+[node name="Slot12" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=569683173]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+
+[node name="Slot13" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=1396735677]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+
+[node name="Slot14" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=1090132555]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+
+[node name="Slot15" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=887748541]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+
+[node name="Slot16" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=1827511203]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+
+[node name="Slot17" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=84230134]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+
+[node name="Slot18" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=1421946820]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+
+[node name="Slot19" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=1325300935]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+
+[node name="Slot20" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=1371757056]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+
+[node name="Slot21" type="Panel" parent="MarginContainer/TabContainer/Artifacts" unique_id=519079830]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2

@@ -2,7 +2,7 @@ extends Control
 
 func fly_item_to_slot(slot_index: int, plant_data: PlantData) -> void:
 	var tab_container = $MarginContainer/TabContainer
-	var seeds_tab = tab_container.get_node("Семена")
+	var seeds_tab = tab_container.get_node("Seeds")
 	
 	if slot_index >= seeds_tab.get_child_count(): return
 	var slot = seeds_tab.get_child(slot_index)
