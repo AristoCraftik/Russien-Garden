@@ -31,7 +31,7 @@ func setup_from_data(data: PlantData) -> void:
 	if atlas_texture:
 		sprite.texture = atlas_texture
 		sprite.region_enabled = true
-		frame_width = atlas_texture.get_width() / final_stage
+		
 		frame_height = atlas_texture.get_height()
 		_update_frame()
 	else:
@@ -41,9 +41,10 @@ func set_cell(pos: Vector2i) -> void:
 	cell_position = pos
 
 func _update_frame() -> void:
-	var col = growth_stage % final_stage
-	var row = growth_stage / final_stage
-	sprite.region_rect = Rect2(col * frame_width, row * frame_height, frame_width, frame_height)
+	var count_of_stages_in_atlas = float(atlas_texture.get_width()) / frame_width
+	var t := float(growth_stage) / float(final_stage - 1)
+	var frame_index := int(round(t * (count_of_stages_in_atlas - 1)))
+	sprite.region_rect = Rect2(frame_index * frame_width, 0, frame_width, frame_height)
 
 func water() -> void:
 	watered = true
@@ -52,6 +53,7 @@ func advance_day() -> void:
 	if growth_stage < final_stage:
 		growth_stage += 1
 		_update_frame()
+	else: print('я ебу собак')
 
 func _plants_grow():
 	advance_day()

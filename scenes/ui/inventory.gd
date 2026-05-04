@@ -11,7 +11,7 @@ func fly_item_to_slot(slot_index: int, plant_data: PlantData) -> void:
 	var fly_item = TextureRect.new()
 	fly_item.texture = plant_data.seed_texture
 	fly_item.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	fly_item.size = slot.size
+	fly_item.size = Vector2i(32, 32)
 	fly_item.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	fly_item.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	
@@ -36,8 +36,8 @@ func fly_item_to_slot(slot_index: int, plant_data: PlantData) -> void:
 		
 		var item = TextureRect.new()
 		item.texture = plant_data.seed_texture
-		item.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		item.size = slot.size * 0.6
+		item.size = Vector2i(32, 32)
+		
 		item.mouse_filter = Control.MOUSE_FILTER_STOP
 		item.stretch_mode = TextureRect.STRETCH_SCALE
 		
@@ -47,13 +47,4 @@ func fly_item_to_slot(slot_index: int, plant_data: PlantData) -> void:
 			item.set_plant_data(plant_data)
 		
 		slot.add_child(item)
-		
-		item.anchor_left = 0.4
-		item.anchor_top = 0.4
-		item.anchor_right = 0.4
-		item.anchor_bottom = 0.4
-		item.offset_left = -item.size.x / 2.0
-		item.offset_top = -item.size.y / 2.0
-		item.offset_right = item.size.x / 2.0
-		item.offset_bottom = item.size.y / 2.0
 	)

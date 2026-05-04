@@ -15,6 +15,9 @@ func _spawn_initial_items() -> void:
 	var carrot_data = preload("res://resources/plants/carrot.tres")
 	for i in range(0, 5):
 		inventory.fly_item_to_slot(i, carrot_data)
+	var potato_data = preload("res://resources/plants/potato.tres")
+	inventory.fly_item_to_slot(0, carrot_data)
+	inventory.fly_item_to_slot(1, potato_data)
 
 
 func _on_quit_to_menu_button_button_up() -> void:
