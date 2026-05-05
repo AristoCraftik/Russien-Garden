@@ -19,7 +19,6 @@ position = Vector2(180, 180)
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=128895694]
 anchor_mode = 0
-zoom = Vector2(2, 2)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=495993463]
 

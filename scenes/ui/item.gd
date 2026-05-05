@@ -170,7 +170,12 @@ func try_plant_on_field() -> bool:
 	var field = get_tree().get_first_node_in_group("field")
 	if not field: return false
 	
-	var mouse_world = get_global_mouse_position()
+	# UI живёт в CanvasLayer: get_global_mouse_position() даёт не мировые координаты поля.
+	# Мышь во вьюпорте → мир, с учётом Camera2D (zoom, сдвиг).
+	var viewport = get_viewport()
+	var screen_mouse = viewport.get_mouse_position()
+	var mouse_world = viewport.get_canvas_transform().affine_inverse() * screen_mouse
+	
 	var water_layer = field.WateredBedLayer
 	if not water_layer: return false
 	

@@ -14,6 +14,7 @@ func _ready() -> void:
 	await get_tree().process_frame
 	_spawn_initial_items()
 
+
 func _spawn_initial_items() -> void:
 	var inventory = $CanvasLayer/MarginContainer/Inventory
 	if not inventory: return
