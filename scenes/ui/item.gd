@@ -474,4 +474,11 @@ func _remove_item_from_slot_and_free() -> void:
 	var par: Node = get_parent()
 	if par and par.has_method("detach_stack_label_from_item"):
 		par.call("detach_stack_label_from_item", self)
+
+	# Удаляем цену в этом слоте после покупки
+	if par:
+		var pp: Node = par.get_node_or_null("PricePanel")
+		if pp:
+			pp.queue_free()
+
 	queue_free()

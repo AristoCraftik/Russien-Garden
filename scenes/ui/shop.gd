@@ -104,11 +104,48 @@ func _create_shop_item(slot: Panel, seed: SeedData, qty: int, unit_price: int) -
 	if item.has_method("setup_shop_item"):
 		item.setup_shop_item(unit_price)
 
+	# Компактный ценник по центру снизу
+	var price_panel := Panel.new()
+	price_panel.name = "PricePanel"
+	price_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	price_panel.anchor_left = 0.0
+	price_panel.anchor_top = 0.0
+	price_panel.anchor_right = 0.0
+	price_panel.anchor_bottom = 0.0
+
+	# Кастомный фон, чтобы не зависеть от большой темы PanelContainer
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(0.94, 0.68, 0.02, 0.95)
+	sb.corner_radius_top_left = 5
+	sb.corner_radius_top_right = 5
+	sb.corner_radius_bottom_left = 5
+	sb.corner_radius_bottom_right = 5
+	price_panel.add_theme_stylebox_override("panel", sb)
+
+	slot.add_child(price_panel)
+
 	var price_lbl := Label.new()
 	price_lbl.name = "PriceLabel"
-	price_lbl.text = "$%d" % (unit_price * qty)
-	slot.add_child(price_lbl)
-	price_lbl.position = slot.size - Vector2(24, 5)
+	price_lbl.text = "$%d" % unit_price
+	price_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	price_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	price_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	price_panel.add_child(price_lbl)
+
+	await get_tree().process_frame
+
+	var pad := Vector2(4, 1)
+	var text_size: Vector2 = price_lbl.get_minimum_size()
+	var badge_size := text_size + pad * 2.0
+
+	price_panel.size = badge_size
+	price_lbl.position = pad
+	price_lbl.size = text_size
+
+	price_panel.position = Vector2(
+		(slot.size.x - badge_size.x) * 0.5,
+		slot.size.y - badge_size.y / 2.0
+	)
 
 	item.position = (slot.size - item.size) / 2.0
 
