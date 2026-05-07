@@ -20,6 +20,7 @@ config/icon="res://icon.svg"
 
 FadeManager="*uid://bkbxosxv8w673"
 TimeManager="*uid://c8q1s046b0g7d"
+MarketState="*uid://830yqvmshsvm"
 
 [display]
 

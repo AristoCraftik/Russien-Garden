@@ -1,0 +1,73 @@
+[gd_scene format=3 uid="uid://mc072kwloqpp"]
+
+[ext_resource type="Theme" uid="uid://djyjxn8m33ich" path="res://resources/theme/new_theme.tres" id="1_8v20v"]
+[ext_resource type="Script" uid="uid://bflcxjtnicyd6" path="res://scenes/ui/shop.gd" id="1_85p0y"]
+[ext_resource type="PackedScene" uid="uid://6k81u701i53i" path="res://scenes/ui/slot.tscn" id="2_2i61c"]
+[ext_resource type="FontFile" uid="uid://ib420hrxkh70" path="res://resources/theme/TrueType (.ttf)/04B_03__.TTF" id="2_85p0y"]
+
+[node name="Shop" type="Control" unique_id=248279203]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_85p0y")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1485562416]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -126.0
+offset_bottom = 118.0
+grow_horizontal = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1535926456]
+layout_mode = 2
+alignment = 1
+
+[node name="Panel2" type="Panel" parent="MarginContainer/VBoxContainer" unique_id=47147236]
+custom_minimum_size = Vector2(35, 24)
+layout_mode = 2
+theme = ExtResource("1_8v20v")
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/Panel2" unique_id=1500647504]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -29.0
+offset_top = -8.0
+offset_right = 29.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("2_85p0y")
+theme_override_font_sizes/font_size = 16
+text = "Market"
+
+[node name="Panel" type="PanelContainer" parent="MarginContainer/VBoxContainer" unique_id=1655517053]
+layout_mode = 2
+theme = ExtResource("1_8v20v")
+
+[node name="Slots" type="GridContainer" parent="MarginContainer/VBoxContainer/Panel" unique_id=278111181]
+layout_mode = 2
+theme = ExtResource("1_8v20v")
+columns = 3
+
+[node name="Slot" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=272914832 instance=ExtResource("2_2i61c")]
+layout_mode = 2
+
+[node name="Slot2" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1355925751 instance=ExtResource("2_2i61c")]
+layout_mode = 2
+
+[node name="Slot3" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1937781018 instance=ExtResource("2_2i61c")]
+layout_mode = 2
+
+[node name="Slot4" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1107291141 instance=ExtResource("2_2i61c")]
+layout_mode = 2
+
+[node name="Slot5" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1056952334 instance=ExtResource("2_2i61c")]
+layout_mode = 2
+
+[node name="Slot6" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=663908451 instance=ExtResource("2_2i61c")]
+layout_mode = 2
