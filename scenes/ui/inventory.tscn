@@ -82,5 +82,17 @@ layout_mode = 2
 [node name="Slot11" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1709487025 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
+[node name="Slot12" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1703132010 instance=ExtResource("3_xeaml")]
+layout_mode = 2
+
+[node name="Slot13" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=677903376 instance=ExtResource("3_xeaml")]
+layout_mode = 2
+
+[node name="Slot14" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1683898391 instance=ExtResource("3_xeaml")]
+layout_mode = 2
+
+[node name="Slot15" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=97409099 instance=ExtResource("3_xeaml")]
+layout_mode = 2
+
 [connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/SortTypeBtn" to="." method="sort_by_type"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/SortNameBtn" to="." method="sort_by_name"]
