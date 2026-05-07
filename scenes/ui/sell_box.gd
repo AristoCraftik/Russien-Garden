@@ -5,11 +5,19 @@ const ITEM_SIZE: Vector2 = Vector2(32, 32)
 const SLOT_SCENE: PackedScene = preload("res://scenes/ui/slot.tscn")
 
 @onready var slots_host: VBoxContainer = $VBox/Scroll/SlotsHost
+@onready var title_label: Label = $VBox/Label
 
 
 func _ready() -> void:
 	add_to_group("sell_box")
 	TimeManager.day_advanced.connect(_on_day_advanced)
+	add_to_group("i18n")
+	_apply_i18n()
+
+
+func _apply_i18n() -> void:
+	if is_instance_valid(title_label):
+		title_label.text = tr("UI_SELL")
 
 
 func _on_day_advanced() -> void:

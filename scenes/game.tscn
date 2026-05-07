@@ -6,6 +6,7 @@
 [ext_resource type="Theme" uid="uid://djyjxn8m33ich" path="res://resources/theme/new_theme.tres" id="4_lbhrr"]
 [ext_resource type="PackedScene" uid="uid://bf3iq3gk8b4dp" path="res://scenes/ui/trash_can.tscn" id="5_trash"]
 [ext_resource type="PackedScene" uid="uid://cj7ufkckhegds" path="res://scenes/ui/sell_box.tscn" id="6_sell"]
+[ext_resource type="PackedScene" uid="uid://c7toast011" path="res://scenes/ui/toast_manager.tscn" id="7_toast"]
 
 [sub_resource type="Theme" id="Theme_p57ef"]
 
@@ -105,6 +106,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
+[node name="ToastManager" parent="CanvasLayer" unique_id=883007964 instance=ExtResource("7_toast")]
+layout_mode = 3
 
 [connection signal="button_up" from="CanvasLayer/MarginContainer2/HBoxContainer/NextDayButton" to="." method="_on_next_day_button_button_up"]
 [connection signal="button_up" from="CanvasLayer/MarginContainer2/HBoxContainer/QuitToMenuButton" to="." method="_on_quit_to_menu_button_button_up"]

@@ -19,6 +19,8 @@ func _ready() -> void:
 	ui_drag_root.add_to_group("ui_drag_root")
 	TimeManager.balance_changed.connect(_on_economy_balance_changed)
 	_on_economy_balance_changed(TimeManager.get_balance())
+	add_to_group("i18n")
+	_apply_i18n()
 	# Иначе MarginContainer перехватывает клики по всему экрану, и поле не получает сбор/полив.
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	if FadeManager.start_mode == "load":
@@ -33,7 +35,15 @@ func _ready() -> void:
 
 func _on_economy_balance_changed(balance: int) -> void:
 	if is_instance_valid(money_label):
-		money_label.text = "Money: %d" % balance
+		money_label.text = tr("MONEY_FMT") % balance
+
+
+func _apply_i18n() -> void:
+	if is_instance_valid(next_day_button):
+		next_day_button.text = tr("GAME_NEXT_DAY")
+	if is_instance_valid(quit_button):
+		quit_button.text = tr("GAME_QUIT_TO_MENU")
+	_on_economy_balance_changed(TimeManager.get_balance())
 
 
 func _spawn_starter_inventory() -> void:
@@ -86,7 +96,7 @@ func _load_game() -> void:
 		if stage > cap:
 			stage = cap
 		var watered: bool = bool(plant_entry.get("watered", false))
-		field.plant_seed(cell, data, stage, watered)
+		field.plant_seed(cell, data, stage, watered, plant_entry)
 
 	if inventory:
 		await get_tree().process_frame

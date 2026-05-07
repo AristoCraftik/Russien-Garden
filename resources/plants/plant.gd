@@ -7,6 +7,12 @@ var watered: bool = false
 var can_harvest: bool = false
 var cell_position: Vector2i = Vector2i.ZERO
 
+# Для растений с days_of_fruiting > 0:
+# - fruit_harvests_left: сколько сборов плодов осталось
+# - fruits_available: есть ли плоды прямо сейчас (после сбора — false до следующего дня)
+var fruit_harvests_left: int = 0
+var fruits_available: bool = true
+
 @onready var sprite: Sprite2D = _ensure_sprite()
 
 
@@ -65,6 +71,11 @@ func grow() -> void:
 		_update_frame()
 	if growth_stage >= cap:
 		can_harvest = true
+		# Инициализируем плодоношение на момент первого созревания.
+		if data.days_of_fruiting > 0 and fruit_harvests_left <= 0:
+			fruit_harvests_left = maxi(data.days_of_fruiting, 0)
+			fruits_available = true
+			_update_frame()
 
 
 func _update_frame() -> void:
@@ -81,6 +92,10 @@ func _update_frame() -> void:
 	var cap_x: int = _last_atlas_stage_index()
 	var stage_vis: int = maxi(growth_stage, 0)
 	var stage_x: int = clampi(stage_vis, 0, cap_x)
+	# Растения с плодоношением имеют дополнительный кадр "без плодов" сразу после зрелого.
+	if data.days_of_fruiting > 0 and stage_vis >= cap_x:
+		if not fruits_available and fruit_harvests_left > 0:
+			stage_x = cap_x + 1
 	stage_x = clampi(stage_x, 0, atlas_stages_x - 1)
 	var row_y: int = clamp(data.plant_atlas_row_y, 1, atlas_rows)
 	sprite.region_rect = Atlas.frame_from_plants_atlas(row_y, stage_x, fp)
@@ -92,8 +107,40 @@ func _on_day_advanced() -> void:
 		return
 	grow()
 	watered = false
+	# Если это растение плодоносящее и плоды были собраны — на следующий день они появляются снова.
+	if data and data.days_of_fruiting > 0 and fruit_harvests_left > 0 and not fruits_available:
+		fruits_available = true
+		can_harvest = true
+		_update_frame()
 	if data and data.plant_script and data.plant_script.has_method("on_grew"):
 		data.plant_script.on_grew(self)
+
+
+func can_collect_yield_now() -> bool:
+	if not can_harvest:
+		return false
+	if data and data.days_of_fruiting > 0:
+		return fruits_available and fruit_harvests_left > 0
+	return true
+
+
+## Возвращает true, если растение должно исчезнуть после сбора.
+func after_harvest() -> bool:
+	if data == null or data.days_of_fruiting <= 0:
+		return true
+	# Если по какой-то причине не инициализировалось — инициализируем.
+	if fruit_harvests_left <= 0:
+		fruit_harvests_left = maxi(data.days_of_fruiting, 0)
+		fruits_available = true
+	_update_frame()
+	fruit_harvests_left -= 1
+	if fruit_harvests_left <= 0:
+		return true
+	# Плоды собраны — до следующего дня их нет.
+	fruits_available = false
+	can_harvest = false
+	_update_frame()
+	return false
 
 
 func get_save_dict() -> Dictionary:
@@ -102,4 +149,20 @@ func get_save_dict() -> Dictionary:
 		"id": data.get_save_id() if data else "",
 		"stage": growth_stage,
 		"watered": watered,
+		"fruit_left": fruit_harvests_left,
+		"fruits": fruits_available,
 	}
+
+
+func apply_save_state(raw: Variant) -> void:
+	if typeof(raw) != TYPE_DICTIONARY:
+		return
+	fruit_harvests_left = int(raw.get("fruit_left", fruit_harvests_left))
+	fruits_available = bool(raw.get("fruits", fruits_available))
+	# Восстановим can_harvest корректно для плодоносящих.
+	if data and growth_stage >= _last_atlas_stage_index():
+		if data.days_of_fruiting > 0:
+			can_harvest = fruits_available and fruit_harvests_left > 0
+		else:
+			can_harvest = true
+	_update_frame()

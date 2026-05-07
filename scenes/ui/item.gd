@@ -4,6 +4,7 @@ const TOOLTIP_DELAY: float = 0.3
 const RETURN_DURATION: float = 0.3
 const DRAG_VISUAL_SIZE: Vector2 = Vector2(32, 32)
 const STACK_LABEL_PAD: Vector2 = Vector2(2, 2)
+const TOOLTIP_SCENE: PackedScene = preload("res://scenes/ui/tooltip.tscn")
 
 var dragging: bool = false
 var drag_copy: TextureRect = null
@@ -16,8 +17,6 @@ var stack_count: int = 1
 var _ignore_stack_cap: bool = false
 
 var _tooltip: Control = null
-var _tooltip_label: Label = null
-var _tooltip_panel: Panel = null
 var _tooltip_layer: Node = null
 var _mouse_over: bool = false
 var _tooltip_timer: float = 0.0
@@ -231,15 +230,8 @@ func _process(delta: float) -> void:
 func _ensure_tooltip() -> void:
 	if is_instance_valid(_tooltip):
 		return
-	_tooltip = Control.new()
+	_tooltip = TOOLTIP_SCENE.instantiate() if TOOLTIP_SCENE else Control.new()
 	_tooltip.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_tooltip_panel = Panel.new()
-	_tooltip_panel.self_modulate = Color(0, 0, 0, 0.8)
-	_tooltip.add_child(_tooltip_panel)
-	_tooltip_label = Label.new()
-	_tooltip_label.add_theme_color_override("font_color", Color.WHITE)
-	_tooltip_label.add_theme_font_size_override("font_size", 12)
-	_tooltip.add_child(_tooltip_label)
 	var layer: Node = drag_root.get_parent() if drag_root else (inventory_root.get_parent() if inventory_root else null)
 	while layer and not (layer is CanvasLayer):
 		layer = layer.get_parent()
@@ -259,13 +251,18 @@ func _show_tooltip() -> void:
 	_tooltip_layer.move_child(_tooltip, _tooltip_layer.get_child_count() - 1)
 	var name_text: String = item_data.item_name if item_data.item_name else "—"
 	var desc_text: String = item_data.description if item_data.description else ""
-	_tooltip_label.text = name_text + ("\n" + desc_text if desc_text.length() > 0 else "")
+	var text: String = name_text + ("\n" + desc_text if desc_text.length() > 0 else "")
+	if _tooltip.has_method("set_text"):
+		_tooltip.call("set_text", text)
+	elif _tooltip.has_node("Label"):
+		var lbl := _tooltip.get_node("Label") as Label
+		if lbl:
+			lbl.text = text
 	var item_global_rect: Rect2 = get_global_rect()
-	_tooltip.global_position = item_global_rect.position + Vector2(item_global_rect.size.x, 0)
-	_tooltip_label.size = _tooltip_label.get_minimum_size()
-	_tooltip_panel.size = _tooltip_label.size + Vector2(8, 4)
-	_tooltip_label.position = Vector2(4, 2)
-	_tooltip.size = _tooltip_panel.size
+	var tip_size: Vector2 = _tooltip.size
+	_tooltip.global_position = item_global_rect.position + Vector2(item_global_rect.size.x, -tip_size.y)
+	if _tooltip.has_method("clamp_inside_viewport"):
+		_tooltip.call("clamp_inside_viewport", get_viewport())
 	_tooltip.visible = true
 
 
@@ -278,8 +275,6 @@ func _destroy_tooltip() -> void:
 	if is_instance_valid(_tooltip):
 		_tooltip.queue_free()
 	_tooltip = null
-	_tooltip_label = null
-	_tooltip_panel = null
 
 
 # ---------------- DRAG & DROP ----------------
