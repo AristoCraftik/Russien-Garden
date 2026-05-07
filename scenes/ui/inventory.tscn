@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bqv5rj56s87f1"]
 
 [ext_resource type="Script" uid="uid://dv3pby1jaakkk" path="res://scenes/ui/inventory.gd" id="1_xeaml"]
-[ext_resource type="Theme" uid="uid://djyjxn8m33ich" path="res://resources/new_theme.tres" id="2_avmd0"]
+[ext_resource type="Theme" uid="uid://djyjxn8m33ich" path="res://resources/theme/new_theme.tres" id="2_avmd0"]
 [ext_resource type="PackedScene" uid="uid://6k81u701i53i" path="res://scenes/ui/slot.tscn" id="3_xeaml"]
 
 [node name="Inventory" type="Control" unique_id=1145177155]

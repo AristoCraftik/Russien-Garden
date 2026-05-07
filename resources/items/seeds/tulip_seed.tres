@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="SeedData" format=3]
+
+[ext_resource type="Script" path="res://resources/items/seed_data.gd" id="1"]
+[ext_resource type="Resource" path="res://resources/plants/plants/tulip.tres" id="p"]
+
+[resource]
+script = ExtResource("1")
+item_id = Vector2i(1, 15)
+icon_id = Vector2i(1, 21)
+item_name = "Семена: Тюльпан"
+description = "Посадите на грядку."
+item_type = 0
+stack_size = 99
+plant = ExtResource("p")

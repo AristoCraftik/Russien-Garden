@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="PlantData" format=3]
+
+[ext_resource type="Script" path="res://resources/plants/plant_data.gd" id="1"]
+[resource]
+script = ExtResource("1")
+plant_id = Vector2i(1, 17)
+plant_name = "Ананас"
+plant_type = "Fruit"
+rarity = "Rare"
+description = "Ананас. Fruit, Rare."
+plant_atlas_row_y = 17
+frame_px = Vector2i(32, 32)
+is_tall = false
+grow_days = 9
+days_of_fruiting = 0
+water_every_days = 1
+yield_quantity = Vector2i(1, 2)
+special_traits = ""

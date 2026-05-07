@@ -1,44 +1,135 @@
 extends Control
 
-@onready var camera = $Camera2D
-@onready var field = $Field
+@onready var camera: Camera2D = $Camera2D
+@onready var field: Node2D = $Field
+@onready var inventory: Node = $CanvasLayer/MarginContainer/VBoxContainer/Inventory
+@onready var money_label: Label = $CanvasLayer/MarginContainer2/HBoxContainer/PanelContainer/MoneyLabel
+@onready var next_day_button: Button = $CanvasLayer/MarginContainer2/HBoxContainer/NextDayButton
+@onready var quit_button: Button = $CanvasLayer/MarginContainer2/HBoxContainer/QuitToMenuButton
 
-var camera_zoom = Vector2(0.05, 0.05)
-var day_counter = 0
+const STARTER_STACK: int = 10
+
+var day_counter: int = 0
+var _is_transitioning: bool = false
+
 
 func _ready() -> void:
+	# Общая зона локальных координат для drag-copy предметов (инвентарь, мусорка, продажи).
+	var ui_drag_root: Control = $CanvasLayer/DragOverlay
+	ui_drag_root.add_to_group("ui_drag_root")
+	TimeManager.balance_changed.connect(_on_economy_balance_changed)
+	_on_economy_balance_changed(TimeManager.get_balance())
+	# Иначе MarginContainer перехватывает клики по всему экрану, и поле не получает сбор/полив.
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	if FadeManager.start_mode == "load":
-		load_game()
-		
-	# Ждём, пока весь интерфейс отрисуется
-	await get_tree().process_frame
-	_spawn_initial_items()
+		await _load_game()
+	else:
+		TimeManager.set_balance(0)
+		await get_tree().process_frame
+		_spawn_starter_inventory()
+	# Сбрасываем режим, чтобы повторный вход в эту сцену не падал в "load".
+	FadeManager.start_mode = "new"
 
 
-func _spawn_initial_items() -> void:
-	var inventory = $CanvasLayer/MarginContainer/Inventory
-	if not inventory: return
-	var carrot_data = preload("res://resources/plants/carrot.tres")
-	var potato_data = preload("res://resources/plants/potato.tres")
-	for i in range(0, 10, 2):
-		inventory.fly_item_to_slot(i, carrot_data)
-		inventory.fly_item_to_slot(i+1, potato_data)
+func _on_economy_balance_changed(balance: int) -> void:
+	if is_instance_valid(money_label):
+		money_label.text = "Money: %d" % balance
+
+
+func _spawn_starter_inventory() -> void:
+	if inventory == null:
+		return
+	if not inventory.has_method("try_add_items"):
+		return
+	var dir := DirAccess.open("res://resources/items/seeds/")
+	if dir == null:
+		return
+	var names: Array = Array(dir.get_files())
+	names.sort()
+	for f in names:
+		if not f.ends_with(".tres"):
+			continue
+		var path: String = "res://resources/items/seeds/%s" % f
+		var res: Resource = load(path)
+		if res is SeedData:
+			var seed_data: SeedData = res
+			var n: int = mini(STARTER_STACK, seed_data.stack_size)
+			if not inventory.try_add_items(seed_data as ItemData, n, Vector2.INF):
+				break
+
+
+func _load_game() -> void:
+	var save: Dictionary = TimeManager.load_game()
+	if save.is_empty():
+		# Сейва нет — играем как новая игра.
+		TimeManager.set_balance(0)
+		await get_tree().process_frame
+		_spawn_starter_inventory()
+		return
+
+	day_counter = int(save.get("day", 0))
+	TimeManager.set_balance(int(save.get("coins", 0)))
+
+	for plant_entry in save.get("plants", []):
+		if typeof(plant_entry) != TYPE_DICTIONARY:
+			continue
+		var id_path: String = str(plant_entry.get("id", ""))
+		if id_path.is_empty():
+			continue
+		var data: Resource = load(id_path)
+		if not (data is PlantData):
+			continue
+		var cell: Vector2i = plant_entry.get("cell", Vector2i.ZERO)
+		var stage: int = int(plant_entry.get("stage", 0))
+		# Старые сейвы: зрелость записывали как stage == grow_days; теперь последний кадр — grow_days - 1.
+		var cap: int = maxi(data.grow_days, 1) - 1
+		if stage > cap:
+			stage = cap
+		var watered: bool = bool(plant_entry.get("watered", false))
+		field.plant_seed(cell, data, stage, watered)
+
+	if inventory:
+		await get_tree().process_frame
+		inventory.load_save_data(save.get("inventory", []))
+	var trash_can: Node = get_tree().get_first_node_in_group("trash_can")
+	if trash_can and trash_can.has_method("load_save_data"):
+		trash_can.call("load_save_data", save.get("trash", {}))
+	var sell_box: Node = get_tree().get_first_node_in_group("sell_box")
+	if sell_box and sell_box.has_method("load_save_data"):
+		sell_box.call("load_save_data", save.get("sell", []))
 
 
 func _on_quit_to_menu_button_button_up() -> void:
-	FadeManager.change_scene_with_fade("res://main.tscn", 0.5, 0.5, "Main menu")
+	if _is_transitioning:
+		return
+	_is_transitioning = true
+	# Сохраняем перед выходом, чтобы не терять прогресс.
+	TimeManager.save_all(day_counter)
+	FadeManager.change_scene_with_fade("res://scenes/main.tscn", 0.5, 0.5, "Main menu")
 
 
 func _on_next_day_button_button_up() -> void:
+	if _is_transitioning:
+		return
+	_is_transitioning = true
+	_set_buttons_enabled(false)
+
 	day_counter += 1
-	FadeManager.change_scene_with_fade('', 0.5, 0.5, 'day ' + str(day_counter))
+	FadeManager.change_scene_with_fade("", 0.5, 0.5, "Day " + str(day_counter))
 	await get_tree().create_timer(0.5).timeout
+
 	TimeManager.next_day(day_counter)
-	camera.zoom -= camera_zoom
+
+	# Временно отключено по запросу: отдаление камеры после каждого дня.
+	# camera.zoom = (camera.zoom - ZOOM_STEP).max(MIN_ZOOM)
+
+	await get_tree().create_timer(0.5).timeout
+	_set_buttons_enabled(true)
+	_is_transitioning = false
 
 
-func load_game():
-	var plants = TimeManager.load_game()[0]
-	day_counter = TimeManager.load_game()[1]
-	for plant in plants:
-		field.plant_seed(plant[0], load(str(plant[1])), plant[2])
+func _set_buttons_enabled(enabled: bool) -> void:
+	if is_instance_valid(next_day_button):
+		next_day_button.disabled = not enabled
+	if is_instance_valid(quit_button):
+		quit_button.disabled = not enabled

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="YieldData" format=3]
+
+[ext_resource type="Script" path="res://resources/items/yield_data.gd" id="1"]
+[ext_resource type="Resource" path="res://resources/plants/plants/bean.tres" id="p"]
+
+[resource]
+script = ExtResource("1")
+item_id = Vector2i(1, 21)
+icon_id = Vector2i(2, 28)
+item_name = "Фасоль (урожай)"
+description = "Можно продать."
+item_type = 1
+stack_size = 999
+base_price = 2
+plant = ExtResource("p")

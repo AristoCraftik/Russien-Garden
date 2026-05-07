@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="SeedData" format=3 uid="uid://3m4nh5mcgs5r"]
+
+[ext_resource type="Script" uid="uid://dderyu1ra4vhi" path="res://resources/items/seed_data.gd" id="1"]
+[ext_resource type="Resource" path="res://resources/plants/plants/potato.tres" id="p"]
+
+[resource]
+script = ExtResource("1")
+plant = ExtResource("p")
+item_id = Vector2i(2, 1)
+icon_id = Vector2i(1, 2)
+item_name = "Семена: Картофель"
+description = "Посадите на грядку."
+stack_size = 99

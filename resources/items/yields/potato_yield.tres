@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="YieldData" format=3 uid="uid://bohl7w0vh6lv3"]
+
+[ext_resource type="Script" uid="uid://cr3358ca3bcv" path="res://resources/items/yield_data.gd" id="1"]
+[ext_resource type="Resource" path="res://resources/plants/plants/potato.tres" id="p"]
+
+[resource]
+script = ExtResource("1")
+plant = ExtResource("p")
+base_price = 3
+item_id = Vector2i(2, 1)
+icon_id = Vector2i(2, 2)
+item_name = "Картофель (урожай)"
+description = "Можно продать."
+item_type = 1

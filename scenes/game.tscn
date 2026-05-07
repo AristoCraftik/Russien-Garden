@@ -3,7 +3,11 @@
 [ext_resource type="Script" uid="uid://d1qgvqplxflri" path="res://scenes/game.gd" id="1_lnu2h"]
 [ext_resource type="PackedScene" uid="uid://oprnu180mftx" path="res://scenes/field.tscn" id="1_uwrxv"]
 [ext_resource type="PackedScene" uid="uid://bqv5rj56s87f1" path="res://scenes/ui/inventory.tscn" id="2_yqjtg"]
-[ext_resource type="Theme" uid="uid://djyjxn8m33ich" path="res://resources/new_theme.tres" id="4_lbhrr"]
+[ext_resource type="Theme" uid="uid://djyjxn8m33ich" path="res://resources/theme/new_theme.tres" id="4_lbhrr"]
+[ext_resource type="PackedScene" uid="uid://bf3iq3gk8b4dp" path="res://scenes/ui/trash_can.tscn" id="5_trash"]
+[ext_resource type="PackedScene" uid="uid://cj7ufkckhegds" path="res://scenes/ui/sell_box.tscn" id="6_sell"]
+
+[sub_resource type="Theme" id="Theme_p57ef"]
 
 [node name="Game" type="MarginContainer" unique_id=1090181912]
 anchors_preset = 15
@@ -32,7 +36,12 @@ grow_vertical = 2
 size_flags_horizontal = 8
 size_flags_vertical = 8
 
-[node name="Inventory" parent="CanvasLayer/MarginContainer" unique_id=1145177155 instance=ExtResource("2_yqjtg")]
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/MarginContainer" unique_id=883001964]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+
+[node name="Inventory" parent="CanvasLayer/MarginContainer/VBoxContainer" unique_id=1145177155 instance=ExtResource("2_yqjtg")]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 0
@@ -54,6 +63,48 @@ text = "Next day"
 layout_mode = 2
 theme = ExtResource("4_lbhrr")
 text = "Quit to menu"
+
+[node name="PanelContainer" type="PanelContainer" parent="CanvasLayer/MarginContainer2/HBoxContainer" unique_id=1859533303]
+layout_mode = 2
+theme = ExtResource("4_lbhrr")
+
+[node name="MoneyLabel" type="Label" parent="CanvasLayer/MarginContainer2/HBoxContainer/PanelContainer" unique_id=810450865]
+layout_mode = 2
+theme = ExtResource("4_lbhrr")
+text = "Money: 0"
+
+[node name="MarginContainer3" type="MarginContainer" parent="CanvasLayer" unique_id=1485033179]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -73.0
+offset_top = -44.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="BottomRow" type="HBoxContainer" parent="CanvasLayer/MarginContainer3" unique_id=883002964]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
+theme = SubResource("Theme_p57ef")
+
+[node name="TrashCan" parent="CanvasLayer/MarginContainer3/BottomRow" unique_id=883003964 instance=ExtResource("5_trash")]
+layout_mode = 2
+
+[node name="SellBox" parent="CanvasLayer/MarginContainer3/BottomRow" unique_id=883004964 instance=ExtResource("6_sell")]
+layout_mode = 2
+
+[node name="DragOverlay" type="Control" parent="CanvasLayer" unique_id=883006964]
+z_index = 100
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 
 [connection signal="button_up" from="CanvasLayer/MarginContainer2/HBoxContainer/NextDayButton" to="." method="_on_next_day_button_button_up"]
 [connection signal="button_up" from="CanvasLayer/MarginContainer2/HBoxContainer/QuitToMenuButton" to="." method="_on_quit_to_menu_button_button_up"]

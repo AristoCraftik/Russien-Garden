@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="SeedData" format=3 uid="uid://bdukxqupgs31u"]
+
+[ext_resource type="Script" uid="uid://dderyu1ra4vhi" path="res://resources/items/seed_data.gd" id="1"]
+[ext_resource type="Resource" path="res://resources/plants/plants/carrot.tres" id="p"]
+
+[resource]
+script = ExtResource("1")
+plant = ExtResource("p")
+item_id = Vector2i(1, 1)
+item_name = "Семена: Морковь"
+description = "Посадите на грядку."
+stack_size = 99

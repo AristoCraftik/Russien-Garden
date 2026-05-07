@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="YieldData" format=3]
+
+[ext_resource type="Script" path="res://resources/items/yield_data.gd" id="1"]
+[ext_resource type="Resource" path="res://resources/plants/plants/rose.tres" id="p"]
+
+[resource]
+script = ExtResource("1")
+item_id = Vector2i(2, 6)
+icon_id = Vector2i(2, 20)
+item_name = "Роза (урожай)"
+description = "Можно продать."
+item_type = 1
+stack_size = 999
+base_price = 12
+plant = ExtResource("p")

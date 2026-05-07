@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="PlantData" format=3 uid="uid://dp0thkasf00d8"]
+
+[ext_resource type="Script" uid="uid://bpuoqsrolsstp" path="res://resources/plants/plant_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+plant_id = Vector2i(1, 22)
+plant_name = "Клевер"
+plant_type = "Legume"
+rarity = "Common"
+description = "Клевер. Legume, Common. Закон Мёрфи."
+plant_atlas_row_y = 22
+yield_quantity = Vector2i(1, 3)
+special_traits = "Закон Мёрфи"

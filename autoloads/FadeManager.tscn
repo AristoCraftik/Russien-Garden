@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bkbxosxv8w673"]
 
 [ext_resource type="Script" uid="uid://ikd1eqvqlx73" path="res://autoloads/fade_manager.gd" id="1_h7qw4"]
-[ext_resource type="Theme" uid="uid://djyjxn8m33ich" path="res://resources/new_theme.tres" id="2_vde52"]
+[ext_resource type="Theme" uid="uid://djyjxn8m33ich" path="res://resources/theme/new_theme.tres" id="2_vde52"]
 
 [node name="FadeManager" type="CanvasLayer" unique_id=640020441]
 layer = 2

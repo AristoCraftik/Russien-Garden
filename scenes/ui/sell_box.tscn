@@ -1,0 +1,35 @@
+[gd_scene format=3 uid="uid://cj7ufkckhegds"]
+
+[ext_resource type="Script" uid="uid://duiswu7j5fsu0" path="res://scenes/ui/sell_box.gd" id="1_sell"]
+[ext_resource type="Theme" uid="uid://djyjxn8m33ich" path="res://resources/theme/new_theme.tres" id="2_theme"]
+[ext_resource type="PackedScene" uid="uid://6k81u701i53i" path="res://scenes/ui/slot.tscn" id="3_slot"]
+
+[node name="SellBox" type="MarginContainer" unique_id=961218669]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -608.0
+offset_bottom = -348.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_sell")
+
+[node name="VBox" type="VBoxContainer" parent="." unique_id=1298583120]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBox" unique_id=1406920874]
+layout_mode = 2
+theme = ExtResource("2_theme")
+text = "Sell"
+horizontal_alignment = 1
+
+[node name="Scroll" type="ScrollContainer" parent="VBox" unique_id=532505991]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="SlotsHost" type="VBoxContainer" parent="VBox/Scroll" unique_id=11425628]
+layout_mode = 2
+
+[node name="Slot" parent="VBox/Scroll/SlotsHost" unique_id=34332280 instance=ExtResource("3_slot")]
+layout_mode = 2

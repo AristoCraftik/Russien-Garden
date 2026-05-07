@@ -1,37 +1,118 @@
 extends Node
 
-signal plants_grow
+signal day_advanced
 signal clear_watered_tiles
+signal balance_changed(new_balance: int)
 
-var save_path := "user://garden/game_data.cfg"
+const SAVE_PATH := "user://garden/game_data.cfg"
+const SAVE_VERSION := 2
 
-func load_game():
-	var config = ConfigFile.new()
-	var err = config.load(save_path)
-	if err == OK:
-		return [config.get_value("game", "plants"), config.get_value("game", "day")]
-	else:
-		print("Save error code: ", err)
+var _coins: int = 0
 
 
-func next_day(day_counter):
-	plants_grow.emit(1, Vector2i(100000, 100000))
-	emit_signal("clear_watered_tiles")
-	save_all(day_counter)
+func set_balance(value: int) -> void:
+	_coins = maxi(value, 0)
+	balance_changed.emit(_coins)
 
 
-func save_all(day_counter):
+func add_coins(amount: int) -> void:
+	if amount == 0:
+		return
+	_coins += amount
+	balance_changed.emit(_coins)
+
+
+func get_balance() -> int:
+	return _coins
+
+
+func _ready() -> void:
+	_wipe_save_file()
+
+
+func _wipe_save_file() -> void:
+	if FileAccess.file_exists(SAVE_PATH):
+		var err := DirAccess.remove_absolute(SAVE_PATH)
+		if err != OK:
+			push_warning("TimeManager: could not remove old save (%d)" % err)
+
+
+## Временно: без переноса старых версий — файл сейва сбрасывается при каждом запуске (см. _ready).
+func load_game() -> Dictionary:
 	var config := ConfigFile.new()
-	config.set_value("game", "plants", get_plants())
+	var err: int = config.load(SAVE_PATH)
+	if err != OK:
+		return {}
+	return {
+		"version":   int(config.get_value("game", "version", SAVE_VERSION)),
+		"day":       int(config.get_value("game", "day", 0)),
+		"plants":    config.get_value("game", "plants", []),
+		"inventory": config.get_value("game", "inventory", []),
+		"coins":     int(config.get_value("game", "coins", 0)),
+		"trash":     config.get_value("game", "trash", {}),
+		"sell":      config.get_value("game", "sell", []),
+	}
+
+
+func has_save() -> bool:
+	return FileAccess.file_exists(SAVE_PATH)
+
+
+func next_day(day_counter: int) -> void:
+	day_advanced.emit()
+	clear_watered_tiles.emit()
+	save_all(day_counter, _collect_plants(), _collect_inventory())
+
+
+func save_all(day_counter: int, plants_snapshot: Array = [], inventory_snapshot: Array = []) -> bool:
+	if plants_snapshot.is_empty():
+		plants_snapshot = _collect_plants()
+	if inventory_snapshot.is_empty():
+		inventory_snapshot = _collect_inventory()
+	var config := ConfigFile.new()
+	config.set_value("game", "version", SAVE_VERSION)
 	config.set_value("game", "day", day_counter)
-	var dir := save_path.get_base_dir()
-	DirAccess.make_dir_recursive_absolute(dir)
-	config.save(save_path)
+	config.set_value("game", "plants", plants_snapshot)
+	config.set_value("game", "inventory", inventory_snapshot)
+	config.set_value("game", "coins", get_balance())
+	config.set_value("game", "trash", _collect_trash())
+	config.set_value("game", "sell", _collect_sell())
+	var dir_err: int = DirAccess.make_dir_recursive_absolute(SAVE_PATH.get_base_dir())
+	if dir_err != OK and dir_err != ERR_ALREADY_EXISTS:
+		push_error("TimeManager: cannot create save dir (%d)" % dir_err)
+		return false
+	var save_err: int = config.save(SAVE_PATH)
+	if save_err != OK:
+		push_error("TimeManager: save error %d" % save_err)
+		return false
+	return true
 
 
-func get_plants():
-	var plants_list = []
-	var plants = get_tree().get_nodes_in_group("plants")
-	for plant in plants:
-		plants_list.append([plant.cell_position, plant.path_to_tres, plant.growth_stage])
-	return plants_list
+func _collect_plants() -> Array:
+	var field: Node = get_tree().get_first_node_in_group("field") if get_tree() else null
+	if field and field.has_method("get_plants_save_data"):
+		return field.get_plants_save_data()
+	return []
+
+
+func _collect_inventory() -> Array:
+	var inventory: Node = get_tree().get_first_node_in_group("inventory") if get_tree() else null
+	if inventory and inventory.has_method("get_save_data"):
+		return inventory.get_save_data()
+	return []
+
+
+func _collect_trash() -> Dictionary:
+	var trash: Node = get_tree().get_first_node_in_group("trash_can") if get_tree() else null
+	if trash and trash.has_method("get_save_data"):
+		var d = trash.call("get_save_data")
+		return d if d is Dictionary else {}
+	return {}
+
+
+func _collect_sell() -> Array:
+	var sell_box: Node = get_tree().get_first_node_in_group("sell_box") if get_tree() else null
+	if sell_box and sell_box.has_method("get_save_data"):
+		var arr = sell_box.call("get_save_data")
+		return arr if arr is Array else []
+	return []

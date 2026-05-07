@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dk6v20hgdf1xx"]
 
-[ext_resource type="Texture2D" uid="uid://bqmd53tkujtfy" path="res://assets/button_defoult.png" id="1_3dk36"]
+[ext_resource type="Texture2D" uid="uid://bqmd53tkujtfy" path="res://assets/ui/button_defoult.png" id="1_3dk36"]
 [ext_resource type="Script" uid="uid://dtqhvy1t045kq" path="res://scenes/tiles/tile.gd" id="1_ywnoi"]
 
 [node name="Tile" type="Control" unique_id=1857160279]

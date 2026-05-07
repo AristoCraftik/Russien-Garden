@@ -1,7 +1,26 @@
 [gd_scene format=3 uid="uid://6k81u701i53i"]
 
-[ext_resource type="Theme" uid="uid://djyjxn8m33ich" path="res://resources/new_theme.tres" id="1_jkamp"]
+[ext_resource type="Script" uid="uid://cvyix5astlixo" path="res://scenes/ui/slot_panel.gd" id="1_slot_script"]
+[ext_resource type="Theme" uid="uid://djyjxn8m33ich" path="res://resources/theme/new_theme.tres" id="2_theme"]
 
 [node name="Slot" type="Panel" unique_id=272914832]
 custom_minimum_size = Vector2(32, 32)
-theme = ExtResource("1_jkamp")
+theme = ExtResource("2_theme")
+script = ExtResource("1_slot_script")
+
+[node name="StackLabel" type="Label" parent="." unique_id=480185149]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -24.0
+offset_top = -16.0
+offset_right = -2.0
+offset_bottom = -2.0
+grow_horizontal = 0
+grow_vertical = 0
+theme = ExtResource("2_theme")
+horizontal_alignment = 2
+vertical_alignment = 2
