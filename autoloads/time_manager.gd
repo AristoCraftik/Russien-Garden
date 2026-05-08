@@ -3,11 +3,18 @@ extends Node
 signal day_advanced
 signal clear_watered_tiles
 signal balance_changed(new_balance: int)
+signal day_financials(day: int, earned: int, spent: int, watering_spent: int, quota_spent: int)
 
 const SAVE_PATH := "user://garden/game_data.cfg"
 const SAVE_VERSION := 2
 
 var _coins: int = 0
+
+const DAILY_QUOTA_COST: int = 10
+const WATER_COST: int = 1
+
+var _pending_watering_count: int = 0
+var _active_tool: Resource = null
 
 
 func set_balance(value: int) -> void:
@@ -24,6 +31,18 @@ func add_coins(amount: int) -> void:
 
 func get_balance() -> int:
 	return _coins
+
+
+func set_active_tool(tool: Resource) -> void:
+	_active_tool = tool
+
+
+func get_active_tool() -> Resource:
+	return _active_tool
+
+
+func register_watering_action() -> void:
+	_pending_watering_count += 1
 
 
 func _ready() -> void:
@@ -58,10 +77,33 @@ func has_save() -> bool:
 	return FileAccess.file_exists(SAVE_PATH)
 
 
-func next_day(day_counter: int) -> void:
+func next_day(day_counter: int) -> Dictionary:
+	# Доход: всё, что начислилось при day_advanced (например, продажа).
+	var before: int = get_balance()
 	day_advanced.emit()
+	var after_income: int = get_balance()
+	var earned: int = maxi(after_income - before, 0)
+
+	# Расходы снимаем между днями.
+	var watering_spent: int = _pending_watering_count * WATER_COST
+	var quota_spent: int = DAILY_QUOTA_COST
+	var spent: int = watering_spent + quota_spent
+	set_balance(maxi(after_income - spent, 0))
+
+	# Сбрасываем счётчик на новый день.
+	_pending_watering_count = 0
+
 	clear_watered_tiles.emit()
 	save_all(day_counter, _collect_plants(), _collect_inventory())
+
+	day_financials.emit(day_counter, earned, spent, watering_spent, quota_spent)
+	return {
+		"earned": earned,
+		"spent": spent,
+		"watering_spent": watering_spent,
+		"quota_spent": quota_spent,
+		"balance": get_balance(),
+	}
 
 
 func save_all(day_counter: int, plants_snapshot: Array = [], inventory_snapshot: Array = []) -> bool:

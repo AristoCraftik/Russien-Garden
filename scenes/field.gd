@@ -164,13 +164,16 @@ func harvest_plant_at(cell_pos: Vector2i) -> HarvestOutcome:
 	return HarvestOutcome.HARVESTED
 
 
-func pour_cell(cell_pos: Vector2i = Vector2i.ZERO) -> void:
+func pour_cell(cell_pos: Vector2i = Vector2i.ZERO) -> bool:
 	if not is_bed(cell_pos):
-		return
+		return false
+	if is_cell_watered(cell_pos):
+		return false
 	WateredBedLayer.set_cells_terrain_connect([cell_pos], 0, 0)
 	var plant: Node = _cell_to_plant.get(cell_pos, null)
 	if is_instance_valid(plant):
 		plant.watered = true
+	return true
 
 
 func depour_cell(cell_pos: Vector2i = Vector2i.ZERO) -> void:
@@ -217,21 +220,7 @@ func _input(event: InputEvent) -> void:
 			HarvestOutcome.HARVESTED:
 				get_viewport().set_input_as_handled()
 				return
-			# Созрело, но урожай не влез — всё равно можно полить грядку.
-			HarvestOutcome.INVENTORY_FULL, HarvestOutcome.NO_INVENTORY_GROUP, HarvestOutcome.NO_YIELD_RESOURCE:
-				if is_bed(cell_pos):
-					pour_cell(cell_pos)
-				get_viewport().set_input_as_handled()
-				return
-			HarvestOutcome.NO_PLANT, HarvestOutcome.NOT_RIPE:
-				pour_cell(cell_pos)
-				if DEBUG_HARVEST_AND_FIELD_CLICK:
-					print(
-						"[Field/LMB] полив ", cell_pos,
-						" is_bed=", is_bed(cell_pos),
-						" occupied=", is_cell_occupied(cell_pos),
-						" (попытка сбора: ", ho, ")"
-					)
+		get_viewport().set_input_as_handled()
 	elif event.button_index == MOUSE_BUTTON_RIGHT:
 		depour_cell(cell_pos)
 

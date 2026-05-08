@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ToolData" format=3 uid="uid://btxpsxa1tnc5u"]
+
+[ext_resource type="Script" uid="uid://dugvx0fi85721" path="res://resources/items/tool_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+item_id = Vector2i(1, 1)
+item_name = "Watering Can"
+description = "Allows watering beds."
+item_type = 4
+stack_size = 1

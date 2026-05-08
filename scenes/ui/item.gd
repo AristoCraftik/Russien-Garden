@@ -45,6 +45,7 @@ func _exit_tree() -> void:
 
 func _on_tree_exiting() -> void:
 	_destroy_tooltip()
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	if is_instance_valid(drag_copy):
 		drag_copy.queue_free()
 		drag_copy = null
@@ -281,15 +282,51 @@ func _destroy_tooltip() -> void:
 
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
+		# ЛКМ: нажал — взял, нажал ещё раз — отпустил.
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-			start_drag()
+			if dragging:
+				end_drag()
+			else:
+				start_drag()
+			get_viewport().set_input_as_handled()
+			return
+		# ПКМ: использовать предмет, если он "в руке".
+		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
+			if dragging:
+				_try_use_in_hand()
+				get_viewport().set_input_as_handled()
+				return
 
 
 func _input(event: InputEvent) -> void:
-	if dragging and event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
+	# Когда предмет "в руке", ловим клики глобально.
+	# Важно: поле тоже слушает _input и может помечать событие как handled,
+	# поэтому для ЛКМ используем _input (а не только _unhandled_input).
+	if not dragging:
+		return
+	if event is InputEventMouseButton and event.pressed:
+		if event.button_index == MOUSE_BUTTON_LEFT:
 			end_drag()
 			get_viewport().set_input_as_handled()
+			return
+		if event.button_index == MOUSE_BUTTON_RIGHT:
+			_try_use_in_hand()
+			get_viewport().set_input_as_handled()
+			return
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not dragging:
+		return
+	if event is InputEventMouseButton and event.pressed:
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			end_drag()
+			get_viewport().set_input_as_handled()
+			return
+		if event.button_index == MOUSE_BUTTON_RIGHT:
+			_try_use_in_hand()
+			get_viewport().set_input_as_handled()
+			return
 
 
 func _is_in_flight() -> bool:
@@ -326,12 +363,17 @@ func start_drag() -> void:
 	drag_root.add_child(drag_copy)
 	var mouse_global: Vector2 = get_viewport().get_mouse_position()
 	drag_copy.global_position = mouse_global - drag_copy.size * 0.5
+	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
+	# Если это инструмент — считаем его активным на время использования.
+	if item_data is ToolData and TimeManager and TimeManager.has_method("set_active_tool"):
+		TimeManager.set_active_tool(item_data)
 
 
 func end_drag() -> void:
 	if not dragging:
 		return
 	dragging = false
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	if not is_instance_valid(drag_copy):
 		return
 	var screen_mouse: Vector2 = get_viewport().get_mouse_position()
@@ -346,16 +388,6 @@ func end_drag() -> void:
 			show()
 		return
 	if _try_drop_on_sell(screen_mouse):
-		drag_copy.queue_free()
-		drag_copy = null
-		_destroy_tooltip()
-		if not _drag_consumed_early:
-			consume_amount(1)
-		_drag_consumed_early = false
-		if is_instance_valid(self) and stack_count > 0:
-			show()
-		return
-	if _try_plant_on_field():
 		drag_copy.queue_free()
 		drag_copy = null
 		_destroy_tooltip()
@@ -381,6 +413,71 @@ func _on_return_finished() -> void:
 		else:
 			try_add_stack(1)
 		_drag_consumed_early = false
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	show()
+
+
+func _try_use_in_hand() -> void:
+	if not dragging or not is_instance_valid(drag_copy) or item_data == null:
+		return
+	# 1) Семена: посадить.
+	if item_data is SeedData:
+		if _try_plant_on_field():
+			_commit_used_one()
+		return
+	# 2) Инструменты: пока только лейка.
+	if item_data is ToolData:
+		_try_water_on_field()
+		return
+
+
+func _try_water_on_field() -> void:
+	var field: Node = get_tree().get_first_node_in_group("field")
+	if field == null:
+		return
+	if not (item_data is ToolData):
+		return
+	var td: ToolData = item_data as ToolData
+	if td.tool_type != ToolData.ToolType.WATERING_CAN:
+		return
+	var viewport: Viewport = get_viewport()
+	var screen_mouse: Vector2 = viewport.get_mouse_position()
+	var mouse_world: Vector2 = viewport.get_canvas_transform().affine_inverse() * screen_mouse
+	var water_layer: Node = field.WateredBedLayer
+	if water_layer == null:
+		return
+	var local_pos: Vector2 = water_layer.to_local(mouse_world)
+	var cell_pos: Vector2i = water_layer.local_to_map(local_pos)
+	if not field.is_bed(cell_pos):
+		return
+	if field.has_method("pour_cell"):
+		var ok: bool = bool(field.call("pour_cell", cell_pos))
+		if ok and TimeManager and TimeManager.has_method("register_watering_action"):
+			TimeManager.register_watering_action()
+
+
+func _commit_used_one() -> void:
+	# Фиксируем использование 1 единицы из "руки", сохраняя режим удержания, если ещё есть.
+	_destroy_tooltip()
+	if not _drag_consumed_early:
+		consume_amount(1)
+	# ранний расход (для стака >1) уже уменьшил stack_count — считаем это "использованием".
+	_drag_consumed_early = false
+	if not is_instance_valid(self):
+		# Предмет закончился и был удалён.
+		if is_instance_valid(drag_copy):
+			drag_copy.queue_free()
+		drag_copy = null
+		dragging = false
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		return
+	if stack_count <= 0:
+		if is_instance_valid(drag_copy):
+			drag_copy.queue_free()
+		drag_copy = null
+		dragging = false
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		return
 	show()
 
 

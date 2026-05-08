@@ -81,3 +81,6 @@ msgstr "Имя"
 msgid "TOAST_INVENTORY_FULL"
 msgstr "Инвентарь полон"
 
+msgid "DAY_SUMMARY_FMT"
+msgstr "День %d\nЗаработано: +%d\nТраты: -%d (полив %d, квота %d)"
+
