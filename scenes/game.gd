@@ -3,6 +3,7 @@ extends Control
 @onready var camera: Camera2D = $Camera2D
 @onready var field: Node2D = $Field
 @onready var inventory: Node = $CanvasLayer/MarginContainer/VBoxContainer/Inventory
+@onready var vouchers: Node = $CanvasLayer/MarginContainer5/HBoxContainer/Vouchers
 @onready var money_label: Label = $CanvasLayer/MarginContainer2/HBoxContainer/PanelContainer/MoneyLabel
 @onready var next_day_button: Button = $CanvasLayer/MarginContainer2/HBoxContainer/NextDayButton
 @onready var quit_button: Button = $CanvasLayer/MarginContainer2/HBoxContainer/QuitToMenuButton
@@ -31,6 +32,8 @@ func _ready() -> void:
 		_spawn_starter_inventory()
 	# Сбрасываем режим, чтобы повторный вход в эту сцену не падал в "load".
 	FadeManager.start_mode = "new"
+	if vouchers and vouchers.has_signal("voucher_purchased"):
+		vouchers.voucher_purchased.connect(_on_voucher_purchased)
 
 
 func _on_economy_balance_changed(balance: int) -> void:
@@ -138,9 +141,6 @@ func _on_next_day_button_button_up() -> void:
 	var text: String = tr("DAY_SUMMARY_FMT") % [day_counter, earned, spent, watering_spent, quota_spent]
 	FadeManager.change_scene_with_fade("", 0.5, 0.5, text)
 
-	# Временно отключено по запросу: отдаление камеры после каждого дня.
-	# camera.zoom = (camera.zoom - ZOOM_STEP).max(MIN_ZOOM)
-
 	await get_tree().create_timer(0.5).timeout
 	_set_buttons_enabled(true)
 	_is_transitioning = false
@@ -151,3 +151,11 @@ func _set_buttons_enabled(enabled: bool) -> void:
 		next_day_button.disabled = not enabled
 	if is_instance_valid(quit_button):
 		quit_button.disabled = not enabled
+		
+func _on_voucher_purchased(voucher: VoucherData) -> void:
+	if voucher == null:
+		return
+
+	match voucher.effect:
+		VoucherData.VoucherEffect.CAMERA_ZOOM_OUT:
+			camera.zoom *= Vector2(0.8, 0.8)

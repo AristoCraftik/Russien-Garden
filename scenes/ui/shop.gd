@@ -77,10 +77,10 @@ func _calc_seed_price(seed: SeedData) -> int:
 	if seed.plant:
 		rarity = seed.plant.rarity
 	var rarity_mult := _price_model.rarity_mult(rarity)
-	var sold_balance := MarketState.get_sold_balance(seed.resource_path)
+	var sold_balance: int = MarketState.get_sold_balance(seed.resource_path)
 	var demand_mult := _price_model.demand_mult(sold_balance)
-	var exch := MarketState.exchange_mult
-	var raw := float(seed.base_buy_price) * rarity_mult * demand_mult * exch
+	var exch: float = MarketState.exchange_mult
+	var raw:  float = float(seed.base_buy_price) * rarity_mult * demand_mult * exch
 	return maxi(1, int(round(raw)))
 
 
@@ -126,7 +126,7 @@ func _create_shop_item(slot: Panel, seed: SeedData, qty: int, unit_price: int) -
 
 	var price_lbl := Label.new()
 	price_lbl.name = "PriceLabel"
-	price_lbl.text = "$%d" % unit_price
+	price_lbl.text = "$%d" % (unit_price * qty)
 	price_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	price_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	price_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE

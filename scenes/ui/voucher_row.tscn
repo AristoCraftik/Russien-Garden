@@ -1,0 +1,43 @@
+[gd_scene format=3 uid="uid://bbtnipcav81ya"]
+
+[ext_resource type="Theme" uid="uid://djyjxn8m33ich" path="res://resources/theme/new_theme.tres" id="1_8i8qx"]
+[ext_resource type="Script" uid="uid://ct02xqg882rx" path="res://scenes/ui/voucher_row.gd" id="2_b55p7"]
+
+[node name="VoucherRow" type="PanelContainer" unique_id=1871825846]
+offset_right = 180.0
+offset_bottom = 75.0
+theme = ExtResource("1_8i8qx")
+script = ExtResource("2_b55p7")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=91527462]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer" unique_id=1385674534]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="NameLabel" type="Label" parent="MarginContainer/HBoxContainer" unique_id=1523295008]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+
+[node name="BuyButton" type="Button" parent="MarginContainer/HBoxContainer" unique_id=2128066096]
+custom_minimum_size = Vector2(50, 25)
+layout_mode = 2
+text = "Buy"
+
+[node name="Panel" type="Panel" parent="." unique_id=1088324475]
+layout_mode = 2
+
+[node name="PriceLabel" type="Label" parent="Panel" unique_id=1330653128]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -4.0
+offset_right = 20.0
+offset_bottom = 4.0
+grow_horizontal = 2
+grow_vertical = 2

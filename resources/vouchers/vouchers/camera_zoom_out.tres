@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="VoucherData" format=3 uid="uid://bj5uco7xdugwu"]
+
+[ext_resource type="Script" uid="uid://ckuf3osthfvsr" path="res://resources/vouchers/voucher_data.gd" id="1_xo4nl"]
+
+[resource]
+script = ExtResource("1_xo4nl")
+voucher_id = "camera_zoom_out"
+title = "New Territory"
+description = "camera zoom out"
+metadata/_custom_type_script = "uid://ckuf3osthfvsr"

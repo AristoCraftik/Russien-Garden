@@ -3,9 +3,9 @@ extends Resource
 
 @export var rarity_multipliers: Dictionary = {
 	"common": 1.0,
-	"uncommon": 1.25,
-	"rare": 1.6,
-	"epic": 2.2,
+	"uncommon": 1.2,
+	"rare": 1.5,
+	"epic": 2.0,
 	"legendary": 3.0
 }
 
