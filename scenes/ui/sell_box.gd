@@ -23,6 +23,13 @@ func _on_day_advanced() -> void:
 		if idata != null and idata is YieldData:
 			var yd: YieldData = idata as YieldData
 			total += yd.base_price * qty
+			
+		if idata != null and idata is YieldData:
+			var yd := idata as YieldData
+			total += yd.base_price * qty
+			# влияние на рынок семян соответствующего растения
+			var seed_path := "res://resources/items/seeds/%s_seed.tres" % yd.plant.resource_path.get_file().get_basename()
+			MarketState.register_sale(seed_path, qty)
 	TimeManager.add_coins(total)
 	_reset_to_single_empty_slot()
 

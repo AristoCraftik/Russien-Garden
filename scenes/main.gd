@@ -33,4 +33,3 @@ func switch_settings() -> void:
 	else:
 		settings_is_opened = true
 		settings.open()
-

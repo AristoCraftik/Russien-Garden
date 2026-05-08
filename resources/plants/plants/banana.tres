@@ -1,6 +1,7 @@
-[gd_resource type="Resource" script_class="PlantData" format=3]
+[gd_resource type="Resource" script_class="PlantData" format=3 uid="uid://dk2lbs5cm16wc"]
 
-[ext_resource type="Script" path="res://resources/plants/plant_data.gd" id="1"]
+[ext_resource type="Script" uid="uid://bpuoqsrolsstp" path="res://resources/plants/plant_data.gd" id="1"]
+
 [resource]
 script = ExtResource("1")
 plant_id = Vector2i(2, 7)
@@ -9,10 +10,6 @@ plant_type = "Fruit"
 rarity = "Uncommon"
 description = "Банан. Fruit, Uncommon."
 plant_atlas_row_y = 22
-frame_px = Vector2i(32, 32)
-is_tall = false
 grow_days = 10
 days_of_fruiting = 2
-water_every_days = 1
 yield_quantity = Vector2i(2, 5)
-special_traits = ""

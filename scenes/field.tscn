@@ -7,7 +7,6 @@
 [ext_resource type="Texture2D" uid="uid://c3o3b7gefso3i" path="res://assets/tiles/pour_tilemap.png" id="4_wnvii"]
 [ext_resource type="Texture2D" uid="uid://cse580ok2yhqc" path="res://assets/tiles/ambient_tilemap.png" id="6_wnvii"]
 
-
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_tcubs"]
 texture = ExtResource("2_pn4dk")
 texture_region_size = Vector2i(32, 32)

@@ -7,7 +7,7 @@ extends Control
 @onready var next_day_button: Button = $CanvasLayer/MarginContainer2/HBoxContainer/NextDayButton
 @onready var quit_button: Button = $CanvasLayer/MarginContainer2/HBoxContainer/QuitToMenuButton
 
-const STARTER_STACK: int = 10
+const STARTER_STACK: int = 1
 
 var day_counter: int = 0
 var _is_transitioning: bool = false

@@ -23,6 +23,9 @@ var _mouse_over: bool = false
 var _tooltip_timer: float = 0.0
 var _drag_consumed_early: bool = false
 
+var origin_kind: String = "inventory" # "inventory" | "shop"
+var unit_buy_price: int = 0
+
 
 func _ready() -> void:
 	mouse_filter = MOUSE_FILTER_STOP
@@ -117,7 +120,6 @@ func is_drag_busy() -> bool:
 	return dragging or is_instance_valid(drag_copy)
 
 
-## Сколько не поместилось (остаток).
 func try_add_stack(delta: int) -> int:
 	if item_data == null or delta <= 0:
 		return delta
@@ -168,28 +170,20 @@ func _refresh_stack_visuals() -> void:
 
 
 func _position_stack_label(lbl: Label) -> void:
-	# При сортировке предмет временно переподвешивается в другой Control.
-	# Anchors/layout на Label могут пересчитываться и давать "прыжок".
-	# Поэтому позиционируем вручную в правый-нижний угол относительно текущего родителя.
 	if lbl == null:
 		return
 	var host: Control = lbl.get_parent() as Control
 	if host == null:
 		return
 	var host_size: Vector2 = host.size
-	# Если лейбл прикреплён к самой иконке предмета, во время сортировки size может временно становиться "не тем".
-	# Визуальный размер иконки у нас фиксированный 32x32 — привязываемся к нему.
 	if host == self:
 		host_size = DRAG_VISUAL_SIZE
-	# Сбрасываем anchors, чтобы position работал стабильно.
 	lbl.anchor_left = 0.0
 	lbl.anchor_top = 0.0
 	lbl.anchor_right = 0.0
 	lbl.anchor_bottom = 0.0
-	# Под размер текста.
 	var s: Vector2 = lbl.get_minimum_size()
 	lbl.size = s
-	# Отступы как раньше: справа/снизу 2px, слева/сверху запас под 2-значные/3-значные.
 	var x: float = host_size.x - s.x - STACK_LABEL_PAD.x
 	var y: float = host_size.y - s.y - STACK_LABEL_PAD.y
 	lbl.position = Vector2(maxf(x, 0.0), maxf(y, 0.0))
@@ -197,8 +191,6 @@ func _position_stack_label(lbl: Label) -> void:
 	lbl.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
 	lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
-
-# ---------------- HOVER / TOOLTIP ----------------
 
 func _on_mouse_entered() -> void:
 	_mouse_over = true
@@ -282,8 +274,6 @@ func _destroy_tooltip() -> void:
 	_tooltip_panel = null
 
 
-# ---------------- DRAG & DROP ----------------
-
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
@@ -315,11 +305,16 @@ func start_drag() -> void:
 	if not drag_root:
 		drag_root = _find_drag_root()
 	origin_global_pos = global_position
-	if stack_count > 1:
-		consume_amount(1)
-		_drag_consumed_early = true
+	if origin_kind == "inventory":
+		if stack_count > 1:
+			consume_amount(1)
+			_drag_consumed_early = true
+		else:
+			hide()
 	else:
+		_drag_consumed_early = false
 		hide()
+
 	drag_copy = TextureRect.new()
 	drag_copy.texture = texture
 	drag_copy.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
@@ -334,6 +329,18 @@ func start_drag() -> void:
 
 
 func end_drag() -> void:
+	if origin_kind == "shop":
+		dragging = false
+		if _try_buy_into_inventory():
+			if is_instance_valid(drag_copy):
+				drag_copy.queue_free()
+				drag_copy = null
+			_destroy_tooltip()
+			_remove_item_from_slot_and_free()
+			return
+		_return_drag_copy()
+		return
+
 	if not dragging:
 		return
 	dragging = false
@@ -422,3 +429,56 @@ func _try_plant_on_field() -> bool:
 	if not field.is_bed(cell_pos) or field.is_cell_occupied(cell_pos):
 		return false
 	return field.plant_seed(cell_pos, (item_data as SeedData).plant)
+
+
+func _return_drag_copy() -> void:
+	if not is_instance_valid(drag_copy):
+		return
+	var tween: Tween = create_tween()
+	tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+	tween.tween_property(drag_copy, "global_position", origin_global_pos, RETURN_DURATION)
+	tween.tween_callback(_on_return_finished)
+
+
+func setup_shop_item(price: int) -> void:
+	origin_kind = "shop"
+	unit_buy_price = maxi(price, 1)
+
+
+func _try_buy_into_inventory() -> bool:
+	if item_data == null or not (item_data is SeedData):
+		return false
+	if unit_buy_price <= 0:
+		return false
+
+	var inv: Node = get_tree().get_first_node_in_group("inventory")
+	if inv == null or not inv.has_method("try_add_items"):
+		return false
+
+	var qty: int = max(1, stack_count)
+	var total_price: int = unit_buy_price * qty
+	
+	if TimeManager.get_balance() < total_price:
+		return false
+
+	var ok: bool = inv.try_add_items(item_data, qty, Vector2.INF)
+	if not ok:
+		return false
+
+	TimeManager.add_coins(-total_price)
+	MarketState.register_buy(item_data.resource_path, qty)
+	return true
+
+
+func _remove_item_from_slot_and_free() -> void:
+	var par: Node = get_parent()
+	if par and par.has_method("detach_stack_label_from_item"):
+		par.call("detach_stack_label_from_item", self)
+
+	# Удаляем цену в этом слоте после покупки
+	if par:
+		var pp: Node = par.get_node_or_null("PricePanel")
+		if pp:
+			pp.queue_free()
+
+	queue_free()
