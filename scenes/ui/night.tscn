@@ -1,0 +1,72 @@
+[gd_scene format=3 uid="uid://cjd2ieb0p8tpk"]
+
+[ext_resource type="Theme" uid="uid://djyjxn8m33ich" path="res://resources/theme/new_theme.tres" id="1_1h3m2"]
+
+[node name="Night" type="CanvasLayer" unique_id=98102421]
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=1282723846]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -11.0
+offset_top = -11.0
+offset_right = 11.0
+offset_bottom = 11.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme = ExtResource("1_1h3m2")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer" unique_id=1090186528]
+layout_mode = 2
+
+[node name="DayCount" type="Label" parent="PanelContainer/VBoxContainer" unique_id=1626207959]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Spring, day 1/14"
+horizontal_alignment = 1
+
+[node name="EarnedContainer" type="VBoxContainer" parent="PanelContainer/VBoxContainer" unique_id=2041211849]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/EarnedContainer" unique_id=1324550213]
+layout_mode = 2
+text = "Earned"
+horizontal_alignment = 1
+
+[node name="EarnedContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/EarnedContainer" unique_id=1724202968]
+layout_mode = 2
+
+[node name="Yield" type="Label" parent="PanelContainer/VBoxContainer/EarnedContainer/EarnedContainer" unique_id=434861135]
+layout_mode = 2
+size_flags_horizontal = 2
+text = "Potato"
+
+[node name="MoneyCount" type="Label" parent="PanelContainer/VBoxContainer/EarnedContainer/EarnedContainer" unique_id=280014580]
+layout_mode = 2
+size_flags_horizontal = 10
+text = "10"
+
+[node name="SpentContainer" type="VBoxContainer" parent="PanelContainer/VBoxContainer" unique_id=1101164627]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/SpentContainer" unique_id=1797079248]
+layout_mode = 2
+text = "Spent:"
+horizontal_alignment = 1
+
+[node name="SpentContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/SpentContainer" unique_id=2004503332]
+layout_mode = 2
+
+[node name="Expense" type="Label" parent="PanelContainer/VBoxContainer/SpentContainer/SpentContainer" unique_id=714068312]
+layout_mode = 2
+size_flags_horizontal = 2
+text = "Expense"
+
+[node name="MoneyCount" type="Label" parent="PanelContainer/VBoxContainer/SpentContainer/SpentContainer" unique_id=265674025]
+layout_mode = 2
+size_flags_horizontal = 10
+text = "-5"

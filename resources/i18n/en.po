@@ -1,0 +1,86 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: en\n"
+
+msgid "MENU_TITLE"
+msgstr "Garden State"
+
+msgid "MENU_START_GAME"
+msgstr "Start game"
+
+msgid "MENU_LOAD_GAME"
+msgstr "Load game"
+
+msgid "MENU_COLLECTION"
+msgstr "Collection"
+
+msgid "MENU_SETTINGS"
+msgstr "Settings"
+
+msgid "MENU_QUIT"
+msgstr "Quit"
+
+msgid "MENU_SOCIAL"
+msgstr "Check out our social media"
+
+msgid "SETTINGS_TITLE"
+msgstr "Settings"
+
+msgid "SETTINGS_WINDOW_MODE"
+msgstr "Window mode"
+
+msgid "SETTINGS_MONITOR"
+msgstr "Monitor"
+
+msgid "SETTINGS_LANGUAGE"
+msgstr "Language"
+
+msgid "SETTINGS_SCALE"
+msgstr "Scale"
+
+msgid "SETTINGS_DEFAULT"
+msgstr "Defaults"
+
+msgid "SETTINGS_APPLY"
+msgstr "Apply"
+
+msgid "WINDOW_FULLSCREEN"
+msgstr "Fullscreen"
+
+msgid "WINDOW_BORDERLESS"
+msgstr "Borderless Window"
+
+msgid "WINDOW_WINDOWED"
+msgstr "Windowed"
+
+msgid "DISPLAY_FMT"
+msgstr "Display %d"
+
+msgid "GAME_NEXT_DAY"
+msgstr "Next day"
+
+msgid "GAME_QUIT_TO_MENU"
+msgstr "Quit to menu"
+
+msgid "MONEY_FMT"
+msgstr "Money: %d"
+
+msgid "UI_TRASH"
+msgstr "Trash"
+
+msgid "UI_SELL"
+msgstr "Sell"
+
+msgid "SORT_TYPE"
+msgstr "Type"
+
+msgid "SORT_NAME"
+msgstr "Name"
+
+msgid "TOAST_INVENTORY_FULL"
+msgstr "Inventory is full"
+
+msgid "DAY_SUMMARY_FMT"
+msgstr "Day %d\nEarned: +%d\nSpent: -%d (water %d, quota %d)"
+

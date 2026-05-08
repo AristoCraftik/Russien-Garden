@@ -1,0 +1,86 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: ru\n"
+
+msgid "MENU_TITLE"
+msgstr "Garden State"
+
+msgid "MENU_START_GAME"
+msgstr "Начать игру"
+
+msgid "MENU_LOAD_GAME"
+msgstr "Загрузить игру"
+
+msgid "MENU_COLLECTION"
+msgstr "Коллекция"
+
+msgid "MENU_SETTINGS"
+msgstr "Настройки"
+
+msgid "MENU_QUIT"
+msgstr "Выход"
+
+msgid "MENU_SOCIAL"
+msgstr "Наши соцсети"
+
+msgid "SETTINGS_TITLE"
+msgstr "Настройки"
+
+msgid "SETTINGS_WINDOW_MODE"
+msgstr "Режим окна"
+
+msgid "SETTINGS_MONITOR"
+msgstr "Монитор"
+
+msgid "SETTINGS_LANGUAGE"
+msgstr "Язык"
+
+msgid "SETTINGS_SCALE"
+msgstr "Масштаб"
+
+msgid "SETTINGS_DEFAULT"
+msgstr "По умолчанию"
+
+msgid "SETTINGS_APPLY"
+msgstr "Применить"
+
+msgid "WINDOW_FULLSCREEN"
+msgstr "Полный экран"
+
+msgid "WINDOW_BORDERLESS"
+msgstr "Без рамки"
+
+msgid "WINDOW_WINDOWED"
+msgstr "Окно"
+
+msgid "DISPLAY_FMT"
+msgstr "Дисплей %d"
+
+msgid "GAME_NEXT_DAY"
+msgstr "Следующий день"
+
+msgid "GAME_QUIT_TO_MENU"
+msgstr "В меню"
+
+msgid "MONEY_FMT"
+msgstr "Деньги: %d"
+
+msgid "UI_TRASH"
+msgstr "Мусорка"
+
+msgid "UI_SELL"
+msgstr "Продажа"
+
+msgid "SORT_TYPE"
+msgstr "Тип"
+
+msgid "SORT_NAME"
+msgstr "Имя"
+
+msgid "TOAST_INVENTORY_FULL"
+msgstr "Инвентарь полон"
+
+msgid "DAY_SUMMARY_FMT"
+msgstr "День %d\nЗаработано: +%d\nТраты: -%d (полив %d, квота %d)"
+
