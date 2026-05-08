@@ -16,6 +16,8 @@ const WATER_COST: int = 1
 var _pending_watering_count: int = 0
 var _active_tool: Resource = null
 
+var _last_night_report: Dictionary = {}
+
 
 func set_balance(value: int) -> void:
 	_coins = maxi(value, 0)
@@ -43,6 +45,10 @@ func get_active_tool() -> Resource:
 
 func register_watering_action() -> void:
 	_pending_watering_count += 1
+
+
+func get_last_night_report() -> Dictionary:
+	return _last_night_report
 
 
 func _ready() -> void:
@@ -80,6 +86,10 @@ func has_save() -> bool:
 func next_day(day_counter: int) -> Dictionary:
 	# Доход: всё, что начислилось при day_advanced (например, продажа).
 	var before: int = get_balance()
+
+	# Снимок продаж ДО очистки sell box.
+	var sold_snapshot: Array = _collect_sell()
+
 	day_advanced.emit()
 	var after_income: int = get_balance()
 	var earned: int = maxi(after_income - before, 0)
@@ -97,6 +107,56 @@ func next_day(day_counter: int) -> Dictionary:
 	save_all(day_counter, _collect_plants(), _collect_inventory())
 
 	day_financials.emit(day_counter, earned, spent, watering_spent, quota_spent)
+
+	var earned_lines: Array = []
+	# Группируем одинаковые ресурсы в одну строку.
+	var by_path: Dictionary = {}
+	for entry in sold_snapshot:
+		if typeof(entry) != TYPE_DICTIONARY:
+			continue
+		var p: String = str(entry.get("path", ""))
+		var q: int = int(entry.get("qty", 0))
+		if p.is_empty() or q <= 0:
+			continue
+		by_path[p] = int(by_path.get(p, 0)) + q
+	for p in by_path.keys():
+		var q: int = int(by_path[p])
+		var res: Resource = load(p)
+		if not (res is YieldData):
+			continue
+		var yd: YieldData = res as YieldData
+		var name: String = yd.item_name if yd.item_name != "" else p.get_file().get_basename()
+		var total_price: int = yd.base_price * q
+		earned_lines.append({
+			"left": "%s x%d" % [name, q],
+			"right": "+%d$" % total_price,
+			"value": total_price,
+		})
+
+	var spent_lines: Array = []
+	if watering_spent > 0:
+		spent_lines.append({
+			"left": "Water x%d" % watering_spent,
+			"right": "-%d$" % watering_spent,
+			"value": -watering_spent,
+		})
+	spent_lines.append({
+		"left": "Quota",
+		"right": "-%d$" % quota_spent,
+		"value": -quota_spent,
+	})
+
+	_last_night_report = {
+		"day": day_counter,
+		"earned_lines": earned_lines,
+		"spent_lines": spent_lines,
+		"earned_total": earned,
+		"spent_total": spent,
+		"watering_spent": watering_spent,
+		"quota_spent": quota_spent,
+		"balance": get_balance(),
+	}
+
 	return {
 		"earned": earned,
 		"spent": spent,

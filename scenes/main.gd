@@ -1,6 +1,13 @@
 extends Control
 
 @onready var settings: Node = $SettingsPanelContainer
+@onready var discord_button: Button = $MarginContainer/SocialPanelContainer/MarginContainer/VBoxContainer/HBoxContainer/DiscordButton
+@onready var telegram_button: Button = $MarginContainer/SocialPanelContainer/MarginContainer/VBoxContainer/HBoxContainer/TelegramButton
+@onready var youtube_button: Button = $MarginContainer/SocialPanelContainer/MarginContainer/VBoxContainer/HBoxContainer/YouTubeButton
+@onready var redit_button: Button = $MarginContainer/SocialPanelContainer/MarginContainer/VBoxContainer/HBoxContainer/ReditButton
+@onready var tiktok_button: Button = $MarginContainer/SocialPanelContainer/MarginContainer/VBoxContainer/HBoxContainer/TikTokButton
+
+const SOCIAL_URL: String = "https://t.me/sanchezavropod"
 
 var settings_is_opened: bool = false
 
@@ -8,6 +15,20 @@ var settings_is_opened: bool = false
 func _ready() -> void:
 	add_to_group("i18n")
 	_apply_i18n()
+	_connect_social_buttons()
+
+
+func _connect_social_buttons() -> void:
+	var buttons: Array = [discord_button, telegram_button, youtube_button, redit_button, tiktok_button]
+	for b in buttons:
+		if b == null:
+			continue
+		if not b.button_up.is_connected(_on_social_button_button_up):
+			b.button_up.connect(_on_social_button_button_up)
+
+
+func _on_social_button_button_up() -> void:
+	OS.shell_open(SOCIAL_URL)
 
 
 func _apply_i18n() -> void:

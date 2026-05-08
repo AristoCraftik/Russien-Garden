@@ -3,11 +3,13 @@ extends Control
 @onready var camera: Camera2D = $Camera2D
 @onready var field: Node2D = $Field
 @onready var inventory: Node = $CanvasLayer/MarginContainer/VBoxContainer/Inventory
-@onready var money_label: Label = $CanvasLayer/MarginContainer2/HBoxContainer/PanelContainer/MoneyLabel
+@onready var money_label: Label = $CanvasLayer/MarginContainer3/BottomRow/PanelContainer/MoneyLabel
+@onready var day_label: Label = $CanvasLayer/MarginContainer3/BottomRow/DayContainer/DayLabel
 @onready var next_day_button: Button = $CanvasLayer/MarginContainer2/HBoxContainer/NextDayButton
 @onready var quit_button: Button = $CanvasLayer/MarginContainer2/HBoxContainer/QuitToMenuButton
 
 const STARTER_STACK: int = 1
+const NIGHT_SCENE: String = "res://scenes/ui/night.tscn"
 
 var day_counter: int = 0
 var _is_transitioning: bool = false
@@ -19,6 +21,7 @@ func _ready() -> void:
 	ui_drag_root.add_to_group("ui_drag_root")
 	TimeManager.balance_changed.connect(_on_economy_balance_changed)
 	_on_economy_balance_changed(TimeManager.get_balance())
+	_update_day_label()
 	add_to_group("i18n")
 	_apply_i18n()
 	# Иначе MarginContainer перехватывает клики по всему экрану, и поле не получает сбор/полив.
@@ -44,6 +47,12 @@ func _apply_i18n() -> void:
 	if is_instance_valid(quit_button):
 		quit_button.text = tr("GAME_QUIT_TO_MENU")
 	_on_economy_balance_changed(TimeManager.get_balance())
+	_update_day_label()
+
+
+func _update_day_label() -> void:
+	if is_instance_valid(day_label):
+		day_label.text = "Day: %d" % day_counter
 
 
 func _spawn_starter_inventory() -> void:
@@ -54,7 +63,6 @@ func _spawn_starter_inventory() -> void:
 	# Стартовый инструмент: лейка.
 	var wc: Resource = load("res://resources/items/tools/watering_can.tres")
 	if wc is ItemData:
-		print('2')
 		inventory.try_add_items(wc as ItemData, 1, Vector2.INF)
 	var dir := DirAccess.open("res://resources/items/seeds/")
 	if dir == null:
@@ -84,6 +92,7 @@ func _load_game() -> void:
 
 	day_counter = int(save.get("day", 0))
 	TimeManager.set_balance(int(save.get("coins", 0)))
+	_update_day_label()
 
 	for plant_entry in save.get("plants", []):
 		if typeof(plant_entry) != TYPE_DICTIONARY:
@@ -130,18 +139,10 @@ func _on_next_day_button_button_up() -> void:
 	_set_buttons_enabled(false)
 
 	day_counter += 1
-	var fin: Dictionary = TimeManager.next_day(day_counter)
-	var earned: int = int(fin.get("earned", 0))
-	var spent: int = int(fin.get("spent", 0))
-	var watering_spent: int = int(fin.get("watering_spent", 0))
-	var quota_spent: int = int(fin.get("quota_spent", 0))
-	var text: String = tr("DAY_SUMMARY_FMT") % [day_counter, earned, spent, watering_spent, quota_spent]
-	FadeManager.change_scene_with_fade("", 0.5, 0.5, text)
-
-	# Временно отключено по запросу: отдаление камеры после каждого дня.
-	# camera.zoom = (camera.zoom - ZOOM_STEP).max(MIN_ZOOM)
-
-	await get_tree().create_timer(0.5).timeout
+	_update_day_label()
+	TimeManager.next_day(day_counter)
+	# Переходим на экран ночи (там покажем заработок/траты).
+	FadeManager.change_scene_with_fade(NIGHT_SCENE, 0.5, 0.0, "")
 	_set_buttons_enabled(true)
 	_is_transitioning = false
 

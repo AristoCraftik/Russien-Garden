@@ -6,8 +6,8 @@
 [ext_resource type="Theme" uid="uid://djyjxn8m33ich" path="res://resources/theme/new_theme.tres" id="4_lbhrr"]
 [ext_resource type="PackedScene" uid="uid://bf3iq3gk8b4dp" path="res://scenes/ui/trash_can.tscn" id="5_trash"]
 [ext_resource type="PackedScene" uid="uid://cj7ufkckhegds" path="res://scenes/ui/sell_box.tscn" id="6_sell"]
-[ext_resource type="PackedScene" uid="uid://mc072kwloqpp" path="res://scenes/ui/shop.tscn" id="7_u5sy4"]
 [ext_resource type="PackedScene" uid="uid://0sj408lwmhn4" path="res://scenes/ui/toast_manager.tscn" id="7_toast"]
+[ext_resource type="PackedScene" uid="uid://mc072kwloqpp" path="res://scenes/ui/shop.tscn" id="7_u5sy4"]
 
 [sub_resource type="Theme" id="Theme_p57ef"]
 
@@ -21,20 +21,29 @@ pivot_offset = Vector2(-6.635, 0)
 script = ExtResource("1_lnu2h")
 
 [node name="Field" parent="." unique_id=69235035 instance=ExtResource("1_uwrxv")]
-position = Vector2(180, 180)
+scale = Vector2(1.5, 1.5)
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=128895694]
-anchor_mode = 0
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=495993463]
 
-[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer" unique_id=365589964]
-anchors_preset = 11
-anchor_left = 1.0
+[node name="DragOverlay" type="Control" parent="CanvasLayer" unique_id=883006964]
+z_index = 100
+layout_mode = 3
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-grow_horizontal = 0
+grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer" unique_id=365589964]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -162.0
+offset_bottom = 338.0
+grow_horizontal = 0
 size_flags_horizontal = 8
 size_flags_vertical = 8
 
@@ -45,35 +54,54 @@ size_flags_vertical = 3
 
 [node name="Inventory" parent="CanvasLayer/MarginContainer/VBoxContainer" unique_id=1145177155 instance=ExtResource("2_yqjtg")]
 layout_mode = 2
-size_flags_horizontal = 4
+size_flags_horizontal = 8
 size_flags_vertical = 0
 
+[node name="PanelContainer" type="PanelContainer" parent="CanvasLayer/MarginContainer/VBoxContainer" unique_id=1592793631]
+layout_mode = 2
+size_flags_horizontal = 8
+theme = ExtResource("4_lbhrr")
+
+[node name="BottomRow" type="HBoxContainer" parent="CanvasLayer/MarginContainer/VBoxContainer/PanelContainer" unique_id=1793610527]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
+theme = SubResource("Theme_p57ef")
+theme_override_constants/separation = 0
+
+[node name="TrashCan" parent="CanvasLayer/MarginContainer/VBoxContainer/PanelContainer/BottomRow" unique_id=488630758 instance=ExtResource("5_trash")]
+layout_mode = 2
+
+[node name="SellBox" parent="CanvasLayer/MarginContainer/VBoxContainer/PanelContainer/BottomRow" unique_id=961218669 instance=ExtResource("6_sell")]
+layout_mode = 2
+
 [node name="MarginContainer2" type="MarginContainer" parent="CanvasLayer" unique_id=1686475514]
-offset_right = 127.0
-offset_bottom = 24.0
+offset_right = 250.0
+offset_bottom = 38.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
 
 [node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/MarginContainer2" unique_id=285399231]
 layout_mode = 2
+size_flags_horizontal = 0
 
 [node name="NextDayButton" type="Button" parent="CanvasLayer/MarginContainer2/HBoxContainer" unique_id=1273487328]
 layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
 theme = ExtResource("4_lbhrr")
 theme_override_font_sizes/font_size = 8
 text = "Next day"
 
 [node name="QuitToMenuButton" type="Button" parent="CanvasLayer/MarginContainer2/HBoxContainer" unique_id=2117596932]
 layout_mode = 2
+size_flags_vertical = 0
 theme = ExtResource("4_lbhrr")
 text = "Quit to menu"
-
-[node name="PanelContainer" type="PanelContainer" parent="CanvasLayer/MarginContainer2/HBoxContainer" unique_id=1859533303]
-layout_mode = 2
-theme = ExtResource("4_lbhrr")
-
-[node name="MoneyLabel" type="Label" parent="CanvasLayer/MarginContainer2/HBoxContainer/PanelContainer" unique_id=810450865]
-layout_mode = 2
-theme = ExtResource("4_lbhrr")
-text = "Money: 0"
 
 [node name="MarginContainer3" type="MarginContainer" parent="CanvasLayer" unique_id=1485033179]
 anchors_preset = 3
@@ -92,38 +120,36 @@ size_flags_horizontal = 8
 size_flags_vertical = 8
 theme = SubResource("Theme_p57ef")
 
-[node name="TrashCan" parent="CanvasLayer/MarginContainer3/BottomRow" unique_id=883003964 instance=ExtResource("5_trash")]
+[node name="PanelContainer" type="PanelContainer" parent="CanvasLayer/MarginContainer3/BottomRow" unique_id=1859533303]
 layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("4_lbhrr")
 
-[node name="SellBox" parent="CanvasLayer/MarginContainer3/BottomRow" unique_id=883004964 instance=ExtResource("6_sell")]
+[node name="MoneyLabel" type="Label" parent="CanvasLayer/MarginContainer3/BottomRow/PanelContainer" unique_id=810450865]
 layout_mode = 2
+size_flags_horizontal = 0
+theme = ExtResource("4_lbhrr")
+text = "Money: 0"
+
+[node name="DayContainer" type="PanelContainer" parent="CanvasLayer/MarginContainer3/BottomRow" unique_id=1112477156]
+layout_mode = 2
+size_flags_horizontal = 10
+theme = ExtResource("4_lbhrr")
+
+[node name="DayLabel" type="Label" parent="CanvasLayer/MarginContainer3/BottomRow/DayContainer" unique_id=1378383188]
+layout_mode = 2
+theme = ExtResource("4_lbhrr")
+text = "Day: 0"
 
 [node name="MarginContainer4" type="MarginContainer" parent="CanvasLayer" unique_id=1713480800]
-anchors_preset = 6
-anchor_left = 1.0
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-offset_top = -22.0
-offset_bottom = 22.0
-grow_horizontal = 0
-grow_vertical = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/MarginContainer4" unique_id=755110051]
-layout_mode = 2
-
-[node name="Shop" parent="CanvasLayer/MarginContainer4/VBoxContainer" unique_id=248279203 instance=ExtResource("7_u5sy4")]
-layout_mode = 2
-
-[node name="DragOverlay" type="Control" parent="CanvasLayer" unique_id=883006964]
-z_index = 100
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
+anchors_preset = 2
+anchor_top = 1.0
 anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
+offset_top = -44.0
+grow_vertical = 0
+
+[node name="Shop" parent="CanvasLayer/MarginContainer4" unique_id=248279203 instance=ExtResource("7_u5sy4")]
+layout_mode = 2
 
 [node name="ToastManager" parent="CanvasLayer" unique_id=883007964 instance=ExtResource("7_toast")]
 

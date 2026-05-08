@@ -4,25 +4,20 @@
 [ext_resource type="Theme" uid="uid://djyjxn8m33ich" path="res://resources/theme/new_theme.tres" id="2_avmd0"]
 [ext_resource type="PackedScene" uid="uid://6k81u701i53i" path="res://scenes/ui/slot.tscn" id="3_xeaml"]
 
-[node name="Inventory" type="Control" unique_id=1145177155]
+[node name="Inventory" type="MarginContainer" unique_id=847773058]
 layout_direction = 3
-layout_mode = 3
-anchors_preset = 0
-size_flags_horizontal = 3
+offset_right = 270.0
+offset_bottom = 230.0
 script = ExtResource("1_xeaml")
 
 [node name="MarginContainer" type="MarginContainer" parent="." unique_id=1614663763]
 layout_direction = 2
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -198.0
-offset_bottom = 154.0
-grow_horizontal = 0
+layout_mode = 2
+theme_override_constants/margin_top = 4
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1218143045]
 layout_mode = 2
+size_flags_horizontal = 8
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=1185870568]
 layout_mode = 2
@@ -42,56 +37,109 @@ text = "Name"
 
 [node name="Panel" type="PanelContainer" parent="MarginContainer/VBoxContainer" unique_id=313190389]
 layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
 theme = ExtResource("2_avmd0")
 
 [node name="Slots" type="GridContainer" parent="MarginContainer/VBoxContainer/Panel" unique_id=1998553659]
 layout_mode = 2
 theme = ExtResource("2_avmd0")
-columns = 5
+columns = 4
 
-[node name="Slot" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=272914832 instance=ExtResource("3_xeaml")]
+[node name="Slot18" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=292679798 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot2" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=661972054 instance=ExtResource("3_xeaml")]
+[node name="Slot19" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=393544524 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot3" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1393355875 instance=ExtResource("3_xeaml")]
+[node name="Slot20" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1122321357 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot4" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1107765453 instance=ExtResource("3_xeaml")]
+[node name="Slot21" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=147538964 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot5" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1312307206 instance=ExtResource("3_xeaml")]
+[node name="Slot22" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1195251776 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot6" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1466816179 instance=ExtResource("3_xeaml")]
+[node name="Slot23" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1207387152 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot7" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1278765452 instance=ExtResource("3_xeaml")]
+[node name="Slot24" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1935952973 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot8" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=765122129 instance=ExtResource("3_xeaml")]
+[node name="Slot25" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=741131398 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot9" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1657695112 instance=ExtResource("3_xeaml")]
+[node name="Slot26" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1696181557 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot10" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1557722413 instance=ExtResource("3_xeaml")]
+[node name="Slot27" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=2041628186 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot11" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1709487025 instance=ExtResource("3_xeaml")]
+[node name="Slot28" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1577380570 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot12" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1703132010 instance=ExtResource("3_xeaml")]
+[node name="Slot29" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=815993961 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot13" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=677903376 instance=ExtResource("3_xeaml")]
+[node name="Slot31" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1372954297 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot14" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1683898391 instance=ExtResource("3_xeaml")]
+[node name="Slot32" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1520570066 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
-[node name="Slot15" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=97409099 instance=ExtResource("3_xeaml")]
+[node name="Slot33" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=2108508419 instance=ExtResource("3_xeaml")]
+layout_mode = 2
+
+[node name="Slot34" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1555872423 instance=ExtResource("3_xeaml")]
+layout_mode = 2
+
+[node name="Slot35" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=453461526 instance=ExtResource("3_xeaml")]
+layout_mode = 2
+
+[node name="Slot37" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1107105145 instance=ExtResource("3_xeaml")]
+layout_mode = 2
+
+[node name="Slot45" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1735934005 instance=ExtResource("3_xeaml")]
+layout_mode = 2
+
+[node name="Slot52" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=2081697520 instance=ExtResource("3_xeaml")]
+layout_mode = 2
+
+[node name="Slot59" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=2068371880 instance=ExtResource("3_xeaml")]
+layout_mode = 2
+
+[node name="Slot61" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=2038776152 instance=ExtResource("3_xeaml")]
+layout_mode = 2
+
+[node name="Slot64" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=62142013 instance=ExtResource("3_xeaml")]
+layout_mode = 2
+
+[node name="Slot65" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1260133703 instance=ExtResource("3_xeaml")]
+layout_mode = 2
+
+[node name="Slot66" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1999309082 instance=ExtResource("3_xeaml")]
+layout_mode = 2
+
+[node name="Slot67" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=462703848 instance=ExtResource("3_xeaml")]
+layout_mode = 2
+
+[node name="Slot68" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=63214577 instance=ExtResource("3_xeaml")]
+layout_mode = 2
+
+[node name="Slot69" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1852546190 instance=ExtResource("3_xeaml")]
+layout_mode = 2
+
+[node name="Slot30" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=272914832 instance=ExtResource("3_xeaml")]
+layout_mode = 2
+
+[node name="Slot36" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1232249912 instance=ExtResource("3_xeaml")]
+layout_mode = 2
+
+[node name="Slot38" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1346627828 instance=ExtResource("3_xeaml")]
+layout_mode = 2
+
+[node name="Slot39" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=1322329865 instance=ExtResource("3_xeaml")]
 layout_mode = 2
 
 [connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/SortTypeBtn" to="." method="sort_by_type"]

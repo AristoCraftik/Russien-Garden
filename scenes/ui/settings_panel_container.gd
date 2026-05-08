@@ -10,7 +10,10 @@ extends PanelContainer
 
 const SAVE_PATH := "user://garden/display_settings.cfg"
 const DEFAULT_LOCALE := "en"
-const DEFAULT_SCALE := 2
+const DEFAULT_SCALE: float = 1.0
+
+# Доступные множители UI (окно не меняется — только content_scale_factor).
+const SCALE_OPTIONS = [1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0]
 
 var _saved_settings: Dictionary = {}
 var _locales: Array[String] = ["en", "ru", "de"]
@@ -38,17 +41,48 @@ func _populate_static_options() -> void:
 	language_select.add_item("Русский", 1)
 	language_select.add_item("Deutsch", 2)
 	scale_select.clear()
-	scale_select.add_item("1x", 1)
-	scale_select.add_item("2x", 2)
-	scale_select.add_item("3x", 3)
+	for i in SCALE_OPTIONS.size():
+		var s: float = SCALE_OPTIONS[i]
+		scale_select.add_item(_scale_option_label(s))
+
+
+func _scale_option_label(sf: float) -> String:
+	var ir: int = int(round(sf))
+	if is_equal_approx(sf, float(ir)):
+		return "%dx" % ir
+	return "%.1fx" % sf
+
+
+func _scale_index_for_saved_variant(v: Variant) -> int:
+	var sf: float = DEFAULT_SCALE
+	match typeof(v):
+		TYPE_FLOAT:
+			sf = v as float
+		TYPE_INT:
+			sf = float(v as int)
+		TYPE_STRING:
+			var ts: String = v as String
+			if ts.is_valid_float():
+				sf = ts.to_float()
+		_:
+			pass
+	var best_i: int = 0
+	var best_d: float = INF
+	for i in SCALE_OPTIONS.size():
+		var d: float = absf(SCALE_OPTIONS[i] - sf)
+		if d < best_d:
+			best_d = d
+			best_i = i
+	return best_i
 
 
 func _current_settings() -> Dictionary:
+	var idx: int = clampi(scale_select.selected, 0, max(0, SCALE_OPTIONS.size() - 1))
 	return {
 		"window_mode": window_mode.selected,
 		"display":     display_select.selected,
 		"locale":      _locales[clampi(language_select.selected, 0, _locales.size() - 1)],
-		"scale":       int(scale_select.get_item_id(scale_select.selected)),
+		"scale":       float(SCALE_OPTIONS[idx]),
 	}
 
 
@@ -95,11 +129,7 @@ func _apply_settings(s: Dictionary) -> void:
 	_populate_static_options()
 	window_mode.select(  clampi(int(s["window_mode"]), 0, max(0, window_mode.item_count - 1)))
 	display_select.select(clampi(int(s["display"]),    0, max(0, display_select.item_count - 1)))
-	var sc: int = clampi(int(s.get("scale", DEFAULT_SCALE)), 1, 3)
-	for i in range(scale_select.item_count):
-		if int(scale_select.get_item_id(i)) == sc:
-			scale_select.select(i)
-			break
+	scale_select.select(_scale_index_for_saved_variant(s.get("scale", DEFAULT_SCALE)))
 	var lang_idx: int = _locales.find(loc)
 	if lang_idx < 0:
 		lang_idx = 0
@@ -137,16 +167,16 @@ func _commit_to_window() -> void:
 
 func _commit_content_scale() -> void:
 	# Масштабируем содержимое (CanvasItems/Viewport), НЕ меняя размер окна.
-	var sc: int = clampi(int(_current_settings().get("scale", DEFAULT_SCALE)), 1, 3)
+	var sc: float = float(_current_settings().get("scale", DEFAULT_SCALE))
 	var win: Window = get_window()
 	if win == null:
 		return
 	# В разных сборках/версиях Godot API может отличаться, поэтому ставим через методы, если они есть.
 	if win.has_method("set_content_scale_factor"):
-		win.call("set_content_scale_factor", float(sc))
+		win.call("set_content_scale_factor", sc)
 	elif win.has_method("set_content_scale"):
 		# На случай альтернативного имени.
-		win.call("set_content_scale", float(sc))
+		win.call("set_content_scale", sc)
 
 
 func _apply_i18n() -> void:

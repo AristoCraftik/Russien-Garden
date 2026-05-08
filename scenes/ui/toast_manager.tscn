@@ -4,6 +4,7 @@
 [ext_resource type="Theme" uid="uid://djyjxn8m33ich" path="res://resources/theme/new_theme.tres" id="2_theme"]
 
 [node name="ToastManager" type="Control" unique_id=615067544]
+visible = false
 z_index = 50
 layout_mode = 3
 anchors_preset = 5

@@ -1,8 +1,10 @@
 [gd_scene format=3 uid="uid://cjd2ieb0p8tpk"]
 
 [ext_resource type="Theme" uid="uid://djyjxn8m33ich" path="res://resources/theme/new_theme.tres" id="1_1h3m2"]
+[ext_resource type="Script" path="res://scenes/ui/night.gd" id="2_script"]
 
 [node name="Night" type="CanvasLayer" unique_id=98102421]
+script = ExtResource("2_script")
 
 [node name="PanelContainer" type="PanelContainer" parent="." unique_id=1282723846]
 anchors_preset = 8
@@ -37,18 +39,18 @@ layout_mode = 2
 text = "Earned"
 horizontal_alignment = 1
 
-[node name="EarnedContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/EarnedContainer" unique_id=1724202968]
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/EarnedContainer" unique_id=1724202968]
 layout_mode = 2
 
-[node name="Yield" type="Label" parent="PanelContainer/VBoxContainer/EarnedContainer/EarnedContainer" unique_id=434861135]
+[node name="Yield" type="Label" parent="PanelContainer/VBoxContainer/EarnedContainer/HBoxContainer" unique_id=434861135]
 layout_mode = 2
 size_flags_horizontal = 2
 text = "Potato"
 
-[node name="MoneyCount" type="Label" parent="PanelContainer/VBoxContainer/EarnedContainer/EarnedContainer" unique_id=280014580]
+[node name="MoneyCount" type="Label" parent="PanelContainer/VBoxContainer/EarnedContainer/HBoxContainer" unique_id=280014580]
 layout_mode = 2
 size_flags_horizontal = 10
-text = "10"
+text = "42"
 
 [node name="SpentContainer" type="VBoxContainer" parent="PanelContainer/VBoxContainer" unique_id=1101164627]
 layout_mode = 2
@@ -58,15 +60,78 @@ layout_mode = 2
 text = "Spent:"
 horizontal_alignment = 1
 
-[node name="SpentContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/SpentContainer" unique_id=2004503332]
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/SpentContainer" unique_id=2004503332]
 layout_mode = 2
 
-[node name="Expense" type="Label" parent="PanelContainer/VBoxContainer/SpentContainer/SpentContainer" unique_id=714068312]
+[node name="Expense" type="Label" parent="PanelContainer/VBoxContainer/SpentContainer/HBoxContainer" unique_id=714068312]
 layout_mode = 2
 size_flags_horizontal = 2
 text = "Expense"
 
-[node name="MoneyCount" type="Label" parent="PanelContainer/VBoxContainer/SpentContainer/SpentContainer" unique_id=265674025]
+[node name="MoneyCount" type="Label" parent="PanelContainer/VBoxContainer/SpentContainer/HBoxContainer" unique_id=265674025]
 layout_mode = 2
 size_flags_horizontal = 10
-text = "-5"
+text = "-42"
+
+[node name="SummaryContainer" type="VBoxContainer" parent="PanelContainer/VBoxContainer" unique_id=2073418685]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/SummaryContainer" unique_id=53705689]
+layout_mode = 2
+text = "Summary"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/SummaryContainer" unique_id=146342949]
+layout_mode = 2
+
+[node name="TotalEarned" type="Label" parent="PanelContainer/VBoxContainer/SummaryContainer/HBoxContainer" unique_id=51634718]
+layout_mode = 2
+size_flags_horizontal = 2
+text = "Total earned"
+
+[node name="MoneyCount" type="Label" parent="PanelContainer/VBoxContainer/SummaryContainer/HBoxContainer" unique_id=692921521]
+layout_mode = 2
+size_flags_horizontal = 10
+text = "42"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="PanelContainer/VBoxContainer/SummaryContainer" unique_id=146342950]
+layout_mode = 2
+
+[node name="TotalSpent" type="Label" parent="PanelContainer/VBoxContainer/SummaryContainer/HBoxContainer2" unique_id=51634719]
+layout_mode = 2
+size_flags_horizontal = 2
+text = "Total spent"
+
+[node name="MoneyCount" type="Label" parent="PanelContainer/VBoxContainer/SummaryContainer/HBoxContainer2" unique_id=692921522]
+layout_mode = 2
+size_flags_horizontal = 10
+text = "-42"
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="PanelContainer/VBoxContainer/SummaryContainer" unique_id=146342951]
+layout_mode = 2
+
+[node name="TotalBalance" type="Label" parent="PanelContainer/VBoxContainer/SummaryContainer/HBoxContainer3" unique_id=51634720]
+layout_mode = 2
+size_flags_horizontal = 2
+text = "Balance"
+
+[node name="MoneyCount" type="Label" parent="PanelContainer/VBoxContainer/SummaryContainer/HBoxContainer3" unique_id=692921523]
+layout_mode = 2
+size_flags_horizontal = 10
+text = "0"
+
+[node name="Buttons" type="HBoxContainer" parent="PanelContainer/VBoxContainer" unique_id=146342952]
+layout_mode = 2
+
+[node name="ContinueButton" type="Button" parent="PanelContainer/VBoxContainer/Buttons" unique_id=146342953]
+layout_mode = 2
+size_flags_horizontal = 2
+text = "Continue"
+
+[node name="SaveAndQuitButton" type="Button" parent="PanelContainer/VBoxContainer/Buttons" unique_id=146342954]
+layout_mode = 2
+size_flags_horizontal = 2
+text = "Save & quit"
+
+[connection signal="button_up" from="PanelContainer/VBoxContainer/Buttons/ContinueButton" to="." method="_on_continue_button_button_up"]
+[connection signal="button_up" from="PanelContainer/VBoxContainer/Buttons/SaveAndQuitButton" to="." method="_on_save_and_quit_button_button_up"]

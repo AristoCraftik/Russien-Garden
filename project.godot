@@ -24,8 +24,8 @@ MarketState="*uid://830yqvmshsvm"
 
 [display]
 
-window/size/viewport_width=1600
-window/size/viewport_height=900
+window/size/viewport_width=1920
+window/size/viewport_height=1080
 window/subwindows/embed_subwindows=false
 window/stretch/mode="viewport"
 

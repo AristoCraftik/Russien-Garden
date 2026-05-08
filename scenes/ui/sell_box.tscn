@@ -5,13 +5,18 @@
 [ext_resource type="PackedScene" uid="uid://6k81u701i53i" path="res://scenes/ui/slot.tscn" id="3_slot"]
 
 [node name="SellBox" type="MarginContainer" unique_id=961218669]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_right = -608.0
-offset_bottom = -348.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -16.0
+offset_top = -6.0
+offset_right = 16.0
+offset_bottom = 6.0
 grow_horizontal = 2
 grow_vertical = 2
+size_flags_horizontal = 4
 script = ExtResource("1_sell")
 
 [node name="VBox" type="VBoxContainer" parent="." unique_id=1298583120]
