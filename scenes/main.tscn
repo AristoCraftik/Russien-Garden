@@ -174,8 +174,29 @@ layout_mode = 2
 [node name="OtherContainer" type="VBoxContainer" parent="SettingsPanelContainer/MarginContainer/VBoxContainer/VBoxContainer" unique_id=632770473]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="SettingsPanelContainer/MarginContainer/VBoxContainer/VBoxContainer/OtherContainer" unique_id=1204135738]
+[node name="LanguageContainer" type="HBoxContainer" parent="SettingsPanelContainer/MarginContainer/VBoxContainer/VBoxContainer/OtherContainer" unique_id=1204135738]
 layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="Label" type="Label" parent="SettingsPanelContainer/MarginContainer/VBoxContainer/VBoxContainer/OtherContainer/LanguageContainer" unique_id=1204135739]
+layout_mode = 2
+text = "Language"
+
+[node name="OptionButton" type="OptionButton" parent="SettingsPanelContainer/MarginContainer/VBoxContainer/VBoxContainer/OtherContainer/LanguageContainer" unique_id=1204135740]
+layout_mode = 2
+size_flags_horizontal = 10
+
+[node name="ScaleContainer" type="HBoxContainer" parent="SettingsPanelContainer/MarginContainer/VBoxContainer/VBoxContainer/OtherContainer" unique_id=1204135741]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="Label" type="Label" parent="SettingsPanelContainer/MarginContainer/VBoxContainer/VBoxContainer/OtherContainer/ScaleContainer" unique_id=1204135742]
+layout_mode = 2
+text = "Scale"
+
+[node name="OptionButton" type="OptionButton" parent="SettingsPanelContainer/MarginContainer/VBoxContainer/VBoxContainer/OtherContainer/ScaleContainer" unique_id=1204135743]
+layout_mode = 2
+size_flags_horizontal = 10
 
 [node name="HBoxContainer" type="HBoxContainer" parent="SettingsPanelContainer/MarginContainer/VBoxContainer" unique_id=1724396288]
 layout_mode = 2

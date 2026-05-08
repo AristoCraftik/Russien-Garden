@@ -1,6 +1,8 @@
 extends Control
 
 @onready var slots: GridContainer = $MarginContainer/VBoxContainer/Panel/Slots
+@onready var sort_type_btn: Button = $MarginContainer/VBoxContainer/HBoxContainer/SortTypeBtn
+@onready var sort_name_btn: Button = $MarginContainer/VBoxContainer/HBoxContainer/SortNameBtn
 
 const ITEM_SCRIPT: GDScript = preload("res://scenes/ui/item.gd")
 const ITEM_SIZE: Vector2 = Vector2(32, 32)
@@ -13,6 +15,15 @@ var _slots_in_flight: Dictionary = {}
 
 func _ready() -> void:
 	add_to_group("inventory")
+	add_to_group("i18n")
+	_apply_i18n()
+
+
+func _apply_i18n() -> void:
+	if is_instance_valid(sort_type_btn):
+		sort_type_btn.text = tr("SORT_TYPE")
+	if is_instance_valid(sort_name_btn):
+		sort_name_btn.text = tr("SORT_NAME")
 
 
 func _slot_get_item_node(slot: Node) -> Node:
@@ -70,7 +81,7 @@ func try_add_items(item_data: ItemData, amount: int, fly_from_global: Vector2 = 
 		var before: int = remaining
 		remaining = node.try_add_stack(remaining)
 		if before != remaining and fly_from_global != Vector2.INF:
-			pass
+			_fly_visual_to_slot(i, item_data, fly_from_global)
 	if remaining <= 0:
 		return true
 	# 2) Новые слоты
@@ -116,6 +127,34 @@ func fly_item_to_slot(
 	tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
 	tween.tween_property(fly_item, "position", target_local, FLY_DURATION)
 	tween.tween_callback(_on_fly_finished.bind(fly_item, slot, slot_index, item_data, count))
+
+
+func _fly_visual_to_slot(slot_index: int, item_data: ItemData, from_global: Vector2) -> void:
+	# Чисто визуальная анимация "полет в слот", когда предмет стакается в уже занятый слот.
+	if item_data == null or from_global == Vector2.INF:
+		return
+	if slot_index < 0 or slot_index >= slot_count():
+		return
+	var slot: Control = slots.get_child(slot_index) as Control
+	if slot == null:
+		return
+	var fly_item: TextureRect = TextureRect.new()
+	fly_item.texture = item_data.get_icon()
+	fly_item.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	fly_item.size = ITEM_SIZE
+	fly_item.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	fly_item.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	add_child(fly_item)
+	var start_local: Vector2 = from_global - global_position - ITEM_SIZE / 2.0
+	var target_local: Vector2 = slot.global_position - global_position + (slot.size - ITEM_SIZE) / 2.0
+	fly_item.position = start_local
+	var tween: Tween = create_tween()
+	tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+	tween.tween_property(fly_item, "position", target_local, FLY_DURATION)
+	tween.tween_callback(func() -> void:
+		if is_instance_valid(fly_item):
+			fly_item.queue_free()
+	)
 
 
 func _on_fly_finished(

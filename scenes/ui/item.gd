@@ -4,6 +4,7 @@ const TOOLTIP_DELAY: float = 0.3
 const RETURN_DURATION: float = 0.3
 const DRAG_VISUAL_SIZE: Vector2 = Vector2(32, 32)
 const STACK_LABEL_PAD: Vector2 = Vector2(2, 2)
+const TOOLTIP_SCENE: PackedScene = preload("res://scenes/ui/tooltip.tscn")
 
 var dragging: bool = false
 var drag_copy: TextureRect = null
@@ -16,8 +17,6 @@ var stack_count: int = 1
 var _ignore_stack_cap: bool = false
 
 var _tooltip: Control = null
-var _tooltip_label: Label = null
-var _tooltip_panel: Panel = null
 var _tooltip_layer: Node = null
 var _mouse_over: bool = false
 var _tooltip_timer: float = 0.0
@@ -49,6 +48,7 @@ func _exit_tree() -> void:
 
 func _on_tree_exiting() -> void:
 	_destroy_tooltip()
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	if is_instance_valid(drag_copy):
 		drag_copy.queue_free()
 		drag_copy = null
@@ -223,15 +223,8 @@ func _process(delta: float) -> void:
 func _ensure_tooltip() -> void:
 	if is_instance_valid(_tooltip):
 		return
-	_tooltip = Control.new()
+	_tooltip = TOOLTIP_SCENE.instantiate() if TOOLTIP_SCENE else Control.new()
 	_tooltip.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_tooltip_panel = Panel.new()
-	_tooltip_panel.self_modulate = Color(0, 0, 0, 0.8)
-	_tooltip.add_child(_tooltip_panel)
-	_tooltip_label = Label.new()
-	_tooltip_label.add_theme_color_override("font_color", Color.WHITE)
-	_tooltip_label.add_theme_font_size_override("font_size", 12)
-	_tooltip.add_child(_tooltip_label)
 	var layer: Node = drag_root.get_parent() if drag_root else (inventory_root.get_parent() if inventory_root else null)
 	while layer and not (layer is CanvasLayer):
 		layer = layer.get_parent()
@@ -251,13 +244,18 @@ func _show_tooltip() -> void:
 	_tooltip_layer.move_child(_tooltip, _tooltip_layer.get_child_count() - 1)
 	var name_text: String = item_data.item_name if item_data.item_name else "—"
 	var desc_text: String = item_data.description if item_data.description else ""
-	_tooltip_label.text = name_text + ("\n" + desc_text if desc_text.length() > 0 else "")
+	var text: String = name_text + ("\n" + desc_text if desc_text.length() > 0 else "")
+	if _tooltip.has_method("set_text"):
+		_tooltip.call("set_text", text)
+	elif _tooltip.has_node("Label"):
+		var lbl := _tooltip.get_node("Label") as Label
+		if lbl:
+			lbl.text = text
 	var item_global_rect: Rect2 = get_global_rect()
-	_tooltip.global_position = item_global_rect.position + Vector2(item_global_rect.size.x, 0)
-	_tooltip_label.size = _tooltip_label.get_minimum_size()
-	_tooltip_panel.size = _tooltip_label.size + Vector2(8, 4)
-	_tooltip_label.position = Vector2(4, 2)
-	_tooltip.size = _tooltip_panel.size
+	var tip_size: Vector2 = _tooltip.size
+	_tooltip.global_position = item_global_rect.position + Vector2(item_global_rect.size.x, -tip_size.y)
+	if _tooltip.has_method("clamp_inside_viewport"):
+		_tooltip.call("clamp_inside_viewport", get_viewport())
 	_tooltip.visible = true
 
 
@@ -270,21 +268,55 @@ func _destroy_tooltip() -> void:
 	if is_instance_valid(_tooltip):
 		_tooltip.queue_free()
 	_tooltip = null
-	_tooltip_label = null
-	_tooltip_panel = null
 
 
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
+		# ЛКМ: нажал — взял, нажал ещё раз — отпустил.
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-			start_drag()
+			if dragging:
+				end_drag()
+			else:
+				start_drag()
+			get_viewport().set_input_as_handled()
+			return
+		# ПКМ: использовать предмет, если он "в руке".
+		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
+			if dragging:
+				_try_use_in_hand()
+				get_viewport().set_input_as_handled()
+				return
 
 
 func _input(event: InputEvent) -> void:
-	if dragging and event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
+	# Когда предмет "в руке", ловим клики глобально.
+	# Важно: поле тоже слушает _input и может помечать событие как handled,
+	# поэтому для ЛКМ используем _input (а не только _unhandled_input).
+	if not dragging:
+		return
+	if event is InputEventMouseButton and event.pressed:
+		if event.button_index == MOUSE_BUTTON_LEFT:
 			end_drag()
 			get_viewport().set_input_as_handled()
+			return
+		if event.button_index == MOUSE_BUTTON_RIGHT:
+			_try_use_in_hand()
+			get_viewport().set_input_as_handled()
+			return
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not dragging:
+		return
+	if event is InputEventMouseButton and event.pressed:
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			end_drag()
+			get_viewport().set_input_as_handled()
+			return
+		if event.button_index == MOUSE_BUTTON_RIGHT:
+			_try_use_in_hand()
+			get_viewport().set_input_as_handled()
+			return
 
 
 func _is_in_flight() -> bool:
@@ -326,6 +358,10 @@ func start_drag() -> void:
 	drag_root.add_child(drag_copy)
 	var mouse_global: Vector2 = get_viewport().get_mouse_position()
 	drag_copy.global_position = mouse_global - drag_copy.size * 0.5
+	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
+	# Если это инструмент — считаем его активным на время использования.
+	if item_data is ToolData and TimeManager and TimeManager.has_method("set_active_tool"):
+		TimeManager.set_active_tool(item_data)
 
 
 func end_drag() -> void:
@@ -344,6 +380,7 @@ func end_drag() -> void:
 	if not dragging:
 		return
 	dragging = false
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	if not is_instance_valid(drag_copy):
 		return
 	var screen_mouse: Vector2 = get_viewport().get_mouse_position()
@@ -358,16 +395,6 @@ func end_drag() -> void:
 			show()
 		return
 	if _try_drop_on_sell(screen_mouse):
-		drag_copy.queue_free()
-		drag_copy = null
-		_destroy_tooltip()
-		if not _drag_consumed_early:
-			consume_amount(1)
-		_drag_consumed_early = false
-		if is_instance_valid(self) and stack_count > 0:
-			show()
-		return
-	if _try_plant_on_field():
 		drag_copy.queue_free()
 		drag_copy = null
 		_destroy_tooltip()
@@ -393,6 +420,71 @@ func _on_return_finished() -> void:
 		else:
 			try_add_stack(1)
 		_drag_consumed_early = false
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	show()
+
+
+func _try_use_in_hand() -> void:
+	if not dragging or not is_instance_valid(drag_copy) or item_data == null:
+		return
+	# 1) Семена: посадить.
+	if item_data is SeedData:
+		if _try_plant_on_field():
+			_commit_used_one()
+		return
+	# 2) Инструменты: пока только лейка.
+	if item_data is ToolData:
+		_try_water_on_field()
+		return
+
+
+func _try_water_on_field() -> void:
+	var field: Node = get_tree().get_first_node_in_group("field")
+	if field == null:
+		return
+	if not (item_data is ToolData):
+		return
+	var td: ToolData = item_data as ToolData
+	if td.tool_type != ToolData.ToolType.WATERING_CAN:
+		return
+	var viewport: Viewport = get_viewport()
+	var screen_mouse: Vector2 = viewport.get_mouse_position()
+	var mouse_world: Vector2 = viewport.get_canvas_transform().affine_inverse() * screen_mouse
+	var water_layer: Node = field.WateredBedLayer
+	if water_layer == null:
+		return
+	var local_pos: Vector2 = water_layer.to_local(mouse_world)
+	var cell_pos: Vector2i = water_layer.local_to_map(local_pos)
+	if not field.is_bed(cell_pos):
+		return
+	if field.has_method("pour_cell"):
+		var ok: bool = bool(field.call("pour_cell", cell_pos))
+		if ok and TimeManager and TimeManager.has_method("register_watering_action"):
+			TimeManager.register_watering_action()
+
+
+func _commit_used_one() -> void:
+	# Фиксируем использование 1 единицы из "руки", сохраняя режим удержания, если ещё есть.
+	_destroy_tooltip()
+	if not _drag_consumed_early:
+		consume_amount(1)
+	# ранний расход (для стака >1) уже уменьшил stack_count — считаем это "использованием".
+	_drag_consumed_early = false
+	if not is_instance_valid(self):
+		# Предмет закончился и был удалён.
+		if is_instance_valid(drag_copy):
+			drag_copy.queue_free()
+		drag_copy = null
+		dragging = false
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		return
+	if stack_count <= 0:
+		if is_instance_valid(drag_copy):
+			drag_copy.queue_free()
+		drag_copy = null
+		dragging = false
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		return
 	show()
 
 
