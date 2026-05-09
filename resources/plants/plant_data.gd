@@ -12,9 +12,11 @@ enum PlantType { VEGETABLE, FRUIT, FLOWER, BERRY, LEGUME, GRAIN, HERB }
 @export_multiline var description: String = ""
 
 @export_group("Visuals")
-@export var plant_atlas_row_y: int = 1
-@export var frame_px: Vector2i = Vector2i(32, 32)
-@export var is_tall: bool = false
+# plant_id кодирует визуал:
+# - plant_id.x: 1 -> short atlas (32px), 2 -> tall atlas (48px)
+# - plant_id.y: row_y в атласе (1-based)
+const SHORT_FRAME_PX := Vector2i(32, 32)
+const TALL_FRAME_PX := Vector2i(32, 48)
 
 @export_group("Growth")
 # Сколько раз растение успешно проходит grow() (дней с поливом) до созревания.
@@ -31,6 +33,18 @@ enum PlantType { VEGETABLE, FRUIT, FLOWER, BERRY, LEGUME, GRAIN, HERB }
 
 func get_save_id() -> String:
 	return resource_path
+
+
+func get_atlas_row_y() -> int:
+	return maxi(plant_id.y, 1)
+
+
+func is_tall() -> bool:
+	return plant_id.x == 2
+
+
+func get_frame_px() -> Vector2i:
+	return TALL_FRAME_PX if is_tall() else SHORT_FRAME_PX
 
 
 func roll_yield_amount() -> int:

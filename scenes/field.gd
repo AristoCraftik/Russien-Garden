@@ -227,6 +227,14 @@ func _input(event: InputEvent) -> void:
 
 # ----------------- ВНУТРЕННЕЕ -----------------
 
+## Снять клетку с карты до queue_free (например засуха): иначе сейв в том же кадре
+## после day_advanced всё ещё увидит растение.
+func unregister_plant_cell(cell_pos: Vector2i, plant: Node) -> void:
+	var current: Node = _cell_to_plant.get(cell_pos, null)
+	if current == plant:
+		_cell_to_plant.erase(cell_pos)
+
+
 func _on_plant_exiting(cell_pos: Vector2i, plant: Node) -> void:
 	# Снимаем регистрацию ровно той клетки и того узла, чтобы не убрать соседнюю запись.
 	var current: Node = _cell_to_plant.get(cell_pos, null)

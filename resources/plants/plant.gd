@@ -35,11 +35,12 @@ func setup_from_data(plant_data: PlantData) -> void:
 	data = plant_data
 	if data == null:
 		return
-	sprite.texture = Atlas.PLANTS_TALL_ATLAS if data.is_tall else Atlas.PLANTS_SHORT_ATLAS
+	sprite.texture = Atlas.PLANTS_TALL_ATLAS if data.is_tall() else Atlas.PLANTS_SHORT_ATLAS
 	sprite.region_enabled = true
 	sprite.centered = true
-	var fh: float = float(max(1, data.frame_px.y))
-	if data.is_tall:
+	var fp: Vector2i = data.get_frame_px()
+	var fh: float = float(max(1, fp.y))
+	if data.is_tall():
 		sprite.offset.y = (32.0 - fh) / 2.0
 	else:
 		sprite.offset.y = 0.0
@@ -84,7 +85,7 @@ func _update_frame() -> void:
 	var atlas: Texture2D = sprite.texture
 	if atlas == null:
 		return
-	var fp: Vector2i = data.frame_px
+	var fp: Vector2i = data.get_frame_px()
 	var fw: int = max(1, fp.x)
 	var fh: int = max(1, fp.y)
 	var atlas_stages_x: int = max(1, atlas.get_width() / fw)
@@ -97,12 +98,18 @@ func _update_frame() -> void:
 		if not fruits_available and fruit_harvests_left > 0:
 			stage_x = cap_x + 1
 	stage_x = clampi(stage_x, 0, atlas_stages_x - 1)
-	var row_y: int = clamp(data.plant_atlas_row_y, 1, atlas_rows)
+	var row_y: int = clamp(data.get_atlas_row_y(), 1, atlas_rows)
 	sprite.region_rect = Atlas.frame_from_plants_atlas(row_y, stage_x, fp)
 
 
 func _on_day_advanced() -> void:
 	if not watered:
+		# free() во время emit сигнала запрещён (object locked). queue_free — ок.
+		# Клетку снимаем сейчас: save_all после emit иначе снова записал бы «труп».
+		if is_inside_tree():
+			var f: Node = get_tree().get_first_node_in_group("field")
+			if f and f.has_method("unregister_plant_cell"):
+				f.call("unregister_plant_cell", cell_position, self)
 		queue_free()
 		return
 	grow()

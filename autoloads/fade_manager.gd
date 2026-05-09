@@ -63,13 +63,17 @@ func change_scene_with_fade(
 	path: String = "",
 	fade_time: float = 0.5,
 	hold_time: float = 0.5,
-	text: String = ""
+	text: String = "",
+	run_while_screen_black: Callable = Callable()
 ) -> void:
 	if fade_label:
 		fade_label.text = text
 
 	await fade_out(fade_time)
 	await get_tree().create_timer(hold_time).timeout
+
+	if run_while_screen_black.is_valid():
+		run_while_screen_black.call()
 
 	if path != "":
 		get_tree().change_scene_to_file(path)

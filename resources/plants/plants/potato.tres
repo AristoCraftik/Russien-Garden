@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="PlantData" format=3 uid="uid://ct005gcfbl3qa"]
+[gd_resource type="Resource" script_class="PlantData" format=3 uid="uid://bjltfqfbrdyeh"]
 
 [ext_resource type="Script" uid="uid://bpuoqsrolsstp" path="res://resources/plants/plant_data.gd" id="1"]
 [ext_resource type="Script" uid="uid://c1c2l0ku8r31c" path="res://resources/plants/potato.gd" id="pot"]
@@ -10,8 +10,6 @@ plant_name = "Картофель"
 plant_type = "Vegetable"
 rarity = "Common"
 description = "Картофель. Vegetable, Common."
-frame_px = Vector2i(32, 48)
-is_tall = true
 yield_quantity = Vector2i(2, 5)
 plant_script = ExtResource("pot")
 metadata/_custom_type_script = "uid://bpuoqsrolsstp"

@@ -21,21 +21,11 @@ pivot_offset = Vector2(-6.635, 0)
 script = ExtResource("1_lnu2h")
 
 [node name="Field" parent="." unique_id=69235035 instance=ExtResource("1_uwrxv")]
-scale = Vector2(1.5, 1.5)
+scale = Vector2(2.55, 2.55)
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=128895694]
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=495993463]
-
-[node name="DragOverlay" type="Control" parent="CanvasLayer" unique_id=883006964]
-z_index = 100
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="CanvasLayer" unique_id=365589964]
 anchors_preset = 1
@@ -152,6 +142,18 @@ grow_vertical = 0
 layout_mode = 2
 
 [node name="ToastManager" parent="CanvasLayer" unique_id=883007964 instance=ExtResource("7_toast")]
+
+[node name="DragLayer" type="CanvasLayer" parent="." unique_id=1883006964]
+layer = 100
+
+[node name="DragOverlay" type="Control" parent="DragLayer" unique_id=883006964]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 
 [connection signal="button_up" from="CanvasLayer/MarginContainer2/HBoxContainer/NextDayButton" to="." method="_on_next_day_button_button_up"]
 [connection signal="button_up" from="CanvasLayer/MarginContainer2/HBoxContainer/QuitToMenuButton" to="." method="_on_quit_to_menu_button_button_up"]

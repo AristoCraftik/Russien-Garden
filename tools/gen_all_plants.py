@@ -53,13 +53,11 @@ def plant_tres(
     ptype: str,
     rarity: str,
     pid: tuple[int, int],
-    row_y: int,
     grow: int,
     fruiting: int,
     water: int,
     yld: tuple[int, int],
     traits: str,
-    tall: bool,
 ) -> str:
     ext_script = '[ext_resource type="Script" path="res://resources/plants/plant_data.gd" id="1"]\n'
     ext_potato = ""
@@ -68,8 +66,6 @@ def plant_tres(
         ext_potato = '[ext_resource type="Script" path="res://resources/plants/potato.gd" id="pot"]\n'
         potato_res = "plant_script = ExtResource(\"pot\")\n"
 
-    fx = "(32, 48)" if tall else "(32, 32)"
-    tall_s = "true" if tall else "false"
     desc = f"{name}. {ptype}, {rarity}."
     if traits:
         desc += f" {traits}."
@@ -84,9 +80,6 @@ def plant_tres(
         f"plant_type = \"{ptype}\"\n"
         f"rarity = \"{rarity}\"\n"
         f"description = \"{desc}\"\n"
-        f"plant_atlas_row_y = {row_y}\n"
-        f"frame_px = Vector2i{fx}\n"
-        f"is_tall = {tall_s}\n"
         f"grow_days = {grow}\n"
         f"days_of_fruiting = {fruiting}\n"
         f"water_every_days = {water}\n"
@@ -144,29 +137,6 @@ def yield_tres(
     )
 
 
-def plant_atlas_row_y(*, pid: tuple[int, int], tall: bool, idx: int) -> int:
-    """Строка Y в атласе растений (1-based), как в Sprite.region_rect.
-
-    Для id вида 1.N вторая координата plant_id — номер строки в short_plants_atlas.
-
-    Для всего списка раньше брали (idx % 21) + 1: после нескольких культур «колонки 2», вставленных
-    между 1.*, строка получалась примерно на число этих вставок больше N (типично +4 около 1.12).
-
-    Колонку (2,*) кроме картофеля пока считаем по индексу в PLANTS, как было (до отдельного слоя PNG).
-    Хвост списка 1.* (орхидея и ниже) %21 давал строки 1..8 заново и ломал id.
-    """
-    a, b = pid[0], pid[1]
-    if a == 1:
-        return b
-    if tall:
-        return min(b, 10)
-    if idx >= 21:
-        # После orchid только банан (2,7). %21 давал строку 1 как у моркови; залипаем на самую нижнюю строку.
-        # Совпадает с 1.22 (клевер) пока короткий атлас только на 22 ряда.
-        return 22
-    return (idx % 21) + 1
-
-
 def main() -> None:
     plants_dir = os.path.join(ROOT, "resources", "plants", "plants")
     seeds_dir = os.path.join(ROOT, "resources", "items", "seeds")
@@ -185,7 +155,6 @@ def main() -> None:
         pid = row[9]
         traits = row[10]
         tall = row[11]
-        atlas_row = plant_atlas_row_y(pid=pid, tall=tall, idx=idx)
 
         iy = idx + 1
         ix_seed = 1
@@ -197,8 +166,8 @@ def main() -> None:
         p_path = os.path.join(plants_dir, f"{slug}.tres")
         write(p_path, plant_tres(
             slug=slug, name=ru, ptype=ptype, rarity=rarity, pid=pid,
-            row_y=atlas_row, grow=grow, fruiting=fruiting, water=water,
-            yld=yld, traits=traits, tall=tall,
+            grow=grow, fruiting=fruiting, water=water,
+            yld=yld, traits=traits,
         ))
         write(
             os.path.join(seeds_dir, f"{slug}_seed.tres"),

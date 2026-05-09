@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="PlantData" format=3 uid="uid://dk2lbs5cm16wc"]
+[gd_resource type="Resource" script_class="PlantData" format=3 uid="uid://nbyh7iku6r1k"]
 
 [ext_resource type="Script" uid="uid://bpuoqsrolsstp" path="res://resources/plants/plant_data.gd" id="1"]
 
@@ -9,7 +9,6 @@ plant_name = "Банан"
 plant_type = "Fruit"
 rarity = "Uncommon"
 description = "Банан. Fruit, Uncommon."
-plant_atlas_row_y = 22
 grow_days = 10
 days_of_fruiting = 2
 yield_quantity = Vector2i(2, 5)

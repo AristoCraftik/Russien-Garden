@@ -17,6 +17,7 @@ font_size = 8
 font_color = Color(0, 0, 0, 1)
 
 [node name="Tooltip" type="Control" unique_id=1585994340]
+visible = false
 layout_mode = 3
 anchors_preset = 0
 mouse_filter = 2

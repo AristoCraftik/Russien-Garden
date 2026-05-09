@@ -11,12 +11,38 @@ const SORT_DURATION: float = 0.4
 
 var _is_sorting: bool = false
 var _slots_in_flight: Dictionary = {}
+var _is_compacting: bool = false
+var _fly_root: Control = null
 
 
 func _ready() -> void:
 	add_to_group("inventory")
 	add_to_group("i18n")
 	_apply_i18n()
+	_fly_root = _find_fly_root()
+	call_deferred("_refresh_fly_root")
+
+
+func _refresh_fly_root() -> void:
+	_fly_root = _find_fly_root()
+
+
+func _find_fly_root() -> Control:
+	# Летающие визуальные иконки нельзя добавлять в Container (Inventory),
+	# иначе контейнер будет менять их размер/позицию и появится "растягивание".
+	var tree := get_tree()
+	if tree:
+		var g: Node = tree.get_first_node_in_group("ui_drag_root")
+		if g is Control:
+			return g as Control
+	return self
+
+
+func _ensure_fly_root() -> Control:
+	if is_instance_valid(_fly_root) and _fly_root.is_in_group("ui_drag_root"):
+		return _fly_root
+	_fly_root = _find_fly_root()
+	return _fly_root
 
 
 func _apply_i18n() -> void:
@@ -58,6 +84,154 @@ func _is_slot_free(slot_index: int) -> bool:
 	if _slots_in_flight.has(slot_index):
 		return false
 	return not _slot_has_item(slots.get_child(slot_index))
+
+
+func compact_items() -> void:
+	# Сдвигаем всё влево, чтобы не оставлять "дырки" в слотах.
+	if _is_sorting or _is_compacting:
+		return
+	if slots == null:
+		return
+	# Если что-то "в полёте" — не трогаем.
+	if not _slots_in_flight.is_empty():
+		return
+	# Если что-то держат в руке — не трогаем.
+	for it in get_all_items():
+		if it and it.has_method("is_drag_busy") and it.call("is_drag_busy"):
+			return
+
+	var n: int = slot_count()
+	var write_i: int = 0
+	for read_i in range(n):
+		var slot_r: Control = slots.get_child(read_i) as Control
+		var item: Node = _slot_get_item_node(slot_r)
+		if item == null:
+			continue
+		if read_i != write_i:
+			var slot_w: Control = slots.get_child(write_i) as Control
+			# Перепривязываем item в более ранний слот.
+			slot_r.remove_child(item)
+			slot_w.add_child(item)
+			if slot_w.has_method("attach_stack_label_to_item") and item is TextureRect:
+				slot_w.call("attach_stack_label_to_item", item)
+			if slot_w.has_method("reorder_stack_label_top"):
+				slot_w.call("reorder_stack_label_top")
+			if item is Control:
+				(item as Control).size = ITEM_SIZE
+				(item as Control).custom_minimum_size = ITEM_SIZE
+			if item is TextureRect:
+				(item as TextureRect).expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			if slot_w:
+				(item as Control).position = (slot_w.size - (item as Control).size) / 2.0
+		write_i += 1
+
+
+func request_compact() -> void:
+	# Уплотнение нужно делать ПОСЛЕ того, как Godot реально удалит queue_free() предмет
+	# (иначе слот ещё не считается пустым и сдвига "не видно" до следующего удаления).
+	call_deferred("_compact_next_frame")
+
+
+func _compact_next_frame() -> void:
+	await get_tree().process_frame
+	compact_items_animated()
+
+
+func compact_items_animated() -> void:
+	# То же, что compact_items(), но с анимацией как при сортировке.
+	if _is_sorting or _is_compacting:
+		return
+	if slots == null:
+		return
+	if not _slots_in_flight.is_empty():
+		return
+	for it in get_all_items():
+		if it and it.has_method("is_drag_busy") and it.call("is_drag_busy"):
+			return
+
+	var n: int = slot_count()
+	var current: Array = []
+	current.resize(n)
+	for i in range(n):
+		current[i] = _slot_get_item_node(slots.get_child(i))
+
+	var packed: Array = []
+	for i in range(n):
+		var it: Node = current[i]
+		if it != null:
+			packed.append(it)
+
+	# Список перемещений: {item, from_slot, to_slot}
+	var moves: Array = []
+	for to_i in range(packed.size()):
+		var it: Control = packed[to_i] as Control
+		if it == null:
+			continue
+		var from_slot: Control = it.get_parent() as Control
+		var to_slot: Control = slots.get_child(to_i) as Control
+		if from_slot == to_slot:
+			continue
+		moves.append({"item": it, "to": to_slot})
+
+	if moves.is_empty():
+		return
+
+	_is_compacting = true
+	var pending: Array = [moves.size()]
+
+	# Подготовка: фиксируем размер и переводим в top-level, чтобы не зависеть от родителя.
+	for m in moves:
+		var it: Control = m["item"]
+		if not is_instance_valid(it):
+			pending[0] -= 1
+			continue
+		var start_gp: Vector2 = it.global_position
+		it.custom_minimum_size = ITEM_SIZE
+		it.size = ITEM_SIZE
+		it.scale = Vector2.ONE
+		if it is TextureRect:
+			(it as TextureRect).expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		it.set_as_top_level(true)
+		# Важно: при переключении top_level позиция может сброситься; возвращаем на старт.
+		it.global_position = start_gp
+		it.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	# Анимация к целевым слотам
+	for m in moves:
+		var it: Control = m["item"]
+		var to_slot: Control = m["to"]
+		if not is_instance_valid(it) or not is_instance_valid(to_slot):
+			pending[0] -= 1
+			continue
+		var target_global_pos: Vector2 = to_slot.global_position + (to_slot.size - it.size) / 2.0
+		var tw: Tween = create_tween()
+		tw.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+		tw.tween_property(it, "global_position", target_global_pos, SORT_DURATION)
+		tw.tween_callback(_finish_compact_item.bind(it, to_slot, pending))
+
+
+func _finish_compact_item(item: Control, target_slot: Control, pending: Array) -> void:
+	if is_instance_valid(item) and is_instance_valid(target_slot):
+		item.set_as_top_level(false)
+		var par: Node = item.get_parent()
+		if par:
+			par.remove_child(item)
+		target_slot.add_child(item)
+		item.custom_minimum_size = ITEM_SIZE
+		item.size = ITEM_SIZE
+		item.scale = Vector2.ONE
+		if item is TextureRect:
+			(item as TextureRect).expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		if target_slot.has_method("attach_stack_label_to_item"):
+			target_slot.call("attach_stack_label_to_item", item)
+		if target_slot.has_method("reorder_stack_label_top"):
+			target_slot.call("reorder_stack_label_top")
+		item.position = (target_slot.size - item.size) / 2.0
+		item.mouse_filter = Control.MOUSE_FILTER_STOP
+
+	pending[0] -= 1
+	if pending[0] <= 0:
+		_is_compacting = false
 
 
 ## Добавляет предметы по стакам. Возвращает false, если не влезает весь объём.
@@ -112,20 +286,24 @@ func fly_item_to_slot(
 	if slot == null:
 		return
 	_slots_in_flight[slot_index] = true
+	var fly_root: Control = _ensure_fly_root()
 	var fly_item: TextureRect = TextureRect.new()
 	fly_item.texture = item_data.get_icon()
 	fly_item.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	fly_item.size = ITEM_SIZE
+	fly_item.custom_minimum_size = ITEM_SIZE
+	fly_item.scale = Vector2.ONE
 	fly_item.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	fly_item.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	add_child(fly_item)
+	fly_item.z_index = 4096
+	fly_root.add_child(fly_item)
 	var start_global: Vector2 = from_global if from_global != Vector2.INF else get_viewport().get_visible_rect().size / 2.0
-	var start_local: Vector2 = start_global - global_position - ITEM_SIZE / 2.0
-	var target_local: Vector2 = slot.global_position - global_position + (slot.size - ITEM_SIZE) / 2.0
-	fly_item.position = start_local
+	fly_item.global_position = start_global - ITEM_SIZE / 2.0
+	fly_item.set_as_top_level(true)
+	var target_global: Vector2 = slot.global_position + (slot.size - ITEM_SIZE) / 2.0
 	var tween: Tween = create_tween()
 	tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
-	tween.tween_property(fly_item, "position", target_local, FLY_DURATION)
+	tween.tween_property(fly_item, "global_position", target_global, FLY_DURATION)
 	tween.tween_callback(_on_fly_finished.bind(fly_item, slot, slot_index, item_data, count))
 
 
@@ -138,19 +316,23 @@ func _fly_visual_to_slot(slot_index: int, item_data: ItemData, from_global: Vect
 	var slot: Control = slots.get_child(slot_index) as Control
 	if slot == null:
 		return
+	var fly_root: Control = _ensure_fly_root()
 	var fly_item: TextureRect = TextureRect.new()
 	fly_item.texture = item_data.get_icon()
 	fly_item.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	fly_item.size = ITEM_SIZE
+	fly_item.custom_minimum_size = ITEM_SIZE
+	fly_item.scale = Vector2.ONE
 	fly_item.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	fly_item.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	add_child(fly_item)
-	var start_local: Vector2 = from_global - global_position - ITEM_SIZE / 2.0
-	var target_local: Vector2 = slot.global_position - global_position + (slot.size - ITEM_SIZE) / 2.0
-	fly_item.position = start_local
+	fly_item.z_index = 4096
+	fly_root.add_child(fly_item)
+	fly_item.global_position = from_global - ITEM_SIZE / 2.0
+	fly_item.set_as_top_level(true)
+	var target_global: Vector2 = slot.global_position + (slot.size - ITEM_SIZE) / 2.0
 	var tween: Tween = create_tween()
 	tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
-	tween.tween_property(fly_item, "position", target_local, FLY_DURATION)
+	tween.tween_property(fly_item, "global_position", target_global, FLY_DURATION)
 	tween.tween_callback(func() -> void:
 		if is_instance_valid(fly_item):
 			fly_item.queue_free()
@@ -175,7 +357,9 @@ func _on_fly_finished(
 func _create_item_in_slot(slot: Control, item_data: ItemData, count: int = 1) -> void:
 	var item: TextureRect = TextureRect.new()
 	item.texture = item_data.get_icon()
+	item.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	item.size = ITEM_SIZE
+	item.custom_minimum_size = ITEM_SIZE
 	item.mouse_filter = Control.MOUSE_FILTER_STOP
 	item.stretch_mode = TextureRect.STRETCH_SCALE
 	item.set_script(ITEM_SCRIPT)
@@ -251,12 +435,19 @@ func _animate_sort(sorted_items: Array) -> void:
 	_is_sorting = true
 	var pending: Array = [n]
 	for item in sorted_items:
-		var old_slot: Node = item.get_parent()
+		var old_slot: Control = item.get_parent() as Control
 		if old_slot == null:
 			continue
+		# Фиксируем размер и переводим в top-level, чтобы анимация по global_position
+		# не зависела от скейла/лейаута родителя.
+		if item is Control:
+			(item as Control).custom_minimum_size = ITEM_SIZE
+		if item is TextureRect:
+			(item as TextureRect).expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		item.size = ITEM_SIZE
+		item.scale = Vector2.ONE
+		item.set_as_top_level(true)
 		var start_global_center: Vector2 = old_slot.global_position + old_slot.size / 2.0
-		old_slot.remove_child(item)
-		add_child(item)
 		item.global_position = start_global_center - item.size / 2.0
 		item.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	for i in range(n):
@@ -275,9 +466,18 @@ func _animate_sort(sorted_items: Array) -> void:
 
 
 func _finish_sort_item(item: Control, target_slot: Control, pending: Array) -> void:
-	if is_instance_valid(item) and item.get_parent() == self and is_instance_valid(target_slot):
-		remove_child(item)
+	if is_instance_valid(item) and is_instance_valid(target_slot):
+		# Возвращаем из top-level и перепривязываем к целевому слоту.
+		item.set_as_top_level(false)
+		var par: Node = item.get_parent()
+		if par:
+			par.remove_child(item)
 		target_slot.add_child(item)
+		item.custom_minimum_size = ITEM_SIZE
+		item.size = ITEM_SIZE
+		item.scale = Vector2.ONE
+		if item is TextureRect:
+			(item as TextureRect).expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		if target_slot.has_method("attach_stack_label_to_item"):
 			target_slot.call("attach_stack_label_to_item", item)
 		if target_slot.has_method("reorder_stack_label_top"):

@@ -28,6 +28,12 @@ var unit_buy_price: int = 0
 
 func _ready() -> void:
 	mouse_filter = MOUSE_FILTER_STOP
+	# Фиксируем базовый размер, чтобы перепривязка (например, при сортировке)
+	# не приводила к пересчёту размера по текстуре/контейнеру.
+	custom_minimum_size = DRAG_VISUAL_SIZE
+	size = DRAG_VISUAL_SIZE
+	scale = Vector2.ONE
+	expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	inventory_root = _find_inventory_root()
 	drag_root = _find_drag_root()
 	call_deferred("_refresh_drag_root")
@@ -55,6 +61,14 @@ func _on_tree_exiting() -> void:
 
 
 func _find_inventory_root() -> Control:
+	# Надёжно находим инвентарь по группе, чтобы предметы из мусорки/продажи
+	# тоже могли корректно возвращаться в инвентарь.
+	if is_inside_tree():
+		var tree := get_tree()
+		if tree:
+			var g: Node = tree.get_first_node_in_group("inventory")
+			if g is Control:
+				return g as Control
 	var node: Node = self
 	while node:
 		if node.name == "Inventory" and node is Control:
@@ -69,15 +83,18 @@ func _find_drag_root() -> Control:
 		if node is Control and node.is_in_group("ui_drag_root"):
 			return node as Control
 		node = node.get_parent()
-	var tree := get_tree()
-	if tree:
-		var g: Node = tree.get_first_node_in_group("ui_drag_root")
-		if g is Control:
-			return g as Control
+	if is_inside_tree():
+		var tree := get_tree()
+		if tree:
+			var g: Node = tree.get_first_node_in_group("ui_drag_root")
+			if g is Control:
+				return g as Control
 	return _find_inventory_root()
 
 
 func _refresh_drag_root() -> void:
+	if not is_inside_tree():
+		return
 	drag_root = _find_drag_root()
 
 
@@ -104,6 +121,11 @@ func set_item_data(data: ItemData, count: int = 1, ignore_stack_cap: bool = fals
 	_ignore_stack_cap = ignore_stack_cap
 	if data:
 		texture = data.get_icon()
+		# На случай, если Godot пересчитал размеры после перепривязки.
+		custom_minimum_size = DRAG_VISUAL_SIZE
+		size = DRAG_VISUAL_SIZE
+		scale = Vector2.ONE
+		expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		stack_count = maxi(count, 1) if ignore_stack_cap else clampi(count, 1, data.stack_size)
 		_refresh_stack_visuals()
 
@@ -154,6 +176,9 @@ func consume_amount(amount: int) -> void:
 				lbl_f.visible = false
 				lbl_f.text = ""
 		queue_free()
+		# После удаления предмета из слота уплотняем инвентарь, чтобы не оставлять дыр.
+		if inventory_root and inventory_root.has_method("request_compact"):
+			inventory_root.call_deferred("request_compact")
 	else:
 		_refresh_stack_visuals()
 
@@ -221,6 +246,8 @@ func _process(delta: float) -> void:
 
 
 func _ensure_tooltip() -> void:
+	if not is_inside_tree():
+		return
 	if is_instance_valid(_tooltip):
 		return
 	_tooltip = TOOLTIP_SCENE.instantiate() if TOOLTIP_SCENE else Control.new()
@@ -228,8 +255,10 @@ func _ensure_tooltip() -> void:
 	var layer: Node = drag_root.get_parent() if drag_root else (inventory_root.get_parent() if inventory_root else null)
 	while layer and not (layer is CanvasLayer):
 		layer = layer.get_parent()
-	if layer == null:
+	if layer == null and is_inside_tree():
 		layer = get_tree().root
+	if layer == null:
+		return
 	_tooltip_layer = layer
 
 
@@ -355,6 +384,7 @@ func start_drag() -> void:
 	drag_copy.size = DRAG_VISUAL_SIZE
 	drag_copy.modulate = Color(1, 1, 1, 1)
 	drag_copy.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	drag_copy.z_index = 4096
 	drag_root.add_child(drag_copy)
 	var mouse_global: Vector2 = get_viewport().get_mouse_position()
 	drag_copy.global_position = mouse_global - drag_copy.size * 0.5
@@ -395,6 +425,17 @@ func end_drag() -> void:
 			show()
 		return
 	if _try_drop_on_sell(screen_mouse):
+		drag_copy.queue_free()
+		drag_copy = null
+		_destroy_tooltip()
+		if not _drag_consumed_early:
+			consume_amount(1)
+		_drag_consumed_early = false
+		if is_instance_valid(self) and stack_count > 0:
+			show()
+		return
+	# Если отпустили предмет НЕ на мусорку/продажу — пробуем вернуть 1 шт. в инвентарь.
+	if _try_drop_into_inventory(drag_copy.global_position + drag_copy.size * 0.5):
 		drag_copy.queue_free()
 		drag_copy = null
 		_destroy_tooltip()
@@ -500,6 +541,20 @@ func _try_drop_on_sell(screen_pos: Vector2) -> bool:
 	if sell == null or not sell.has_method("try_accept_drop"):
 		return false
 	return bool(sell.call("try_accept_drop", screen_pos, self))
+
+
+func _try_drop_into_inventory(from_global: Vector2 = Vector2.INF) -> bool:
+	if item_data == null:
+		return false
+	# Если предмет уже в инвентаре — "отпускание" должно просто вернуть его,
+	# а не пытаться снова добавить в инвентарь (иначе будут дубли/сдвиги).
+	if inventory_root and inventory_root.is_ancestor_of(self):
+		return false
+	var inv: Node = get_tree().get_first_node_in_group("inventory")
+	if inv == null or not inv.has_method("try_add_items"):
+		return false
+	# Перекладываем 1 единицу (из мусорки/продажи/любого другого источника) обратно.
+	return bool(inv.call("try_add_items", item_data, 1, from_global))
 
 
 func _try_plant_on_field() -> bool:

@@ -4,6 +4,41 @@ extends Control
 @onready var label: Label = $Panel/Label
 
 const SCREEN_PAD: Vector2 = Vector2(2, 2)
+const APPEAR_OVERSHOOT: float = 1.08
+const APPEAR_PHASE1_SEC: float = 0.12
+const APPEAR_PHASE2_SEC: float = 0.14
+
+var _appear_tween: Tween
+
+
+func _enter_tree() -> void:
+	# Подключаем до _ready: иначе первый `visible = true` в том же кадре после add_child
+	# срабатывает раньше, чем сработает _ready, и анимация теряется.
+	if not visibility_changed.is_connected(_on_visibility_changed):
+		visibility_changed.connect(_on_visibility_changed)
+
+
+func _on_visibility_changed() -> void:
+	if visible:
+		pivot_offset = Vector2.ZERO
+		scale = Vector2.ZERO
+		_kill_appear_tween()
+		_appear_tween = create_tween()
+		_appear_tween.tween_property(self, "scale", Vector2.ONE * APPEAR_OVERSHOOT, APPEAR_PHASE1_SEC).set_trans(
+			Tween.TRANS_QUAD
+		).set_ease(Tween.EASE_OUT)
+		_appear_tween.tween_property(self, "scale", Vector2.ONE, APPEAR_PHASE2_SEC).set_trans(Tween.TRANS_BACK).set_ease(
+			Tween.EASE_OUT
+		)
+	else:
+		_kill_appear_tween()
+		scale = Vector2.ONE
+
+
+func _kill_appear_tween() -> void:
+	if _appear_tween != null:
+		_appear_tween.kill()
+	_appear_tween = null
 
 
 func set_text(t: String) -> void:

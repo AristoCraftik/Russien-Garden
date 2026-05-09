@@ -17,7 +17,7 @@ var _is_transitioning: bool = false
 
 func _ready() -> void:
 	# Общая зона локальных координат для drag-copy предметов (инвентарь, мусорка, продажи).
-	var ui_drag_root: Control = $CanvasLayer/DragOverlay
+	var ui_drag_root: Control = $DragLayer/DragOverlay
 	ui_drag_root.add_to_group("ui_drag_root")
 	TimeManager.balance_changed.connect(_on_economy_balance_changed)
 	_on_economy_balance_changed(TimeManager.get_balance())
@@ -138,13 +138,17 @@ func _on_next_day_button_button_up() -> void:
 	_is_transitioning = true
 	_set_buttons_enabled(false)
 
-	day_counter += 1
-	_update_day_label()
-	TimeManager.next_day(day_counter)
-	# Переходим на экран ночи (там покажем заработок/траты).
-	FadeManager.change_scene_with_fade(NIGHT_SCENE, 0.5, 0.0, "")
-	_set_buttons_enabled(true)
-	_is_transitioning = false
+	# Рост, магазин, счёт и т.д. — только после полного затемнения (колбэк в FadeManager).
+	# Без await: после change_scene этот узел освобождается.
+	FadeManager.change_scene_with_fade(
+		NIGHT_SCENE,
+		0.5,
+		0.0,
+		"",
+		func() -> void:
+			day_counter += 1
+			TimeManager.next_day(day_counter)
+	)
 
 
 func _set_buttons_enabled(enabled: bool) -> void:

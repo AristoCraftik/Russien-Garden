@@ -31,11 +31,6 @@ func _on_day_advanced() -> void:
 		if idata != null and idata is YieldData:
 			var yd: YieldData = idata as YieldData
 			total += yd.base_price * qty
-			
-		if idata != null and idata is YieldData:
-			var yd := idata as YieldData
-			total += yd.base_price * qty
-			# влияние на рынок семян соответствующего растения
 			var seed_path := "res://resources/items/seeds/%s_seed.tres" % yd.plant.resource_path.get_file().get_basename()
 			MarketState.register_sale(seed_path, qty)
 	TimeManager.add_coins(total)
@@ -138,8 +133,14 @@ func _first_empty_slot() -> Panel:
 
 
 func _clear_slots_host_children() -> void:
-	for child in slots_host.get_children():
-		child.queue_free()
+	# Сначала снимаем с родителя: иначе queue_free отложен, слоты с урожаем всё ещё
+	# числятся детьми, и save_all после day_advanced записывает «проданное» обратно.
+	var kids: Array = slots_host.get_children().duplicate()
+	for child in kids:
+		if child is Node:
+			var n := child as Node
+			slots_host.remove_child(n)
+			n.queue_free()
 
 
 func _reset_to_single_empty_slot() -> void:
