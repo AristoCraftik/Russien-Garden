@@ -9,6 +9,7 @@ extends Control
 @onready var quit_button: Button = $CanvasLayer/MarginContainer2/HBoxContainer/QuitToMenuButton
 
 const STARTER_STACK: int = 1
+const STARTING_COINS: int = 300
 
 var day_counter: int = 0
 var _is_transitioning: bool = false
@@ -27,9 +28,11 @@ func _ready() -> void:
 	if FadeManager.start_mode == "load":
 		await _load_game()
 	else:
-		TimeManager.set_balance(0)
+		TimeManager.set_balance(STARTING_COINS)
 		await get_tree().process_frame
 		_spawn_starter_inventory()
+	if is_instance_valid(MarketState):
+		MarketState.set_day(day_counter)
 	# Сбрасываем режим, чтобы повторный вход в эту сцену не падал в "load".
 	FadeManager.start_mode = "new"
 	if vouchers and vouchers.has_signal("voucher_purchased"):
@@ -58,14 +61,12 @@ func _spawn_starter_inventory() -> void:
 	var wc: Resource = load("res://resources/items/tools/watering_can.tres")
 	if wc is ItemData:
 		inventory.try_add_items(wc as ItemData, 1, Vector2.INF)
-	var bed: Resource = load("res://resources/items/bed_tetrominoes/l_bed.tres")
-	if bed is ItemData:
-		inventory.try_add_items(bed as ItemData, 1, Vector2.INF)
+	
 	var dir := DirAccess.open("res://resources/items/seeds/")
 	if dir == null:
 		return
 	var names: Array = Array(dir.get_files())
-	names.sort()
+	names.sort()	
 	for f in names:
 		if not f.ends_with(".tres"):
 			continue
@@ -82,7 +83,7 @@ func _load_game() -> void:
 	var save: Dictionary = TimeManager.load_game()
 	if save.is_empty():
 		# Сейва нет — играем как новая игра.
-		TimeManager.set_balance(0)
+		TimeManager.set_balance(STARTING_COINS)
 		await get_tree().process_frame
 		_spawn_starter_inventory()
 		return

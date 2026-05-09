@@ -23,6 +23,13 @@ func has_item() -> bool:
 	return get_item_node() != null
 
 
+func clear_price_badge() -> void:
+	for c in get_children():
+		if c.name == "PricePanel":
+			c.queue_free()
+			return
+
+
 ## Прикрепляет StackLabel к иконке, чтобы счётчик двигался вместе с ней (сортировка, drag).
 func attach_stack_label_to_item(item: TextureRect) -> void:
 	if item == null:

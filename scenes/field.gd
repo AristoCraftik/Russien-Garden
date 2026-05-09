@@ -2,11 +2,19 @@ extends Node2D
 
 @onready var WateredBedLayer: TileMapLayer = $WateredBedLayer
 @onready var BedLayer: TileMapLayer = $BedLayer
+@onready var GrassLayer: TileMapLayer = $GrassLayer
+@onready var AmbientLayer: TileMapLayer = $AmbientLayer
 
 const PLANT_SCENE: PackedScene = preload("res://resources/plants/plant.tscn")
 ## Вкл.: в консоли Godot — детали клика по полю (для отладки).
 const DEBUG_HARVEST_AND_FIELD_CLICK: bool = false
 const BED_TILE_SOURCE_ID: int = 0
+const GRASS_OUTLINE_TERRAIN_SET: int = 0
+const GRASS_OUTLINE_TERRAIN: int = 0
+
+## Тайловое превью грядки-тетрамино (создаётся в `_setup_bed_preview_layers`).
+var BedPreviewLayer: TileMapLayer
+var GrassPreviewLayer: TileMapLayer
 
 enum HarvestOutcome {
 	NO_PLANT,
@@ -27,6 +35,7 @@ func _ready() -> void:
 	add_to_group("field")
 	set_process_input(true)
 	_rebuild_bed_cells()
+	_setup_bed_preview_layers()
 	if TimeManager:
 		if not TimeManager.clear_watered_tiles.is_connected(clear_watered_tiles):
 			TimeManager.clear_watered_tiles.connect(clear_watered_tiles)
@@ -215,7 +224,169 @@ func place_bed_tetromino(cells_world: Array[Vector2i]) -> bool:
 	for c in cells_world:
 		BedLayer.set_cell(c, BED_TILE_SOURCE_ID, Vector2i.ZERO)
 		_bed_cells[c] = true
+	_refresh_grass_outline_for_beds_changed(cells_world)
+	_clear_ambient_near_new_beds(cells_world)
 	return true
+
+
+func clear_bed_tetromino_preview() -> void:
+	if BedPreviewLayer:
+		BedPreviewLayer.clear()
+	if GrassPreviewLayer:
+		GrassPreviewLayer.clear()
+
+
+func update_bed_tetromino_preview(cells_world: Array[Vector2i], valid: bool) -> void:
+	if BedPreviewLayer == null or GrassPreviewLayer == null:
+		return
+	BedPreviewLayer.clear()
+	GrassPreviewLayer.clear()
+	if cells_world.is_empty():
+		return
+	var tint: Color = Color(1.0, 1.0, 1.0, 0.42) if valid else Color(1.0, 0.38, 0.38, 0.48)
+	BedPreviewLayer.modulate = tint
+	GrassPreviewLayer.modulate = tint
+	for c in cells_world:
+		BedPreviewLayer.set_cell(c, BED_TILE_SOURCE_ID, Vector2i.ZERO)
+	var extra_bed: Dictionary = {}
+	for c in cells_world:
+		extra_bed[c] = true
+	_refresh_grass_outline_on_layer(GrassPreviewLayer, cells_world, extra_bed)
+
+
+func _setup_bed_preview_layers() -> void:
+	if BedPreviewLayer != null:
+		return
+	BedPreviewLayer = TileMapLayer.new()
+	BedPreviewLayer.name = "BedPreviewLayer"
+	BedPreviewLayer.tile_set = BedLayer.tile_set
+	BedPreviewLayer.z_index = 500
+	BedPreviewLayer.position = BedLayer.position
+	BedPreviewLayer.scale = BedLayer.scale
+	add_child(BedPreviewLayer)
+
+	GrassPreviewLayer = TileMapLayer.new()
+	GrassPreviewLayer.name = "GrassPreviewLayer"
+	GrassPreviewLayer.tile_set = GrassLayer.tile_set
+	GrassPreviewLayer.z_index = 501
+	GrassPreviewLayer.position = GrassLayer.position
+	GrassPreviewLayer.scale = GrassLayer.scale
+	GrassPreviewLayer.use_parent_material = GrassLayer.use_parent_material
+	add_child(GrassPreviewLayer)
+
+
+func _is_bed_for_outline(cell: Vector2i, extra_bed: Dictionary) -> bool:
+	if _bed_cells.has(cell):
+		return true
+	return extra_bed.has(cell)
+
+
+func _packed_from_cells(cells: Array[Vector2i]) -> PackedVector2Array:
+	var out := PackedVector2Array()
+	out.resize(cells.size())
+	for i in range(cells.size()):
+		out[i] = Vector2(cells[i])
+	return out
+
+
+## Обводка повторяет форму грядки: terrain на **тех же клетках**, что и фигура (кластер),
+## плюс только уже существующие тайлы Grass у 8-соседей — чтобы обновился стык с полем.
+func _grass_outline_stamp_cells(
+		layer: TileMapLayer,
+		seed_cells: Array[Vector2i],
+		extra_bed: Dictionary,
+	) -> Array[Vector2i]:
+	var seen: Dictionary = {}
+	var out: Array[Vector2i] = []
+	for c in seed_cells:
+		if not _is_bed_for_outline(c, extra_bed):
+			continue
+		if seen.has(c):
+			continue
+		seen[c] = true
+		out.append(c)
+	for c in seed_cells:
+		if not _is_bed_for_outline(c, extra_bed):
+			continue
+		for dx in range(-1, 2):
+			for dy in range(-1, 2):
+				if dx == 0 and dy == 0:
+					continue
+				var n: Vector2i = c + Vector2i(dx, dy)
+				if _is_bed_for_outline(n, extra_bed):
+					continue
+				if seen.has(n):
+					continue
+				if layer.get_cell_tile_data(n) == null:
+					continue
+				seen[n] = true
+				out.append(n)
+	return out
+
+
+func _refresh_grass_outline_on_layer(
+		layer: TileMapLayer,
+		seed_cells: Array[Vector2i],
+		extra_bed: Dictionary,
+	) -> void:
+	if layer == null or seed_cells.is_empty():
+		return
+	var stamp: Array[Vector2i] = _grass_outline_stamp_cells(layer, seed_cells, extra_bed)
+	if stamp.is_empty():
+		return
+	layer.set_cells_terrain_connect(
+		_packed_from_cells(stamp),
+		GRASS_OUTLINE_TERRAIN_SET,
+		GRASS_OUTLINE_TERRAIN,
+	)
+
+
+func _refresh_grass_outline_for_beds_changed(changed_bed_cells: Array[Vector2i]) -> void:
+	if GrassLayer == null or changed_bed_cells.is_empty():
+		return
+	_refresh_grass_outline_on_layer(GrassLayer, changed_bed_cells, {})
+
+
+## Какие клетки карты AmbientLayer пересекают одну клетку грядки (учёт разного tile_size).
+func _ambient_map_cells_under_bed_cell(bed_cell: Vector2i) -> Array[Vector2i]:
+	var out: Array[Vector2i] = []
+	if AmbientLayer.tile_set == null or BedLayer.tile_set == null:
+		out.append(bed_cell)
+		return out
+	var bed_sz: Vector2i = BedLayer.tile_set.tile_size
+	var amb_sz: Vector2i = AmbientLayer.tile_set.tile_size
+	if amb_sz.x <= 0 or amb_sz.y <= 0 or bed_sz.x <= 0 or bed_sz.y <= 0:
+		out.append(bed_cell)
+		return out
+	var origin_global: Vector2 = BedLayer.to_global(BedLayer.map_to_local(bed_cell))
+	const EPS: float = 0.02
+	var tl_global: Vector2 = origin_global + Vector2(EPS, EPS)
+	var br_global: Vector2 = origin_global + Vector2(bed_sz) - Vector2(EPS, EPS)
+	var amb_tl: Vector2i = AmbientLayer.local_to_map(AmbientLayer.to_local(tl_global))
+	var amb_br: Vector2i = AmbientLayer.local_to_map(AmbientLayer.to_local(br_global))
+	var x0: int = mini(amb_tl.x, amb_br.x)
+	var x1: int = maxi(amb_tl.x, amb_br.x)
+	var y0: int = mini(amb_tl.y, amb_br.y)
+	var y1: int = maxi(amb_tl.y, amb_br.y)
+	for x in range(x0 - 1, x1):
+		for y in range(y0 - 1, y1):
+			out.append(Vector2i(x, y))
+	return out
+
+
+func _clear_ambient_near_new_beds(bed_cells: Array[Vector2i]) -> void:
+	if AmbientLayer == null or bed_cells.is_empty():
+		return
+	var wipe: Dictionary = {}
+	for v in bed_cells:
+		if not (v is Vector2i):
+			continue
+		var bc: Vector2i = v
+		for ac in _ambient_map_cells_under_bed_cell(bc):
+			wipe[ac] = true
+	for c in wipe:
+		AmbientLayer.erase_cell(c)
+		AmbientLayer.set_cell(c, -1)
 
 # ----------------- INPUT -----------------
 
@@ -229,8 +400,8 @@ func _input(event: InputEvent) -> void:
 			print("[Field/_input] клик по UI, пропуск: ", hovered.get_path())
 		return
 	var mouse_pos: Vector2 = get_global_mouse_position()
-	var local_pos: Vector2 = WateredBedLayer.to_local(mouse_pos)
-	var cell_pos: Vector2i = WateredBedLayer.local_to_map(local_pos)
+	var local_pos: Vector2 = BedLayer.to_local(mouse_pos)
+	var cell_pos: Vector2i = BedLayer.local_to_map(local_pos)
 
 	if event.button_index == MOUSE_BUTTON_LEFT:
 		var ho: HarvestOutcome = harvest_plant_at(cell_pos)

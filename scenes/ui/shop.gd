@@ -4,9 +4,14 @@ class_name Shop
 const ITEM_SCRIPT: GDScript = preload("res://scenes/ui/item.gd")
 const ITEM_SIZE := Vector2(32, 32)
 
-@export var shop_size_min: int = 3
-@export var shop_size_max: int = 6
+## Сколько разных предложений за день (не больше числа слотов в сцене и размера пула).
+@export_range(1, 24, 1) var shop_size_max: int = 6
 @export var max_stack_per_offer: int = 8
+
+## Дополнительный множитель веса для всех семян (поверх shop_offer_weight у каждого .tres).
+@export_range(0.0, 1000.0, 0.01, "or_greater") var seed_shop_weight_mult: float = 1.0
+## Дополнительный множитель веса для кроватей-тетрамино.
+@export_range(0.0, 1000.0, 0.01, "or_greater") var bed_shop_weight_mult: float = 4.0
 
 @onready var slots_host: GridContainer = $MarginContainer/VBoxContainer/Panel/Slots
 
@@ -18,7 +23,8 @@ func _ready() -> void:
 	_price_model = PriceModel.new()
 	if TimeManager:
 		TimeManager.day_advanced.connect(_on_day_advanced)
-	_roll_daily_offers()
+	# После Game._ready успевает выставить MarketState.set_day(day_counter).
+	call_deferred("_roll_daily_offers")
 
 
 func _on_day_advanced() -> void:
@@ -38,19 +44,25 @@ func _roll_daily_offers() -> void:
 	if existing_slots.is_empty():
 		return
 
-	var offers_count := rng.randi_range(
-		shop_size_min,
-		min(shop_size_max, min(all_items.size(), existing_slots.size()))
-	)
-	all_items.shuffle()
+	var pool := _filter_weighted_shop_pool(all_items)
+	if pool.is_empty() and not all_items.is_empty():
+		push_warning("Shop: нулевые веса у всех предметов, используем полный пул без фильтра.")
+		pool = all_items.duplicate()
+	var slot_count: int = existing_slots.size()
+	var max_offers: int = mini(pool.size(), slot_count)
+	if max_offers <= 0:
+		return
+	# Заполняем слоты до лимита пула; shop_size_max — верхняя планка (все 6 ячеек при значении 6).
+	var offers_count: int = mini(max_offers, shop_size_max)
+	var picked: Array[ItemData] = _pick_weighted_without_replacement(pool, offers_count, rng)
 
 	for i in range(existing_slots.size()):
 		var clear_slot := existing_slots[i] as Panel
 		_clear_slot_visual(clear_slot)
 
-	for i in range(offers_count):
+	for i in range(picked.size()):
 		var slot := existing_slots[i] as Panel
-		var item_data: ItemData = all_items[i]
+		var item_data: ItemData = picked[i]
 
 		var qty := 1
 		if item_data is SeedData:
@@ -58,6 +70,52 @@ func _roll_daily_offers() -> void:
 
 		var unit_price := _calc_shop_price(item_data)
 		_create_shop_item(slot, item_data, qty, unit_price)
+
+
+func _effective_shop_pick_weight(item: ItemData) -> float:
+	var w: float = maxf(0.0, item.shop_offer_weight)
+	if w <= 0.0:
+		return 0.0
+	if item is BedTetrominoData:
+		return w * bed_shop_weight_mult
+	if item is SeedData:
+		return w * seed_shop_weight_mult
+	return w
+
+
+func _filter_weighted_shop_pool(all_items: Array[ItemData]) -> Array[ItemData]:
+	var out: Array[ItemData] = []
+	for item in all_items:
+		if _effective_shop_pick_weight(item) > 0.0:
+			out.append(item)
+	return out
+
+
+func _pick_weighted_without_replacement(
+	pool: Array[ItemData], count: int, rng: RandomNumberGenerator
+) -> Array[ItemData]:
+	var remaining: Array[ItemData] = pool.duplicate()
+	var picks: Array[ItemData] = []
+	var n: int = mini(count, remaining.size())
+	for _k in range(n):
+		var total: float = 0.0
+		for item in remaining:
+			total += _effective_shop_pick_weight(item)
+		var chosen_i: int
+		if total <= 0.0:
+			chosen_i = rng.randi_range(0, remaining.size() - 1)
+		else:
+			var roll: float = rng.randf() * total
+			var acc: float = 0.0
+			chosen_i = remaining.size() - 1
+			for i in range(remaining.size()):
+				acc += _effective_shop_pick_weight(remaining[i])
+				if roll < acc:
+					chosen_i = i
+					break
+		picks.append(remaining[chosen_i])
+		remaining.remove_at(chosen_i)
+	return picks
 
 
 func _load_all_seed_data() -> Array:
@@ -87,8 +145,7 @@ func _calc_shop_price(item_data: ItemData) -> int:
 
 	if item_data is BedTetrominoData:
 		var b := item_data as BedTetrominoData
-		var raw_bed: float = float(b.base_buy_price) * MarketState.exchange_mult
-		return maxi(1, int(round(raw_bed)))
+		return maxi(1, b.base_buy_price)
 
 	return 1
 

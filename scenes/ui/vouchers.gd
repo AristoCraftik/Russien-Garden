@@ -90,6 +90,11 @@ func _on_buy_requested(voucher: VoucherData) -> void:
 	if voucher.one_time:
 		_bought_one_time_ids[voucher.voucher_id] = true
 
+	for c in list.get_children():
+		if c is VoucherRow and (c as VoucherRow).get_voucher() == voucher:
+			(c as VoucherRow).hide_price_badge()
+			break
+
 	voucher_purchased.emit(voucher)
 
 	# Удаляем купленный из текущего списка и перерисовываем

@@ -23,7 +23,6 @@ var _tooltip_timer: float = 0.0
 var _drag_consumed_early: bool = false
 
 var _tetro_rotation: int = 0
-var _tetro_preview_root: Node2D = null
 
 var origin_kind: String = "inventory" # "inventory" | "shop"
 var unit_buy_price: int = 0
@@ -480,11 +479,11 @@ func _try_water_on_field() -> void:
 	var viewport: Viewport = get_viewport()
 	var screen_mouse: Vector2 = viewport.get_mouse_position()
 	var mouse_world: Vector2 = viewport.get_canvas_transform().affine_inverse() * screen_mouse
-	var water_layer: Node = field.WateredBedLayer
-	if water_layer == null:
+	var map_layer: Node = _field_cell_map_layer(field)
+	if map_layer == null:
 		return
-	var local_pos: Vector2 = water_layer.to_local(mouse_world)
-	var cell_pos: Vector2i = water_layer.local_to_map(local_pos)
+	var local_pos: Vector2 = map_layer.to_local(mouse_world)
+	var cell_pos: Vector2i = map_layer.local_to_map(local_pos)
 	if not field.is_bed(cell_pos):
 		return
 	if field.has_method("pour_cell"):
@@ -543,11 +542,11 @@ func _try_plant_on_field() -> bool:
 	var viewport: Viewport = get_viewport()
 	var screen_mouse: Vector2 = viewport.get_mouse_position()
 	var mouse_world: Vector2 = viewport.get_canvas_transform().affine_inverse() * screen_mouse
-	var water_layer: Node = field.WateredBedLayer
-	if water_layer == null:
+	var map_layer: Node = _field_cell_map_layer(field)
+	if map_layer == null:
 		return false
-	var local_pos: Vector2 = water_layer.to_local(mouse_world)
-	var cell_pos: Vector2i = water_layer.local_to_map(local_pos)
+	var local_pos: Vector2 = map_layer.to_local(mouse_world)
+	var cell_pos: Vector2i = map_layer.local_to_map(local_pos)
 	if not field.is_bed(cell_pos) or field.is_cell_occupied(cell_pos):
 		return false
 	return field.plant_seed(cell_pos, (item_data as SeedData).plant)
@@ -591,6 +590,13 @@ func _try_buy_into_inventory() -> bool:
 
 	TimeManager.add_coins(-total_price)
 	MarketState.register_buy(item_data.resource_path, qty)
+	var slot_node: Node = get_parent()
+	if slot_node and slot_node.has_method("clear_price_badge"):
+		slot_node.call("clear_price_badge")
+	else:
+		var pp: Node = slot_node.get_node_or_null("PricePanel") if slot_node else null
+		if pp:
+			pp.queue_free()
 	return true
 
 
@@ -599,8 +605,9 @@ func _remove_item_from_slot_and_free() -> void:
 	if par and par.has_method("detach_stack_label_from_item"):
 		par.call("detach_stack_label_from_item", self)
 
-	# Удаляем цену в этом слоте после покупки
-	if par:
+	if par and par.has_method("clear_price_badge"):
+		par.call("clear_price_badge")
+	elif par:
 		var pp: Node = par.get_node_or_null("PricePanel")
 		if pp:
 			pp.queue_free()
@@ -619,11 +626,19 @@ func _rotate_cell(c: Vector2i, rot: int) -> Vector2i:
 		_:
 			return Vector2i(c.y, -c.x)
 
+func _field_cell_map_layer(field: Node) -> Node:
+	if field.has_node("BedLayer"):
+		return field.get_node("BedLayer")
+	return field.get_node_or_null("WateredBedLayer")
+
+
 func _mouse_to_field_cell(field: Node) -> Vector2i:
 	var viewport: Viewport = get_viewport()
 	var screen_mouse: Vector2 = viewport.get_mouse_position()
 	var mouse_world: Vector2 = viewport.get_canvas_transform().affine_inverse() * screen_mouse
-	var layer: Node = field.WateredBedLayer
+	var layer: Node = _field_cell_map_layer(field)
+	if layer == null:
+		return Vector2i.ZERO
 	var local_pos: Vector2 = layer.to_local(mouse_world)
 	return layer.local_to_map(local_pos)
 
@@ -645,42 +660,26 @@ func _try_place_tetromino_on_field() -> bool:
 	if not field.has_method("place_bed_tetromino"):
 		return false
 	return bool(field.call("place_bed_tetromino", cells_world))
-	
-func _ensure_tetro_preview_root(field: Node) -> void:
-	if is_instance_valid(_tetro_preview_root):
-		return
-	_tetro_preview_root = Node2D.new()
-	_tetro_preview_root.name = "TetrominoPreview"
-	field.add_child(_tetro_preview_root)
+
 
 func _clear_tetro_preview() -> void:
-	if is_instance_valid(_tetro_preview_root):
-		_tetro_preview_root.queue_free()
-	_tetro_preview_root = null
+	var field: Node = get_tree().get_first_node_in_group("field") if get_tree() else null
+	if field and field.has_method("clear_bed_tetromino_preview"):
+		field.call("clear_bed_tetromino_preview")
+
 
 func _update_tetromino_preview() -> void:
 	if not dragging or not (item_data is BedTetrominoData):
 		_clear_tetro_preview()
 		return
-	var data := item_data as BedTetrominoData
 	var field: Node = get_tree().get_first_node_in_group("field")
 	if field == null:
 		_clear_tetro_preview()
 		return
-
-	_ensure_tetro_preview_root(field)
-	for ch in _tetro_preview_root.get_children():
-		ch.queue_free()
-
+	var data := item_data as BedTetrominoData
 	var cells_world := _build_tetromino_cells_world(field, data)
 	var valid: bool = false
 	if field.has_method("can_place_bed_tetromino"):
 		valid = bool(field.call("can_place_bed_tetromino", cells_world))
-
-	for c in cells_world:
-		var s := Sprite2D.new()
-		s.texture = data.get_icon() # временно, как просил — атлас предметов
-		s.modulate = Color(1, 1, 1, 0.45) if valid else Color(1, 0.35, 0.35, 0.45)
-		s.position = field.WateredBedLayer.map_to_local(c)
-		s.z_index = 50
-		_tetro_preview_root.add_child(s)
+	if field.has_method("update_bed_tetromino_preview"):
+		field.call("update_bed_tetromino_preview", cells_world, valid)

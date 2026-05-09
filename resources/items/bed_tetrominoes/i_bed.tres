@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="BedTetrominoData" format=3 uid="uid://cd8818c1l8kvn"]
+
+[ext_resource type="Script" uid="uid://dtcbuiyp603ms" path="res://resources/items/bed_tetromino_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+cells = Array[Vector2i]([Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(3, 0)])
+icon_id = Vector2i(0, 0)
+item_name = "I-Bed"
+description = "Expands field in I shape."
+item_type = 5
+stack_size = 1
+metadata/_custom_type_script = "uid://dtcbuiyp603ms"

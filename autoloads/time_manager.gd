@@ -78,6 +78,8 @@ func has_save() -> bool:
 
 
 func next_day(day_counter: int) -> Dictionary:
+	if is_instance_valid(MarketState):
+		MarketState.set_day(day_counter)
 	# Доход: всё, что начислилось при day_advanced (например, продажа).
 	var before: int = get_balance()
 	day_advanced.emit()

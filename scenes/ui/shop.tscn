@@ -9,6 +9,7 @@
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_85p0y")
+shop_size_max = 6
 
 [node name="MarginContainer" type="MarginContainer" parent="." unique_id=1485562416]
 layout_mode = 1

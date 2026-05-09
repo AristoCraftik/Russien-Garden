@@ -80,6 +80,12 @@ func _on_buy_pressed() -> void:
 
 func get_voucher() -> VoucherData:
 	return _voucher
+
+
+func hide_price_badge() -> void:
+	if is_instance_valid(price_panel):
+		price_panel.visible = false
+
 	
 func _process(delta: float) -> void:
 	if _mouse_over:
