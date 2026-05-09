@@ -1,0 +1,17 @@
+[remap]
+
+importer="font_data_bmfont"
+type="FontFile"
+uid="uid://6u6iiti6v3ci"
+path="res://.godot/imported/RedPeaberry.fnt-18312477b5820dbc222822c521f06d14.fontdata"
+
+[deps]
+
+source_file="res://resources/theme/Peaberry Bitmap Fonts/4. RedPeaberry/RedPeaberry.fnt (XML)/RedPeaberry.fnt"
+dest_files=["res://.godot/imported/RedPeaberry.fnt-18312477b5820dbc222822c521f06d14.fontdata"]
+
+[params]
+
+fallbacks=[]
+compress=true
+scaling_mode=2

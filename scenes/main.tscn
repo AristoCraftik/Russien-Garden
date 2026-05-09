@@ -35,18 +35,21 @@ theme = ExtResource("2_h2yge")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/MainPanelContainer/MarginContainer" unique_id=483519422]
 layout_mode = 2
-theme_override_constants/separation = 12
+theme = ExtResource("2_h2yge")
+theme_override_constants/separation = 16
 
 [node name="Label" type="Label" parent="MarginContainer/MainPanelContainer/MarginContainer/VBoxContainer" unique_id=1722746789]
 layout_mode = 2
 theme = ExtResource("2_h2yge")
+theme_override_font_sizes/font_size = 48
 text = "Game name"
+horizontal_alignment = 3
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/MainPanelContainer/MarginContainer/VBoxContainer" unique_id=351241366]
 layout_mode = 2
-size_flags_horizontal = 4
 size_flags_vertical = 4
-theme_override_constants/separation = 6
+theme = ExtResource("2_h2yge")
+theme_override_constants/separation = 12
 
 [node name="StartGameButton" parent="MarginContainer/MainPanelContainer/MarginContainer/VBoxContainer/VBoxContainer" unique_id=529498404 instance=ExtResource("1_ig7tw")]
 layout_mode = 2
@@ -114,10 +117,10 @@ layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = 59.0
-offset_top = 17.0
-offset_right = 206.0
-offset_bottom = 127.0
+offset_left = 131.0
+offset_top = 4.0
+offset_right = 491.0
+offset_bottom = 302.0
 grow_horizontal = 0
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -131,7 +134,7 @@ theme_override_constants/margin_top = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="SettingsPanelContainer/MarginContainer" unique_id=1990533075]
 layout_mode = 2
-theme_override_constants/separation = 2
+theme = ExtResource("2_h2yge")
 
 [node name="Label" type="Label" parent="SettingsPanelContainer/MarginContainer/VBoxContainer" unique_id=858717989]
 layout_mode = 2
@@ -140,6 +143,7 @@ horizontal_alignment = 1
 
 [node name="VBoxContainer" type="VBoxContainer" parent="SettingsPanelContainer/MarginContainer/VBoxContainer" unique_id=811824741]
 layout_mode = 2
+theme = ExtResource("2_h2yge")
 
 [node name="WindowContainer" type="VBoxContainer" parent="SettingsPanelContainer/MarginContainer/VBoxContainer/VBoxContainer" unique_id=1279800328]
 layout_mode = 2

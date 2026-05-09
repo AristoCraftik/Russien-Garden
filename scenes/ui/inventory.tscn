@@ -26,13 +26,11 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 4
 theme = ExtResource("2_avmd0")
-theme_override_font_sizes/font_size = 8
 text = "Type"
 
 [node name="SortNameBtn" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=1586839550]
 layout_mode = 2
 theme = ExtResource("2_avmd0")
-theme_override_font_sizes/font_size = 8
 text = "Name"
 
 [node name="Panel" type="PanelContainer" parent="MarginContainer/VBoxContainer" unique_id=313190389]
@@ -44,6 +42,8 @@ theme = ExtResource("2_avmd0")
 [node name="Slots" type="GridContainer" parent="MarginContainer/VBoxContainer/Panel" unique_id=1998553659]
 layout_mode = 2
 theme = ExtResource("2_avmd0")
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
 columns = 5
 
 [node name="Slot18" parent="MarginContainer/VBoxContainer/Panel/Slots" unique_id=292679798 instance=ExtResource("3_xeaml")]

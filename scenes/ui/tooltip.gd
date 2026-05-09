@@ -7,8 +7,11 @@ const SCREEN_PAD: Vector2 = Vector2(2, 2)
 const APPEAR_OVERSHOOT: float = 1.08
 const APPEAR_PHASE1_SEC: float = 0.12
 const APPEAR_PHASE2_SEC: float = 0.14
+const FADE_OUT_SEC: float = 0.16
 
 var _appear_tween: Tween
+var _fade_out_tween: Tween
+var _playing_fade_out: bool = false
 
 
 func _enter_tree() -> void:
@@ -20,6 +23,9 @@ func _enter_tree() -> void:
 
 func _on_visibility_changed() -> void:
 	if visible:
+		_kill_fade_out_tween()
+		_playing_fade_out = false
+		modulate.a = 1.0
 		pivot_offset = Vector2.ZERO
 		scale = Vector2.ZERO
 		_kill_appear_tween()
@@ -33,6 +39,50 @@ func _on_visibility_changed() -> void:
 	else:
 		_kill_appear_tween()
 		scale = Vector2.ONE
+
+
+func interrupt_hide_for_show() -> void:
+	_kill_fade_out_tween()
+	_playing_fade_out = false
+	modulate.a = 1.0
+
+
+## Плавное исчезновение перед скрытием (из item.gd вместо visible = false).
+func play_hide() -> void:
+	if not visible:
+		return
+	if _playing_fade_out:
+		return
+	if is_equal_approx(modulate.a, 0.0):
+		_finalize_hide_visuals()
+		return
+	_kill_appear_tween()
+	scale = Vector2.ONE
+	_kill_fade_out_tween()
+	_playing_fade_out = true
+	_fade_out_tween = create_tween()
+	_fade_out_tween.tween_property(self, "modulate:a", 0.0, FADE_OUT_SEC).set_trans(Tween.TRANS_SINE).set_ease(
+		Tween.EASE_OUT
+	)
+	_fade_out_tween.finished.connect(_on_fade_out_finished, CONNECT_ONE_SHOT)
+
+
+func _on_fade_out_finished() -> void:
+	_fade_out_tween = null
+	_playing_fade_out = false
+	if is_instance_valid(self):
+		_finalize_hide_visuals()
+
+
+func _finalize_hide_visuals() -> void:
+	visible = false
+	modulate.a = 1.0
+
+
+func _kill_fade_out_tween() -> void:
+	if _fade_out_tween != null:
+		_fade_out_tween.kill()
+	_fade_out_tween = null
 
 
 func _kill_appear_tween() -> void:

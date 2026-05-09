@@ -124,7 +124,7 @@ func set_item_data(data: ItemData, count: int = 1, ignore_stack_cap: bool = fals
 		# На случай, если Godot пересчитал размеры после перепривязки.
 		custom_minimum_size = DRAG_VISUAL_SIZE
 		size = DRAG_VISUAL_SIZE
-		scale = Vector2.ONE
+		scale = Vector2(2, 2)
 		expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		stack_count = maxi(count, 1) if ignore_stack_cap else clampi(count, 1, data.stack_size)
 		_refresh_stack_visuals()
@@ -285,11 +285,17 @@ func _show_tooltip() -> void:
 	_tooltip.global_position = item_global_rect.position + Vector2(item_global_rect.size.x, -tip_size.y)
 	if _tooltip.has_method("clamp_inside_viewport"):
 		_tooltip.call("clamp_inside_viewport", get_viewport())
+	if _tooltip.has_method("interrupt_hide_for_show"):
+		_tooltip.call("interrupt_hide_for_show")
 	_tooltip.visible = true
 
 
 func _hide_tooltip() -> void:
-	if is_instance_valid(_tooltip):
+	if not is_instance_valid(_tooltip):
+		return
+	if _tooltip.has_method("play_hide"):
+		_tooltip.call("play_hide")
+	else:
 		_tooltip.visible = false
 
 

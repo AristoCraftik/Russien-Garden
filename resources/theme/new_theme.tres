@@ -1,8 +1,8 @@
 [gd_resource type="Theme" format=3 uid="uid://djyjxn8m33ich"]
 
+[ext_resource type="FontFile" uid="uid://bq77fmsn43g22" path="res://resources/theme/Comic Sans MS Pixel.ttf" id="1_kux8l"]
 [ext_resource type="Texture2D" uid="uid://d0e04hfsjgrnj" path="res://assets/ui/button_selected.png" id="1_ph6ia"]
 [ext_resource type="Texture2D" uid="uid://dt62meujlty5g" path="res://assets/ui/gold_card.png" id="1_t42wq"]
-[ext_resource type="FontFile" uid="uid://ib420hrxkh70" path="res://resources/theme/TrueType (.ttf)/04B_03__.TTF" id="1_wrif5"]
 [ext_resource type="Texture2D" uid="uid://bqmd53tkujtfy" path="res://assets/ui/button_defoult.png" id="2_wrif5"]
 [ext_resource type="Texture2D" uid="uid://4xbkq4pitopw" path="res://assets/ui/button_pressed.png" id="3_fp81a"]
 [ext_resource type="Texture2D" uid="uid://8376b2ob1yqd" path="res://assets/ui/strelka.png" id="5_muxr5"]
@@ -95,6 +95,10 @@ texture_margin_right = 3.0
 texture_margin_bottom = 3.0
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_1bvp3"]
+content_margin_left = 16.0
+content_margin_top = 16.0
+content_margin_right = 16.0
+content_margin_bottom = 16.0
 texture = ExtResource("1_t42wq")
 texture_margin_left = 11.0
 texture_margin_top = 11.0
@@ -308,8 +312,8 @@ Button/constants/align_to_largest_stylebox = 0
 Button/constants/h_separation = 1
 Button/constants/icon_max_width = 0
 Button/constants/outline_size = 0
-Button/font_sizes/font_size = 8
-Button/fonts/font = ExtResource("1_wrif5")
+Button/font_sizes/font_size = 32
+Button/fonts/font = ExtResource("1_kux8l")
 Button/styles/disabled = SubResource("StyleBoxTexture_kux8l")
 Button/styles/focus = SubResource("StyleBoxTexture_ijp2m")
 Button/styles/hover = SubResource("StyleBoxTexture_x6k3b")
@@ -317,6 +321,7 @@ Button/styles/normal = SubResource("StyleBoxTexture_fp81a")
 Button/styles/pressed = SubResource("StyleBoxTexture_rk8yy")
 GridContainer/constants/h_separation = 4
 GridContainer/constants/v_separation = 4
+HBoxContainer/constants/separation = 8
 Label/colors/font_color = Color(0, 0, 0, 1)
 Label/colors/font_outline_color = Color(0, 0, 0, 1)
 Label/colors/font_shadow_color = Color(0, 0, 0, 0)
@@ -325,8 +330,8 @@ Label/constants/outline_size = 0
 Label/constants/shadow_offset_x = 1
 Label/constants/shadow_offset_y = 1
 Label/constants/shadow_outline_size = 1
-Label/font_sizes/font_size = 8
-Label/fonts/font = ExtResource("1_wrif5")
+Label/font_sizes/font_size = 32
+Label/fonts/font = ExtResource("1_kux8l")
 Label/styles/focus = SubResource("StyleBoxFlat_ph6ia")
 Label/styles/normal = SubResource("StyleBoxEmpty_ph6ia")
 MarginContainer/constants/margin_bottom = 2
@@ -344,8 +349,8 @@ OptionButton/constants/arrow_margin = 8
 OptionButton/constants/h_separation = 1
 OptionButton/constants/modulate_arrow = 0
 OptionButton/constants/outline_size = 0
-OptionButton/font_sizes/font_size = 8
-OptionButton/fonts/font = ExtResource("1_wrif5")
+OptionButton/font_sizes/font_size = 32
+OptionButton/fonts/font = ExtResource("1_kux8l")
 OptionButton/icons/arrow = ExtResource("5_muxr5")
 Panel/styles/panel = SubResource("StyleBoxTexture_y16ef")
 PanelContainer/styles/panel = SubResource("StyleBoxTexture_1bvp3")
@@ -365,10 +370,10 @@ PopupMenu/constants/item_start_padding = 2
 PopupMenu/constants/outline_size = 0
 PopupMenu/constants/separator_outline_size = 0
 PopupMenu/constants/v_separation = 4
-PopupMenu/font_sizes/font_separator_size = 8
-PopupMenu/font_sizes/font_size = 8
-PopupMenu/fonts/font = ExtResource("1_wrif5")
-PopupMenu/fonts/font_separator = ExtResource("1_wrif5")
+PopupMenu/font_sizes/font_separator_size = 32
+PopupMenu/font_sizes/font_size = 32
+PopupMenu/fonts/font = ExtResource("1_kux8l")
+PopupMenu/fonts/font_separator = ExtResource("1_kux8l")
 PopupMenu/icons/checked = SubResource("DPITexture_fp81a")
 PopupMenu/icons/checked_disabled = SubResource("DPITexture_cacpv")
 PopupMenu/icons/radio_checked = SubResource("DPITexture_x6k3b")
@@ -399,8 +404,8 @@ TabContainer/constants/icon_separation = 4
 TabContainer/constants/outline_size = 0
 TabContainer/constants/side_margin = 8
 TabContainer/constants/tab_separation = 4
-TabContainer/font_sizes/font_size = 8
-TabContainer/fonts/font = ExtResource("1_wrif5")
+TabContainer/font_sizes/font_size = 32
+TabContainer/fonts/font = ExtResource("1_kux8l")
 TabContainer/icons/decrement = SubResource("DPITexture_rormb")
 TabContainer/icons/decrement_highlight = SubResource("DPITexture_y16ef")
 TabContainer/icons/drop_mark = SubResource("DPITexture_uckyq")
@@ -415,3 +420,4 @@ TabContainer/styles/tab_hovered = SubResource("StyleBoxTexture_rormb")
 TabContainer/styles/tab_selected = SubResource("StyleBoxTexture_7nolm")
 TabContainer/styles/tab_unselected = SubResource("StyleBoxTexture_jkydo")
 TabContainer/styles/tabbar_background = SubResource("StyleBoxEmpty_u5vx3")
+VBoxContainer/constants/separation = 8

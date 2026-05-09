@@ -21,7 +21,7 @@ pivot_offset = Vector2(-6.635, 0)
 script = ExtResource("1_lnu2h")
 
 [node name="Field" parent="." unique_id=69235035 instance=ExtResource("1_uwrxv")]
-scale = Vector2(2.55, 2.55)
+scale = Vector2(5.625, 5.625)
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=128895694]
 
@@ -84,7 +84,6 @@ layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 0
 theme = ExtResource("4_lbhrr")
-theme_override_font_sizes/font_size = 8
 text = "Next day"
 
 [node name="QuitToMenuButton" type="Button" parent="CanvasLayer/MarginContainer2/HBoxContainer" unique_id=2117596932]

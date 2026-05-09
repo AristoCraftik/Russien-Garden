@@ -1,0 +1,16 @@
+[remap]
+
+importer="font_data_bmfont"
+type="FontFile"
+uid="uid://bpvqcav78x1tw"
+valid=false
+
+[deps]
+
+source_file="res://resources/theme/Peaberry Bitmap Fonts/5. ShinyPeaberry/ShinyPeaberry.fnt (BMFont Text)/ShinyPeaberry.fnt"
+
+[params]
+
+fallbacks=[]
+compress=true
+scaling_mode=2
