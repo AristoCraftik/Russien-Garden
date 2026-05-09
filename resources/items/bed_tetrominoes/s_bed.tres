@@ -6,7 +6,7 @@
 script = ExtResource("1")
 cells = Array[Vector2i]([Vector2i(1, 0), Vector2i(2, 0), Vector2i(0, 1), Vector2i(1, 1)])
 item_id = Vector2i(3, 0)
-icon_id = Vector2i(3, 0)
+icon_id = Vector2i(1, 4)
 item_name = "S-Bed"
 description = "Expands field in S shape."
 item_type = 5
