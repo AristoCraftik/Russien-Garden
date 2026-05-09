@@ -1,7 +1,8 @@
 [gd_scene format=3 uid="uid://cjd2ieb0p8tpk"]
 
 [ext_resource type="Theme" uid="uid://djyjxn8m33ich" path="res://resources/theme/new_theme.tres" id="1_1h3m2"]
-[ext_resource type="Script" path="res://scenes/ui/night.gd" id="2_script"]
+[ext_resource type="Script" uid="uid://ch8a8a3w5isoj" path="res://scenes/ui/night.gd" id="2_script"]
+[ext_resource type="Texture2D" uid="uid://d3c7sp67yfsho" path="res://assets/ui/panel.png" id="3_lghaj"]
 
 [node name="Night" type="CanvasLayer" unique_id=98102421]
 script = ExtResource("2_script")
@@ -132,6 +133,69 @@ text = "Continue"
 layout_mode = 2
 size_flags_horizontal = 2
 text = "Save & quit"
+
+[node name="DocumentsContainer" type="PanelContainer" parent="." unique_id=1447004084]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -80.0
+offset_top = -162.0
+offset_right = 80.0
+grow_horizontal = 2
+grow_vertical = 0
+theme = ExtResource("1_1h3m2")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="DocumentsContainer" unique_id=35739408]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Label" type="Label" parent="DocumentsContainer/VBoxContainer" unique_id=1511802110]
+layout_mode = 2
+text = "Именем закона"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="DocumentsContainer/VBoxContainer" unique_id=1447195841]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Label2" type="Label" parent="DocumentsContainer/VBoxContainer/VBoxContainer" unique_id=414972889]
+layout_mode = 2
+text = "Арбузы по диагонали от
+овощей сажать запрещенно
+пчол ебать нелизя"
+
+[node name="Label3" type="Label" parent="DocumentsContainer/VBoxContainer/VBoxContainer" unique_id=2110915666]
+layout_mode = 2
+text = "а еще квота повышена"
+
+[node name="Label4" type="Label" parent="DocumentsContainer/VBoxContainer/VBoxContainer" unique_id=943286708]
+layout_mode = 2
+text = "с 10 до 100"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="DocumentsContainer/VBoxContainer" unique_id=398954673]
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="VBoxContainer" type="VBoxContainer" parent="DocumentsContainer/VBoxContainer/HBoxContainer" unique_id=2099439198]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 4
+theme_override_constants/separation = 0
+
+[node name="TextureRect" type="TextureRect" parent="DocumentsContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=1118899530]
+modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(64, 32)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 0
+texture = ExtResource("3_lghaj")
+
+[node name="Label5" type="Label" parent="DocumentsContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=1029219664]
+layout_mode = 2
+text = "ваша подпись"
+horizontal_alignment = 2
 
 [connection signal="button_up" from="PanelContainer/VBoxContainer/Buttons/ContinueButton" to="." method="_on_continue_button_button_up"]
 [connection signal="button_up" from="PanelContainer/VBoxContainer/Buttons/SaveAndQuitButton" to="." method="_on_save_and_quit_button_button_up"]

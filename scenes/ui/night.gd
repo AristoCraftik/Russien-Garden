@@ -13,8 +13,20 @@ extends CanvasLayer
 @onready var total_spent_value: Label = $PanelContainer/VBoxContainer/SummaryContainer/HBoxContainer2/MoneyCount
 @onready var total_balance_value: Label = $PanelContainer/VBoxContainer/SummaryContainer/HBoxContainer3/MoneyCount
 
+@onready var main_container: PanelContainer = $PanelContainer
+@onready var documents_container: PanelContainer = $DocumentsContainer
+@onready var texture_rect: TextureRect = $DocumentsContainer/VBoxContainer/HBoxContainer/VBoxContainer/TextureRect
+
 
 func _ready() -> void:
+	var screen_size = get_viewport().get_visible_rect().size
+	documents_container.position = Vector2(
+		(screen_size.x - documents_container.size.x) / 2,
+		screen_size.y + 200)
+	documents_container.modulate.a = 0.0
+	texture_rect.gui_input.connect(_on_gui_input)
+
+
 	_populate_from_report(TimeManager.get_last_night_report() if TimeManager and TimeManager.has_method("get_last_night_report") else {})
 
 
@@ -27,8 +39,7 @@ func _on_save_and_quit_button_button_up() -> void:
 
 func _on_continue_button_button_up() -> void:
 	# Возвращаемся в игру через загрузку сохранения (чтобы восстановить day_counter и состояние мира).
-	FadeManager.start_mode = "load"
-	FadeManager.change_scene_with_fade("res://scenes/game.tscn", 0.5, 0.0, "")
+	show_main()
 
 
 func _clear_dynamic_rows(section: VBoxContainer) -> void:
@@ -88,3 +99,45 @@ func _populate_from_report(report: Dictionary) -> void:
 		total_spent_value.text = "-%d$" % spent_total
 	if total_balance_value:
 		total_balance_value.text = "%d$" % balance
+
+
+func show_main() -> void:
+	var screen_size = get_viewport().get_visible_rect().size
+
+	# Центр экрана
+	var target_position = Vector2(
+		(screen_size.x - documents_container.size.x) / 2,
+		(screen_size.y - documents_container.size.y) / 2
+	)
+
+	var tween = create_tween()
+
+	tween.set_trans(Tween.TRANS_CUBIC)
+	tween.set_ease(Tween.EASE_OUT)
+
+	# Анимация позиции
+	tween.tween_property(
+		documents_container,
+		"position",
+		target_position,
+		1.4
+	)
+
+	# Анимация прозрачности
+	tween.parallel().tween_property(
+		documents_container,
+		"modulate:a",
+		1.0,
+		1.5
+	)
+
+
+func _on_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			texture_rect.modulate.a = 1
+			await get_tree().create_timer(1.0).timeout
+			FadeManager.start_mode = "load"
+			FadeManager.change_scene_with_fade("res://scenes/game.tscn", 0.5, 0.0, "")
+	
+	
