@@ -27,8 +27,8 @@ func _on_day_advanced() -> void:
 
 func _roll_daily_offers() -> void:
 	_clear_slots()
-	var all_seeds := _load_all_seed_data()
-	if all_seeds.is_empty():
+	var all_items := _load_all_shop_items()
+	if all_items.is_empty():
 		return
 
 	var rng := RandomNumberGenerator.new()
@@ -40,20 +40,24 @@ func _roll_daily_offers() -> void:
 
 	var offers_count := rng.randi_range(
 		shop_size_min,
-		min(shop_size_max, min(all_seeds.size(), existing_slots.size()))
+		min(shop_size_max, min(all_items.size(), existing_slots.size()))
 	)
-	all_seeds.shuffle()
+	all_items.shuffle()
 
 	for i in range(existing_slots.size()):
-		var slot := existing_slots[i] as Panel
-		_clear_slot_visual(slot)
+		var clear_slot := existing_slots[i] as Panel
+		_clear_slot_visual(clear_slot)
 
 	for i in range(offers_count):
-		var seed: SeedData = all_seeds[i]
 		var slot := existing_slots[i] as Panel
-		var qty := rng.randi_range(1, max_stack_per_offer)
-		var unit_price := _calc_seed_price(seed)
-		_create_shop_item(slot, seed, qty, unit_price)
+		var item_data: ItemData = all_items[i]
+
+		var qty := 1
+		if item_data is SeedData:
+			qty = rng.randi_range(1, max_stack_per_offer)
+
+		var unit_price := _calc_shop_price(item_data)
+		_create_shop_item(slot, item_data, qty, unit_price)
 
 
 func _load_all_seed_data() -> Array:
@@ -70,29 +74,35 @@ func _load_all_seed_data() -> Array:
 	return result
 
 
-func _calc_seed_price(seed: SeedData) -> int:
-	if seed == null:
-		return 1
-	var rarity := ""
-	if seed.plant:
-		rarity = seed.plant.rarity
-	var rarity_mult := _price_model.rarity_mult(rarity)
-	var sold_balance: int = MarketState.get_sold_balance(seed.resource_path)
-	var demand_mult := _price_model.demand_mult(sold_balance)
-	var exch: float = MarketState.exchange_mult
-	var raw:  float = float(seed.base_buy_price) * rarity_mult * demand_mult * exch
-	return maxi(1, int(round(raw)))
+func _calc_shop_price(item_data: ItemData) -> int:
+	if item_data is SeedData:
+		var seed := item_data as SeedData
+		var rarity := seed.plant.rarity if seed.plant else ""
+		var rarity_mult := _price_model.rarity_mult(rarity)
+		var sold_balance: int = MarketState.get_sold_balance(seed.resource_path)
+		var demand_mult := _price_model.demand_mult(sold_balance)
+		var exch: float = MarketState.exchange_mult
+		var raw: float = float(seed.base_buy_price) * rarity_mult * demand_mult * exch
+		return maxi(1, int(round(raw)))
+
+	if item_data is BedTetrominoData:
+		var b := item_data as BedTetrominoData
+		var raw_bed: float = float(b.base_buy_price) * MarketState.exchange_mult
+		return maxi(1, int(round(raw_bed)))
+
+	return 1
 
 
-func _create_shop_item(slot: Panel, seed: SeedData, qty: int, unit_price: int) -> void:
+func _create_shop_item(slot: Panel, item_data: ItemData, qty: int, unit_price: int) -> void:
 	var item := TextureRect.new()
-	item.texture = seed.get_icon()
+	item.texture = item_data.get_icon()
 	item.custom_minimum_size = ITEM_SIZE
 	item.size = ITEM_SIZE
 	item.mouse_filter = Control.MOUSE_FILTER_STOP
 	item.stretch_mode = TextureRect.STRETCH_SCALE
 	item.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	item.set_script(ITEM_SCRIPT)
+	item.set_item_data(item_data, qty, false)
 	slot.add_child(item)
 
 	if slot.has_method("attach_stack_label_to_item"):
@@ -100,7 +110,6 @@ func _create_shop_item(slot: Panel, seed: SeedData, qty: int, unit_price: int) -
 	if slot.has_method("reorder_stack_label_top"):
 		slot.call("reorder_stack_label_top")
 
-	item.set_item_data(seed, qty, false)
 	if item.has_method("setup_shop_item"):
 		item.setup_shop_item(unit_price)
 
@@ -166,3 +175,26 @@ func _clear_slot_visual(slot: Panel) -> void:
 	if stack_lbl is Label:
 		(stack_lbl as Label).visible = false
 		(stack_lbl as Label).text = ""
+		
+func _load_all_shop_items() -> Array[ItemData]:
+	var out: Array[ItemData] = []
+
+	# Seeds
+	var dir_seeds := DirAccess.open("res://resources/items/seeds/")
+	if dir_seeds:
+		for f in dir_seeds.get_files():
+			if f.ends_with(".tres"):
+				var r := load("res://resources/items/seeds/%s" % f)
+				if r is ItemData:
+					out.append(r)
+
+	# Bed tetrominoes
+	var dir_beds := DirAccess.open("res://resources/items/bed_tetrominoes/")
+	if dir_beds:
+		for f in dir_beds.get_files():
+			if f.ends_with(".tres"):
+				var r := load("res://resources/items/bed_tetrominoes/%s" % f)
+				if r is ItemData:
+					out.append(r)
+
+	return out

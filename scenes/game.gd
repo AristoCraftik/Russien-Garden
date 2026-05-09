@@ -57,8 +57,10 @@ func _spawn_starter_inventory() -> void:
 	# Стартовый инструмент: лейка.
 	var wc: Resource = load("res://resources/items/tools/watering_can.tres")
 	if wc is ItemData:
-		print('2')
 		inventory.try_add_items(wc as ItemData, 1, Vector2.INF)
+	var bed: Resource = load("res://resources/items/bed_tetrominoes/l_bed.tres")
+	if bed is ItemData:
+		inventory.try_add_items(bed as ItemData, 1, Vector2.INF)
 	var dir := DirAccess.open("res://resources/items/seeds/")
 	if dir == null:
 		return

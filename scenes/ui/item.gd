@@ -22,6 +22,9 @@ var _mouse_over: bool = false
 var _tooltip_timer: float = 0.0
 var _drag_consumed_early: bool = false
 
+var _tetro_rotation: int = 0
+var _tetro_preview_root: Node2D = null
+
 var origin_kind: String = "inventory" # "inventory" | "shop"
 var unit_buy_price: int = 0
 
@@ -52,6 +55,8 @@ func _on_tree_exiting() -> void:
 	if is_instance_valid(drag_copy):
 		drag_copy.queue_free()
 		drag_copy = null
+		
+	_clear_tetro_preview()
 
 
 func _find_inventory_root() -> Control:
@@ -218,6 +223,9 @@ func _process(delta: float) -> void:
 		_tooltip_timer = TOOLTIP_DELAY
 		if _tooltip:
 			_hide_tooltip()
+			
+	if dragging and item_data is BedTetrominoData:
+		_update_tetromino_preview()
 
 
 func _ensure_tooltip() -> void:
@@ -294,6 +302,19 @@ func _input(event: InputEvent) -> void:
 	# поэтому для ЛКМ используем _input (а не только _unhandled_input).
 	if not dragging:
 		return
+		
+	if dragging and item_data is BedTetrominoData and event is InputEventMouseButton and event.pressed:
+		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+			_tetro_rotation = (_tetro_rotation + 1) % 4
+			_update_tetromino_preview()
+			get_viewport().set_input_as_handled()
+			return
+		if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			_tetro_rotation = (_tetro_rotation + 3) % 4
+			_update_tetromino_preview()
+			get_viewport().set_input_as_handled()
+			return
+	
 	if event is InputEventMouseButton and event.pressed:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			end_drag()
@@ -408,6 +429,8 @@ func end_drag() -> void:
 	tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
 	tween.tween_property(drag_copy, "global_position", origin_global_pos, RETURN_DURATION)
 	tween.tween_callback(_on_return_finished)
+	
+	_clear_tetro_preview()
 
 
 func _on_return_finished() -> void:
@@ -422,6 +445,8 @@ func _on_return_finished() -> void:
 		_drag_consumed_early = false
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	show()
+	
+	_clear_tetro_preview()
 
 
 func _try_use_in_hand() -> void:
@@ -435,6 +460,11 @@ func _try_use_in_hand() -> void:
 	# 2) Инструменты: пока только лейка.
 	if item_data is ToolData:
 		_try_water_on_field()
+		return
+	# 3) Тетрамино грядок
+	if item_data is BedTetrominoData:
+		if _try_place_tetromino_on_field():
+			_commit_used_one()
 		return
 
 
@@ -538,7 +568,9 @@ func setup_shop_item(price: int) -> void:
 
 
 func _try_buy_into_inventory() -> bool:
-	if item_data == null or not (item_data is SeedData):
+	if item_data == null:
+		return false
+	if not (item_data is SeedData or item_data is BedTetrominoData):
 		return false
 	if unit_buy_price <= 0:
 		return false
@@ -574,3 +606,81 @@ func _remove_item_from_slot_and_free() -> void:
 			pp.queue_free()
 
 	queue_free()
+
+# Тетрамино
+func _rotate_cell(c: Vector2i, rot: int) -> Vector2i:
+	match rot % 4:
+		0:
+			return c
+		1:
+			return Vector2i(-c.y, c.x)
+		2:
+			return Vector2i(-c.x, -c.y)
+		_:
+			return Vector2i(c.y, -c.x)
+
+func _mouse_to_field_cell(field: Node) -> Vector2i:
+	var viewport: Viewport = get_viewport()
+	var screen_mouse: Vector2 = viewport.get_mouse_position()
+	var mouse_world: Vector2 = viewport.get_canvas_transform().affine_inverse() * screen_mouse
+	var layer: Node = field.WateredBedLayer
+	var local_pos: Vector2 = layer.to_local(mouse_world)
+	return layer.local_to_map(local_pos)
+
+func _build_tetromino_cells_world(field: Node, data: BedTetrominoData) -> Array[Vector2i]:
+	var anchor: Vector2i = _mouse_to_field_cell(field)
+	var out: Array[Vector2i] = []
+	for c in data.cells:
+		out.append(anchor + _rotate_cell(c, _tetro_rotation))
+	return out
+
+func _try_place_tetromino_on_field() -> bool:
+	if not (item_data is BedTetrominoData):
+		return false
+	var data := item_data as BedTetrominoData
+	var field: Node = get_tree().get_first_node_in_group("field")
+	if field == null:
+		return false
+	var cells_world := _build_tetromino_cells_world(field, data)
+	if not field.has_method("place_bed_tetromino"):
+		return false
+	return bool(field.call("place_bed_tetromino", cells_world))
+	
+func _ensure_tetro_preview_root(field: Node) -> void:
+	if is_instance_valid(_tetro_preview_root):
+		return
+	_tetro_preview_root = Node2D.new()
+	_tetro_preview_root.name = "TetrominoPreview"
+	field.add_child(_tetro_preview_root)
+
+func _clear_tetro_preview() -> void:
+	if is_instance_valid(_tetro_preview_root):
+		_tetro_preview_root.queue_free()
+	_tetro_preview_root = null
+
+func _update_tetromino_preview() -> void:
+	if not dragging or not (item_data is BedTetrominoData):
+		_clear_tetro_preview()
+		return
+	var data := item_data as BedTetrominoData
+	var field: Node = get_tree().get_first_node_in_group("field")
+	if field == null:
+		_clear_tetro_preview()
+		return
+
+	_ensure_tetro_preview_root(field)
+	for ch in _tetro_preview_root.get_children():
+		ch.queue_free()
+
+	var cells_world := _build_tetromino_cells_world(field, data)
+	var valid: bool = false
+	if field.has_method("can_place_bed_tetromino"):
+		valid = bool(field.call("can_place_bed_tetromino", cells_world))
+
+	for c in cells_world:
+		var s := Sprite2D.new()
+		s.texture = data.get_icon() # временно, как просил — атлас предметов
+		s.modulate = Color(1, 1, 1, 0.45) if valid else Color(1, 0.35, 0.35, 0.45)
+		s.position = field.WateredBedLayer.map_to_local(c)
+		s.z_index = 50
+		_tetro_preview_root.add_child(s)

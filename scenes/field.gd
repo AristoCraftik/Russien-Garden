@@ -6,6 +6,7 @@ extends Node2D
 const PLANT_SCENE: PackedScene = preload("res://resources/plants/plant.tscn")
 ## Вкл.: в консоли Godot — детали клика по полю (для отладки).
 const DEBUG_HARVEST_AND_FIELD_CLICK: bool = false
+const BED_TILE_SOURCE_ID: int = 0
 
 enum HarvestOutcome {
 	NO_PLANT,
@@ -198,6 +199,23 @@ func get_plants_save_data() -> Array:
 			snapshot.append(plant.get_save_dict())
 	return snapshot
 
+func can_place_bed_tetromino(cells_world: Array[Vector2i]) -> bool:
+	if cells_world.is_empty():
+		return false
+	for c in cells_world:
+		if is_bed(c):
+			return false
+		if is_cell_occupied(c):
+			return false
+	return true
+
+func place_bed_tetromino(cells_world: Array[Vector2i]) -> bool:
+	if not can_place_bed_tetromino(cells_world):
+		return false
+	for c in cells_world:
+		BedLayer.set_cell(c, BED_TILE_SOURCE_ID, Vector2i.ZERO)
+		_bed_cells[c] = true
+	return true
 
 # ----------------- INPUT -----------------
 

@@ -2,7 +2,7 @@ class_name ItemData
 extends Resource
 
 
-enum ItemType { SEED, YIELD, FERTILIZER, ARTIFACT, TOOL }
+enum ItemType { SEED, YIELD, FERTILIZER, ARTIFACT, TOOL, BED_TETROMINO }
 
 @export var item_id: Vector2i = Vector2i.ZERO
 @export var icon_id: Vector2i = Vector2i.ONE
