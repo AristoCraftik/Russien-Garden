@@ -301,8 +301,13 @@ func _input(event: InputEvent) -> void:
 	# поэтому для ЛКМ используем _input (а не только _unhandled_input).
 	if not dragging:
 		return
+
+	if dragging and origin_kind == "shop" and event is InputEventMouseButton and event.pressed:
+		if event.button_index != MOUSE_BUTTON_LEFT:
+			get_viewport().set_input_as_handled()
+			return
 		
-	if dragging and item_data is BedTetrominoData and event is InputEventMouseButton and event.pressed:
+	if dragging and origin_kind != "shop" and item_data is BedTetrominoData and event is InputEventMouseButton and event.pressed:
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
 			_tetro_rotation = (_tetro_rotation + 1) % 4
 			_update_tetromino_preview()
@@ -379,8 +384,8 @@ func start_drag() -> void:
 	var mouse_global: Vector2 = get_viewport().get_mouse_position()
 	drag_copy.global_position = mouse_global - drag_copy.size * 0.5
 	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
-	# Если это инструмент — считаем его активным на время использования.
-	if item_data is ToolData and TimeManager and TimeManager.has_method("set_active_tool"):
+	# Если это инструмент — считаем его активным на время использования (только не с витрины).
+	if origin_kind != "shop" and item_data is ToolData and TimeManager and TimeManager.has_method("set_active_tool"):
 		TimeManager.set_active_tool(item_data)
 
 
@@ -450,6 +455,8 @@ func _on_return_finished() -> void:
 
 func _try_use_in_hand() -> void:
 	if not dragging or not is_instance_valid(drag_copy) or item_data == null:
+		return
+	if origin_kind == "shop":
 		return
 	# 1) Семена: посадить.
 	if item_data is SeedData:
@@ -577,6 +584,10 @@ func _try_buy_into_inventory() -> bool:
 	var inv: Node = get_tree().get_first_node_in_group("inventory")
 	if inv == null or not inv.has_method("try_add_items"):
 		return false
+	var mouse_global: Vector2 = get_viewport().get_mouse_position()
+	if inv.has_method("is_global_point_on_any_slot"):
+		if not bool(inv.call("is_global_point_on_any_slot", mouse_global)):
+			return false
 
 	var qty: int = max(1, stack_count)
 	var total_price: int = unit_buy_price * qty
@@ -590,27 +601,30 @@ func _try_buy_into_inventory() -> bool:
 
 	TimeManager.add_coins(-total_price)
 	MarketState.register_buy(item_data.resource_path, qty)
-	var slot_node: Node = get_parent()
-	if slot_node and slot_node.has_method("clear_price_badge"):
-		slot_node.call("clear_price_badge")
-	else:
-		var pp: Node = slot_node.get_node_or_null("PricePanel") if slot_node else null
-		if pp:
-			pp.queue_free()
+	_clear_shop_slot_price_visual()
 	return true
 
 
+func _clear_shop_slot_price_visual() -> void:
+	var p: Node = get_parent()
+	var depth: int = 0
+	while p != null and depth < 12:
+		if p.has_method("clear_price_badge"):
+			p.call("clear_price_badge")
+			return
+		var pp: Node = p.get_node_or_null("PricePanel")
+		if pp != null:
+			pp.queue_free()
+			return
+		p = p.get_parent()
+		depth += 1
+
+
 func _remove_item_from_slot_and_free() -> void:
+	_clear_shop_slot_price_visual()
 	var par: Node = get_parent()
 	if par and par.has_method("detach_stack_label_from_item"):
 		par.call("detach_stack_label_from_item", self)
-
-	if par and par.has_method("clear_price_badge"):
-		par.call("clear_price_badge")
-	elif par:
-		var pp: Node = par.get_node_or_null("PricePanel")
-		if pp:
-			pp.queue_free()
 
 	queue_free()
 
@@ -669,6 +683,9 @@ func _clear_tetro_preview() -> void:
 
 
 func _update_tetromino_preview() -> void:
+	if origin_kind == "shop":
+		_clear_tetro_preview()
+		return
 	if not dragging or not (item_data is BedTetrominoData):
 		_clear_tetro_preview()
 		return

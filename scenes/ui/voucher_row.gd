@@ -34,6 +34,8 @@ func setup(voucher: VoucherData, can_buy: bool = true) -> void:
 	price_label.text = "$%d" % voucher.price
 
 	await get_tree().process_frame
+	if not is_instance_valid(price_panel) or not is_instance_valid(price_label):
+		return
 
 	var pad := Vector2(4, 1)
 	var text_size: Vector2 = price_label.get_minimum_size()
@@ -83,8 +85,9 @@ func get_voucher() -> VoucherData:
 
 
 func hide_price_badge() -> void:
-	if is_instance_valid(price_panel):
-		price_panel.visible = false
+	var pp: Node = get_node_or_null("Panel")
+	if pp != null:
+		pp.queue_free()
 
 	
 func _process(delta: float) -> void:

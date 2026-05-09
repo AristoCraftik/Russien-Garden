@@ -45,6 +45,19 @@ func slot_count() -> int:
 	return slots.get_child_count() if slots else 0
 
 
+## Точка в глобальных координатах лежит внутри одной из ячеек-слотов (не кнопки, не поля вокруг).
+func is_global_point_on_any_slot(global_pt: Vector2) -> bool:
+	if slots == null:
+		return false
+	for i in range(slot_count()):
+		var slot: Control = slots.get_child(i) as Control
+		if slot == null:
+			continue
+		if slot.get_global_rect().has_point(global_pt):
+			return true
+	return false
+
+
 func get_first_empty_slot_index() -> int:
 	for i in range(slot_count()):
 		if _is_slot_free(i):

@@ -24,10 +24,12 @@ func has_item() -> bool:
 
 
 func clear_price_badge() -> void:
+	var to_free: Array[Node] = []
 	for c in get_children():
 		if c.name == "PricePanel":
-			c.queue_free()
-			return
+			to_free.append(c)
+	for c in to_free:
+		c.queue_free()
 
 
 ## Прикрепляет StackLabel к иконке, чтобы счётчик двигался вместе с ней (сортировка, drag).
