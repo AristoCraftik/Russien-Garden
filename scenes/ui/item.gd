@@ -493,10 +493,17 @@ func _try_water_on_field() -> void:
 	var cell_pos: Vector2i = map_layer.local_to_map(local_pos)
 	if not field.is_bed(cell_pos):
 		return
+	if TimeManager and not TimeManager.has_water_for_watering():
+		var toast_nowater: Node = get_tree().get_first_node_in_group("toast_manager")
+		if toast_nowater and toast_nowater.has_method("show_toast"):
+			toast_nowater.call("show_toast", tr("TOAST_NO_WATER"))
+		return
 	if field.has_method("pour_cell"):
 		var ok: bool = bool(field.call("pour_cell", cell_pos))
-		if ok and TimeManager and TimeManager.has_method("register_watering_action"):
-			TimeManager.register_watering_action()
+		if ok and TimeManager:
+			TimeManager.consume_water_unit(1)
+			if TimeManager.has_method("register_watering_action"):
+				TimeManager.register_watering_action()
 
 
 func _commit_used_one() -> void:

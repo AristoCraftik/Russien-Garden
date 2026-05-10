@@ -3,18 +3,22 @@ extends Node
 signal day_advanced
 signal clear_watered_tiles
 signal balance_changed(new_balance: int)
+signal water_supply_changed(current: int, capacity: int)
 signal day_financials(day: int, earned: int, spent: int, watering_spent: int, quota_spent: int)
 
 const SAVE_PATH := "user://garden/game_data.cfg"
-const SAVE_VERSION := 4
+const SAVE_VERSION := 5
 
 var _coins: int = 0
 
 const DAILY_QUOTA_COST: int = 10
 const WATER_COST: int = 1
+## Запас воды для полива лейкой (не путать с WATER_COST — монеты за ночь).
+const WATER_TANK_CAPACITY: int = 20
 
 var _pending_watering_count: int = 0
 var _active_tool: Resource = null
+var _water_units: int = WATER_TANK_CAPACITY
 
 
 func set_balance(value: int) -> void:
@@ -45,6 +49,35 @@ func register_watering_action() -> void:
 	_pending_watering_count += 1
 
 
+func get_water_tank_capacity() -> int:
+	return WATER_TANK_CAPACITY
+
+
+func get_water_units() -> int:
+	return _water_units
+
+
+func has_water_for_watering() -> bool:
+	return _water_units > 0
+
+
+func consume_water_unit(amount: int = 1) -> void:
+	if amount <= 0:
+		return
+	_water_units = maxi(0, _water_units - amount)
+	water_supply_changed.emit(_water_units, WATER_TANK_CAPACITY)
+
+
+func refill_water_tank_for_new_day() -> void:
+	_water_units = WATER_TANK_CAPACITY
+	water_supply_changed.emit(_water_units, WATER_TANK_CAPACITY)
+
+
+func set_water_units_from_save(value: int) -> void:
+	_water_units = clampi(int(value), 0, WATER_TANK_CAPACITY)
+	water_supply_changed.emit(_water_units, WATER_TANK_CAPACITY)
+
+
 func _ready() -> void:
 	_wipe_save_file()
 
@@ -73,6 +106,7 @@ func load_game() -> Dictionary:
 		"field":             config.get_value("game", "field", {}),
 		"run_seed":          int(config.get_value("game", "run_seed", 0)),
 		"market_rng_state":  config.get_value("game", "market_rng_state", 0),
+		"water_units":       int(config.get_value("game", "water_units", WATER_TANK_CAPACITY)),
 	}
 
 
@@ -81,6 +115,7 @@ func has_save() -> bool:
 
 
 func next_day(day_counter: int) -> Dictionary:
+	refill_water_tank_for_new_day()
 	if is_instance_valid(MarketState):
 		MarketState.set_day(day_counter)
 	# Доход: всё, что начислилось при day_advanced (например, продажа).
@@ -128,6 +163,7 @@ func save_all(day_counter: int, plants_snapshot: Array = [], inventory_snapshot:
 	if is_instance_valid(MarketState):
 		config.set_value("game", "run_seed", MarketState.get_run_seed())
 		config.set_value("game", "market_rng_state", MarketState.get_gameplay_rng_state_for_save())
+	config.set_value("game", "water_units", get_water_units())
 	var dir_err: int = DirAccess.make_dir_recursive_absolute(SAVE_PATH.get_base_dir())
 	if dir_err != OK and dir_err != ERR_ALREADY_EXISTS:
 		push_error("TimeManager: cannot create save dir (%d)" % dir_err)

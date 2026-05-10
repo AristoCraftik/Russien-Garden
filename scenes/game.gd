@@ -5,6 +5,8 @@ extends Control
 @onready var inventory: Node = $CanvasLayer/MarginContainer/VBoxContainer/Inventory
 @onready var vouchers: Node = $CanvasLayer/MarginContainer5/HBoxContainer/Vouchers
 @onready var money_label: Label = $CanvasLayer/MarginContainer2/HBoxContainer/PanelContainer/MoneyLabel
+@onready var water_bar: ProgressBar = $CanvasLayer/MarginContainer2/HBoxContainer/WaterPanel/VBoxWater/WaterProgressBar
+@onready var water_bar_label: Label = $CanvasLayer/MarginContainer2/HBoxContainer/WaterPanel/VBoxWater/WaterBarLabel
 @onready var next_day_button: Button = $CanvasLayer/MarginContainer2/HBoxContainer/NextDayButton
 @onready var quit_button: Button = $CanvasLayer/MarginContainer2/HBoxContainer/QuitToMenuButton
 
@@ -20,7 +22,10 @@ func _ready() -> void:
 	var ui_drag_root: Control = $CanvasLayer/DragOverlay
 	ui_drag_root.add_to_group("ui_drag_root")
 	TimeManager.balance_changed.connect(_on_economy_balance_changed)
+	TimeManager.water_supply_changed.connect(_on_water_supply_changed)
 	_on_economy_balance_changed(TimeManager.get_balance())
+	_apply_water_bar_theme()
+	_on_water_supply_changed(TimeManager.get_water_units(), TimeManager.get_water_tank_capacity())
 	add_to_group("i18n")
 	_apply_i18n()
 	# Иначе MarginContainer перехватывает клики по всему экрану, и поле не получает сбор/полив.
@@ -30,6 +35,7 @@ func _ready() -> void:
 	else:
 		TimeManager.set_balance(STARTING_COINS)
 		_configure_market_for_new_run()
+		TimeManager.refill_water_tank_for_new_day()
 		await get_tree().process_frame
 		_spawn_starter_inventory()
 	if is_instance_valid(MarketState):
@@ -39,6 +45,26 @@ func _ready() -> void:
 	FadeManager.start_mode = "new"
 	if vouchers and vouchers.has_signal("voucher_purchased"):
 		vouchers.voucher_purchased.connect(_on_voucher_purchased)
+
+
+func _apply_water_bar_theme() -> void:
+	if not is_instance_valid(water_bar):
+		return
+	var bg := StyleBoxFlat.new()
+	bg.bg_color = Color(0.1, 0.12, 0.16, 0.92)
+	bg.set_corner_radius_all(3)
+	var fill := StyleBoxFlat.new()
+	fill.bg_color = Color(0.32, 0.78, 0.98, 0.95)
+	fill.set_corner_radius_all(3)
+	water_bar.add_theme_stylebox_override("background", bg)
+	water_bar.add_theme_stylebox_override("fill", fill)
+
+
+func _on_water_supply_changed(current: int, capacity: int) -> void:
+	if not is_instance_valid(water_bar):
+		return
+	water_bar.max_value = float(capacity)
+	water_bar.value = float(clampi(current, 0, capacity))
 
 
 func _on_economy_balance_changed(balance: int) -> void:
@@ -51,6 +77,8 @@ func _apply_i18n() -> void:
 		next_day_button.text = tr("GAME_NEXT_DAY")
 	if is_instance_valid(quit_button):
 		quit_button.text = tr("GAME_QUIT_TO_MENU")
+	if is_instance_valid(water_bar_label):
+		water_bar_label.text = tr("UI_WATER")
 	_on_economy_balance_changed(TimeManager.get_balance())
 
 
@@ -87,12 +115,14 @@ func _load_game() -> void:
 		# Сейва нет — играем как новая игра.
 		TimeManager.set_balance(STARTING_COINS)
 		_configure_market_for_new_run()
+		TimeManager.refill_water_tank_for_new_day()
 		await get_tree().process_frame
 		_spawn_starter_inventory()
 		return
 
 	day_counter = int(save.get("day", 0))
 	TimeManager.set_balance(int(save.get("coins", 0)))
+	TimeManager.set_water_units_from_save(int(save.get("water_units", TimeManager.get_water_tank_capacity())))
 	_configure_market_from_save(save)
 
 	if field and field.has_method("apply_field_save_state"):

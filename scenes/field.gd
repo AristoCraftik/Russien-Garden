@@ -96,6 +96,8 @@ func plant_seed(cell_pos: Vector2i, plant_data: PlantData, growth_stage: int = 0
 	plant.position = WateredBedLayer.map_to_local(cell_pos)
 	plant.z_index = 1
 
+	if watered_state and not is_cell_watered(cell_pos):
+		WateredBedLayer.set_cells_terrain_connect([cell_pos], 0, 0)
 	if watered_state or is_cell_watered(cell_pos):
 		plant.watered = true
 
@@ -232,7 +234,15 @@ func can_place_bed_tetromino(cells_world: Array[Vector2i]) -> bool:
 
 
 func get_field_save_state() -> Dictionary:
-	return {"margin_expansions": _access_margin_expansions}
+	var watered_cells: Array = []
+	if BedLayer != null:
+		for c in BedLayer.get_used_cells():
+			if is_cell_watered(c):
+				watered_cells.append([c.x, c.y])
+	return {
+		"margin_expansions": _access_margin_expansions,
+		"watered_cells": watered_cells,
+	}
 
 
 func apply_field_save_state(data: Variant) -> void:
@@ -240,6 +250,36 @@ func apply_field_save_state(data: Variant) -> void:
 		return
 	var d: Dictionary = data
 	_access_margin_expansions = maxi(0, int(d.get("margin_expansions", 0)))
+	_restore_watered_cells_from_save(d.get("watered_cells", []))
+
+
+func _restore_watered_cells_from_save(cells_data: Variant) -> void:
+	if WateredBedLayer == null:
+		return
+	WateredBedLayer.clear()
+	if cells_data == null or not (cells_data is Array):
+		return
+	for entry in cells_data as Array:
+		var parsed: Variant = _cell_from_save_entry(entry)
+		if parsed == null or not (parsed is Vector2i):
+			continue
+		var c: Vector2i = parsed as Vector2i
+		if not is_bed(c):
+			continue
+		WateredBedLayer.set_cells_terrain_connect([c], 0, 0)
+
+
+func _cell_from_save_entry(entry: Variant) -> Variant:
+	if entry is Vector2i:
+		return entry as Vector2i
+	if entry is Array:
+		var a: Array = entry as Array
+		if a.size() >= 2:
+			return Vector2i(int(a[0]), int(a[1]))
+	if typeof(entry) == TYPE_DICTIONARY:
+		var d: Dictionary = entry as Dictionary
+		return Vector2i(int(d.get("x", 0)), int(d.get("y", 0)))
+	return null
 
 
 ## Новый ваучер: +1 к доступной территории по периметру (ширина/высота +2 каждый покупкой).

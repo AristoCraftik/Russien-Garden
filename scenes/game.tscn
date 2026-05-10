@@ -76,6 +76,27 @@ layout_mode = 2
 theme = ExtResource("4_lbhrr")
 text = "Money: 0"
 
+[node name="WaterPanel" type="PanelContainer" parent="CanvasLayer/MarginContainer2/HBoxContainer" unique_id=810450866]
+layout_mode = 2
+theme = ExtResource("4_lbhrr")
+
+[node name="VBoxWater" type="VBoxContainer" parent="CanvasLayer/MarginContainer2/HBoxContainer/WaterPanel" unique_id=810450867]
+layout_mode = 2
+
+[node name="WaterBarLabel" type="Label" parent="CanvasLayer/MarginContainer2/HBoxContainer/WaterPanel/VBoxWater" unique_id=810450868]
+layout_mode = 2
+theme = ExtResource("4_lbhrr")
+theme_override_font_sizes/font_size = 8
+text = "Water"
+
+[node name="WaterProgressBar" type="ProgressBar" parent="CanvasLayer/MarginContainer2/HBoxContainer/WaterPanel/VBoxWater" unique_id=810450869]
+custom_minimum_size = Vector2(104, 14)
+layout_mode = 2
+theme = ExtResource("4_lbhrr")
+max_value = 20.0
+value = 20.0
+show_percentage = false
+
 [node name="MarginContainer3" type="MarginContainer" parent="CanvasLayer" unique_id=1485033179]
 anchors_preset = 3
 anchor_left = 1.0

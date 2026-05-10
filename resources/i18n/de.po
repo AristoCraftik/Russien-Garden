@@ -81,6 +81,12 @@ msgstr "Name"
 msgid "TOAST_INVENTORY_FULL"
 msgstr "Inventar ist voll"
 
+msgid "TOAST_NO_WATER"
+msgstr "Heute ist kein Wasser mehr übrig"
+
+msgid "UI_WATER"
+msgstr "Wasser"
+
 msgid "DAY_SUMMARY_FMT"
 msgstr "Tag %d\nVerdient: +%d\nAusgaben: -%d (Wasser %d, Quote %d)"
 

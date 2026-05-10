@@ -81,6 +81,12 @@ msgstr "Имя"
 msgid "TOAST_INVENTORY_FULL"
 msgstr "Инвентарь полон"
 
+msgid "TOAST_NO_WATER"
+msgstr "Вода на сегодня закончилась"
+
+msgid "UI_WATER"
+msgstr "Вода"
+
 msgid "DAY_SUMMARY_FMT"
 msgstr "День %d\nЗаработано: +%d\nТраты: -%d (полив %d, квота %d)"
 
