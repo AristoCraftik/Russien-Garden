@@ -6,7 +6,7 @@ signal balance_changed(new_balance: int)
 signal day_financials(day: int, earned: int, spent: int, watering_spent: int, quota_spent: int)
 
 const SAVE_PATH := "user://garden/game_data.cfg"
-const SAVE_VERSION := 2
+const SAVE_VERSION := 3
 
 var _coins: int = 0
 
@@ -70,6 +70,7 @@ func load_game() -> Dictionary:
 		"coins":     int(config.get_value("game", "coins", 0)),
 		"trash":     config.get_value("game", "trash", {}),
 		"sell":      config.get_value("game", "sell", []),
+		"field":     config.get_value("game", "field", {}),
 	}
 
 
@@ -121,6 +122,7 @@ func save_all(day_counter: int, plants_snapshot: Array = [], inventory_snapshot:
 	config.set_value("game", "coins", get_balance())
 	config.set_value("game", "trash", _collect_trash())
 	config.set_value("game", "sell", _collect_sell())
+	config.set_value("game", "field", _collect_field())
 	var dir_err: int = DirAccess.make_dir_recursive_absolute(SAVE_PATH.get_base_dir())
 	if dir_err != OK and dir_err != ERR_ALREADY_EXISTS:
 		push_error("TimeManager: cannot create save dir (%d)" % dir_err)
@@ -137,6 +139,13 @@ func _collect_plants() -> Array:
 	if field and field.has_method("get_plants_save_data"):
 		return field.get_plants_save_data()
 	return []
+
+
+func _collect_field() -> Dictionary:
+	var field: Node = get_tree().get_first_node_in_group("field") if get_tree() else null
+	if field and field.has_method("get_field_save_state"):
+		return field.call("get_field_save_state")
+	return {}
 
 
 func _collect_inventory() -> Array:

@@ -1,5 +1,6 @@
 extends Node2D
 
+@onready var BackGrassLayer: TileMapLayer = $BackGrassLayer
 @onready var WateredBedLayer: TileMapLayer = $WateredBedLayer
 @onready var BedLayer: TileMapLayer = $BedLayer
 @onready var GrassLayer: TileMapLayer = $GrassLayer
@@ -30,11 +31,20 @@ var _bed_cells: Dictionary = {}        # Vector2i -> true
 # Карта занятости клеток растениями — для O(1) lookup'ов.
 var _cell_to_plant: Dictionary = {}    # Vector2i -> Plant
 
+## Кодовая доступная территория: размер после ваучера = initial ± 2*margin каждую сторону.
+## Центр — центр AABB занятых клеток BackGrass + Grass (визуальное «поле»).
+@export_range(1, 512, 1) var initial_accessible_width: int = 20
+@export_range(1, 512, 1) var initial_accessible_height: int = 20
+
+var _access_margin_expansions: int = 0
+var _logical_field_center: Vector2i = Vector2i.ZERO
+
 
 func _ready() -> void:
 	add_to_group("field")
 	set_process_input(true)
 	_rebuild_bed_cells()
+	_recompute_logical_field_center_from_map()
 	_setup_bed_preview_layers()
 	if TimeManager:
 		if not TimeManager.clear_watered_tiles.is_connected(clear_watered_tiles):
@@ -212,11 +222,84 @@ func can_place_bed_tetromino(cells_world: Array[Vector2i]) -> bool:
 	if cells_world.is_empty():
 		return false
 	for c in cells_world:
+		if not is_cell_in_access_territory(c):
+			return false
 		if is_bed(c):
 			return false
 		if is_cell_occupied(c):
 			return false
 	return true
+
+
+func get_field_save_state() -> Dictionary:
+	return {"margin_expansions": _access_margin_expansions}
+
+
+func apply_field_save_state(data: Variant) -> void:
+	if typeof(data) != TYPE_DICTIONARY:
+		return
+	var d: Dictionary = data
+	_access_margin_expansions = maxi(0, int(d.get("margin_expansions", 0)))
+
+
+## Новый ваучер: +1 к доступной территории по периметру (ширина/высота +2 каждый покупкой).
+func expand_access_territory_by_one_margin_in_all_directions() -> void:
+	_access_margin_expansions += 1
+
+
+func is_cell_in_access_territory(cell: Vector2i) -> bool:
+	return _get_access_territory_rect().has_point(cell)
+
+
+func _get_access_territory_rect() -> Rect2i:
+	var w: int = initial_accessible_width + 2 * _access_margin_expansions
+	var h: int = initial_accessible_height + 2 * _access_margin_expansions
+	w = maxi(w, 1)
+	h = maxi(h, 1)
+	var cx: int = _logical_field_center.x
+	var cy: int = _logical_field_center.y
+	var x0: int = cx - int((w - 1) / 2)
+	var y0: int = cy - int((h - 1) / 2)
+	return Rect2i(x0, y0, w, h)
+
+
+func _recompute_logical_field_center_from_map() -> void:
+	var bbox: Variant = _union_used_cells_bbox([BackGrassLayer, GrassLayer])
+	if bbox == null:
+		_logical_field_center = Vector2i.ZERO
+		return
+	var r: Rect2i = bbox
+	_logical_field_center = r.position + r.size / 2
+
+
+func _union_used_cells_bbox(layers: Array) -> Variant:
+	var min_x: int = 0
+	var max_x: int = 0
+	var min_y: int = 0
+	var max_y: int = 0
+	var has_any: bool = false
+	for L in layers:
+		if not (L is TileMapLayer):
+			continue
+		var layer: TileMapLayer = L as TileMapLayer
+		for cell in layer.get_used_cells():
+			var c: Vector2i = cell
+			if not has_any:
+				min_x = c.x
+				max_x = c.x
+				min_y = c.y
+				max_y = c.y
+				has_any = true
+			else:
+				min_x = mini(min_x, c.x)
+				max_x = maxi(max_x, c.x)
+				min_y = mini(min_y, c.y)
+				max_y = maxi(max_y, c.y)
+	if not has_any:
+		return null
+	var w: int = max_x - min_x + 1
+	var h: int = max_y - min_y + 1
+	return Rect2i(min_x, min_y, w, h)
 
 func place_bed_tetromino(cells_world: Array[Vector2i]) -> bool:
 	if not can_place_bed_tetromino(cells_world):

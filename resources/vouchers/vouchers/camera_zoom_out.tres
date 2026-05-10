@@ -4,7 +4,8 @@
 
 [resource]
 script = ExtResource("1_xo4nl")
-voucher_id = "camera_zoom_out"
+voucher_id = "playable_expand_first"
 title = "New Territory"
-description = "camera zoom out"
+description = "Expands usable land by 1 tile on each side."
+effect = 1
 metadata/_custom_type_script = "uid://ckuf3osthfvsr"

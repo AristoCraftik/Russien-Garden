@@ -22,7 +22,7 @@ pivot_offset = Vector2(-6.635, 0)
 script = ExtResource("1_lnu2h")
 
 [node name="Field" parent="." unique_id=69235035 instance=ExtResource("1_uwrxv")]
-position = Vector2(180, 180)
+position = Vector2(395, 198)
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=128895694]
 anchor_mode = 0
@@ -129,16 +129,13 @@ mouse_filter = 2
 [node name="ToastManager" parent="CanvasLayer" unique_id=883007964 instance=ExtResource("7_toast")]
 
 [node name="MarginContainer5" type="MarginContainer" parent="CanvasLayer" unique_id=1583635957]
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -20.0
-offset_top = -40.0
-offset_right = 20.0
-grow_horizontal = 2
-grow_vertical = 0
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -20.0
+offset_right = 40.0
+offset_bottom = 20.0
+grow_vertical = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/MarginContainer5" unique_id=706029585]
 layout_mode = 2

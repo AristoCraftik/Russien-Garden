@@ -91,6 +91,9 @@ func _load_game() -> void:
 	day_counter = int(save.get("day", 0))
 	TimeManager.set_balance(int(save.get("coins", 0)))
 
+	if field and field.has_method("apply_field_save_state"):
+		field.apply_field_save_state(save.get("field", {}))
+
 	for plant_entry in save.get("plants", []):
 		if typeof(plant_entry) != TYPE_DICTIONARY:
 			continue
@@ -162,3 +165,7 @@ func _on_voucher_purchased(voucher: VoucherData) -> void:
 	match voucher.effect:
 		VoucherData.VoucherEffect.CAMERA_ZOOM_OUT:
 			camera.zoom *= Vector2(0.8, 0.8)
+		VoucherData.VoucherEffect.PLAYABLE_FIELD_EXPAND_MARGIN:
+			if field and field.has_method("expand_access_territory_by_one_margin_in_all_directions"):
+				field.expand_access_territory_by_one_margin_in_all_directions()
+			TimeManager.save_all(day_counter)
