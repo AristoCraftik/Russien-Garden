@@ -36,4 +36,6 @@ func get_save_id() -> String:
 func roll_yield_amount() -> int:
 	var lo: int = mini(yield_quantity.x, yield_quantity.y)
 	var hi: int = maxi(yield_quantity.x, yield_quantity.y)
+	if is_instance_valid(MarketState):
+		return MarketState.roll_yield(lo, hi)
 	return randi_range(lo, hi)

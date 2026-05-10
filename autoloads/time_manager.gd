@@ -6,7 +6,7 @@ signal balance_changed(new_balance: int)
 signal day_financials(day: int, earned: int, spent: int, watering_spent: int, quota_spent: int)
 
 const SAVE_PATH := "user://garden/game_data.cfg"
-const SAVE_VERSION := 3
+const SAVE_VERSION := 4
 
 var _coins: int = 0
 
@@ -63,14 +63,16 @@ func load_game() -> Dictionary:
 	if err != OK:
 		return {}
 	return {
-		"version":   int(config.get_value("game", "version", SAVE_VERSION)),
-		"day":       int(config.get_value("game", "day", 0)),
-		"plants":    config.get_value("game", "plants", []),
-		"inventory": config.get_value("game", "inventory", []),
-		"coins":     int(config.get_value("game", "coins", 0)),
-		"trash":     config.get_value("game", "trash", {}),
-		"sell":      config.get_value("game", "sell", []),
-		"field":     config.get_value("game", "field", {}),
+		"version":           int(config.get_value("game", "version", SAVE_VERSION)),
+		"day":               int(config.get_value("game", "day", 0)),
+		"plants":            config.get_value("game", "plants", []),
+		"inventory":         config.get_value("game", "inventory", []),
+		"coins":             int(config.get_value("game", "coins", 0)),
+		"trash":             config.get_value("game", "trash", {}),
+		"sell":              config.get_value("game", "sell", []),
+		"field":             config.get_value("game", "field", {}),
+		"run_seed":          int(config.get_value("game", "run_seed", 0)),
+		"market_rng_state":  config.get_value("game", "market_rng_state", 0),
 	}
 
 
@@ -123,6 +125,9 @@ func save_all(day_counter: int, plants_snapshot: Array = [], inventory_snapshot:
 	config.set_value("game", "trash", _collect_trash())
 	config.set_value("game", "sell", _collect_sell())
 	config.set_value("game", "field", _collect_field())
+	if is_instance_valid(MarketState):
+		config.set_value("game", "run_seed", MarketState.get_run_seed())
+		config.set_value("game", "market_rng_state", MarketState.get_gameplay_rng_state_for_save())
 	var dir_err: int = DirAccess.make_dir_recursive_absolute(SAVE_PATH.get_base_dir())
 	if dir_err != OK and dir_err != ERR_ALREADY_EXISTS:
 		push_error("TimeManager: cannot create save dir (%d)" % dir_err)

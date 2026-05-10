@@ -9,7 +9,7 @@ extends Control
 @onready var quit_button: Button = $CanvasLayer/MarginContainer2/HBoxContainer/QuitToMenuButton
 
 const STARTER_STACK: int = 1
-const STARTING_COINS: int = 300
+const STARTING_COINS: int = 5000
 
 var day_counter: int = 0
 var _is_transitioning: bool = false
@@ -29,10 +29,12 @@ func _ready() -> void:
 		await _load_game()
 	else:
 		TimeManager.set_balance(STARTING_COINS)
+		_configure_market_for_new_run()
 		await get_tree().process_frame
 		_spawn_starter_inventory()
 	if is_instance_valid(MarketState):
 		MarketState.set_day(day_counter)
+	call_deferred("_reroll_shop_and_vouchers_for_current_day")
 	# Сбрасываем режим, чтобы повторный вход в эту сцену не падал в "load".
 	FadeManager.start_mode = "new"
 	if vouchers and vouchers.has_signal("voucher_purchased"):
@@ -84,12 +86,14 @@ func _load_game() -> void:
 	if save.is_empty():
 		# Сейва нет — играем как новая игра.
 		TimeManager.set_balance(STARTING_COINS)
+		_configure_market_for_new_run()
 		await get_tree().process_frame
 		_spawn_starter_inventory()
 		return
 
 	day_counter = int(save.get("day", 0))
 	TimeManager.set_balance(int(save.get("coins", 0)))
+	_configure_market_from_save(save)
 
 	if field and field.has_method("apply_field_save_state"):
 		field.apply_field_save_state(save.get("field", {}))
@@ -121,6 +125,47 @@ func _load_game() -> void:
 	var sell_box: Node = get_tree().get_first_node_in_group("sell_box")
 	if sell_box and sell_box.has_method("load_save_data"):
 		sell_box.call("load_save_data", save.get("sell", []))
+
+
+func _generate_new_run_seed() -> int:
+	var rng := RandomNumberGenerator.new()
+	rng.randomize()
+	return rng.randi()
+
+
+func _configure_market_for_new_run() -> void:
+	if not is_instance_valid(MarketState):
+		return
+	MarketState.set_run_seed(_generate_new_run_seed())
+	MarketState.reset_gameplay_rng_for_run()
+
+
+func _configure_market_from_save(save: Dictionary) -> void:
+	if not is_instance_valid(MarketState):
+		return
+	var rs: int = int(save.get("run_seed", 0))
+	if rs == 0:
+		var plants: Array = save.get("plants", []) as Array
+		rs = int(
+			hash(
+				str(save.get("day", 0))
+				+ "#"
+				+ str(save.get("coins", 0))
+				+ "#"
+				+ str(plants.size())
+			)
+		)
+	MarketState.set_run_seed(rs)
+	MarketState.apply_gameplay_rng_state_from_save(save.get("market_rng_state", 0))
+
+
+func _reroll_shop_and_vouchers_for_current_day() -> void:
+	for n in get_tree().get_nodes_in_group("shop"):
+		if n.has_method("_roll_daily_offers"):
+			n.call("_roll_daily_offers")
+	for n in get_tree().get_nodes_in_group("vouchers"):
+		if n.has_method("_roll_daily_vouchers"):
+			n.call("_roll_daily_vouchers")
 
 
 func _on_quit_to_menu_button_button_up() -> void:

@@ -269,7 +269,7 @@ func _recompute_logical_field_center_from_map() -> void:
 		_logical_field_center = Vector2i.ZERO
 		return
 	var r: Rect2i = bbox
-	_logical_field_center = r.position + r.size / 2
+	_logical_field_center = r.position + r.size / 2 - Vector2i(1, 1)
 
 
 func _union_used_cells_bbox(layers: Array) -> Variant:

@@ -6,12 +6,12 @@ const ITEM_SIZE := Vector2(32, 32)
 
 ## Сколько разных предложений за день (не больше числа слотов в сцене и размера пула).
 @export_range(1, 24, 1) var shop_size_max: int = 6
-@export var max_stack_per_offer: int = 8
+@export var max_stack_per_offer: int = 5
 
 ## Дополнительный множитель веса для всех семян (поверх shop_offer_weight у каждого .tres).
 @export_range(0.0, 1000.0, 0.01, "or_greater") var seed_shop_weight_mult: float = 1.0
 ## Дополнительный множитель веса для кроватей-тетрамино.
-@export_range(0.0, 1000.0, 0.01, "or_greater") var bed_shop_weight_mult: float = 4.0
+@export_range(0.0, 1000.0, 0.01, "or_greater") var bed_shop_weight_mult: float = 1.0
 
 @onready var slots_host: GridContainer = $MarginContainer/VBoxContainer/Panel/Slots
 
@@ -23,8 +23,6 @@ func _ready() -> void:
 	_price_model = PriceModel.new()
 	if TimeManager:
 		TimeManager.day_advanced.connect(_on_day_advanced)
-	# После Game._ready успевает выставить MarketState.set_day(day_counter).
-	call_deferred("_roll_daily_offers")
 
 
 func _on_day_advanced() -> void:
@@ -38,7 +36,7 @@ func _roll_daily_offers() -> void:
 		return
 
 	var rng := RandomNumberGenerator.new()
-	rng.seed = int(MarketState.day_seed) * 100003 + 991
+	rng.seed = MarketState.mix_seed(100_003)
 
 	var existing_slots: Array = slots_host.get_children()
 	if existing_slots.is_empty():

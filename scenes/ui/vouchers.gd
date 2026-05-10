@@ -17,7 +17,6 @@ func _ready() -> void:
 	add_to_group("vouchers")
 	TimeManager.day_advanced.connect(_on_day_advanced)
 	TimeManager.balance_changed.connect(_on_balance_changed)
-	_roll_daily_vouchers()
 
 func _on_day_advanced() -> void:
 	_roll_daily_vouchers()
@@ -34,9 +33,8 @@ func _roll_daily_vouchers() -> void:
 		return
 
 	var rng := RandomNumberGenerator.new()
-	rng.seed = int(MarketState.day_seed) * 200003 + 313
-
-	all.shuffle()
+	rng.seed = MarketState.mix_seed(200_003)
+	_shuffle_array_with_rng(all, rng)
 
 	var count := rng.randi_range(min_offers_per_day, min(max_offers_per_day, all.size()))
 	for i in range(count):
@@ -51,6 +49,14 @@ func _roll_daily_vouchers() -> void:
 		var can_buy := TimeManager.get_balance() >= v.price
 		row.setup(v, can_buy)
 		row.buy_requested.connect(_on_buy_requested)
+
+func _shuffle_array_with_rng(arr: Array, rng: RandomNumberGenerator) -> void:
+	for i in range(arr.size() - 1, 0, -1):
+		var j: int = rng.randi_range(0, i)
+		var tmp: Variant = arr[i]
+		arr[i] = arr[j]
+		arr[j] = tmp
+
 
 func _load_all_vouchers() -> Array[VoucherData]:
 	var out: Array[VoucherData] = []
